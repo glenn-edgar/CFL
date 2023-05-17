@@ -32,17 +32,17 @@ void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_h
   }else{
       config_debug_handle_CFL(handle,config->debug_out);
   }
-  allocate_columns_CFL(handle, config->number_of_columns);
+  
 
-  allocate_column_elements_CFL(handle, config->number_of_column_elements);
+ allocate_column_elements_CFL(handle, config->number_of_column_elements);
    
   allocate_function_space_CFL(
     handle, config->number_column_functions, config->number_bool_functions,
     config->number_if_functions, config->one_shot_functions,
     config->number_of_try_functions);
+allocate_columns_CFL(handle, config->number_of_columns);
 
 
- 
   allocate_named_event_queue_space_CFL(handle,
     config->number_of_named_queues);
  
@@ -52,7 +52,7 @@ void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_h
   allocate_state_machine_CFL(handle, config->number_of_state_machines);
  
   allocate_state_space_CFL(handle, config->number_of_states);
- 
+
 
 
   

@@ -247,14 +247,14 @@ static void log_message(void *input, void *params,
  
   char *message;
   
-  const char *column_name;
+  unsigned column_index;
   int column_element_number;
   message = (char *)params;
 
-  column_name = Get_current_column_name_CFL(input);
+  column_index = Get_current_column_index_CFL(input);
   column_element_number = Get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column %s column element %d  ---> msg: %s\n",
-             column_name, column_element_number, message);
+  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
+              column_index, column_element_number, message);
 }
 
 static void set_column_return(void *handle, void *params,

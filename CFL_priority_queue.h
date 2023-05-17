@@ -1,13 +1,14 @@
 #ifndef __PRIORITY_HEAP_H__
 #define __PRIORITY_HEAP_H__
 
-// #define __PRIORITY_HEAP_DEBUG__
+#define __PRIORITY_HEAP_DEBUG__
 
 typedef struct Node_cell_CFL_t
 {
    unsigned short id;
    short forward;
    short backward;
+
    bool allocated;
 } Node_cell_CFL_t;
 

@@ -54,7 +54,7 @@ static void setup_private_heap(Handle_CFL_t *handle,
 
 void *allocate_once_CFL(Handle_CFL_t *handle, unsigned size) {
   void *return_value;
-  char message[80];
+  
 
   if (size == 0) {
     ASSERT_PRINT_INT("cannot allocate zero heap size",
@@ -67,9 +67,9 @@ void *allocate_once_CFL(Handle_CFL_t *handle, unsigned size) {
     size = size + align_8(size);
   }
   if (size >= handle->remaining_heap_size) {
-    sprintf(message, "space: %d requested %d", handle->remaining_heap_size,
+  
+    ASSERT_PRINT_F("local heap space exceeded space: %d requested %d", handle->remaining_heap_size,
             size);
-    ASSERT_PRINT("local heap space exceeded", message);
   }
 
   return_value = (void *)handle->current_heap_location;

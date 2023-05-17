@@ -5,7 +5,7 @@
 #include "Cfl_hash_table_support.h"
 #include "Cfl_local_heap_functions.h"
 
-#define CELL_SAFETY 2
+
 #define TABLE_EXPANSION(x) ((3 * x) / 2)
 #define COMPUTE_HASH_INDEX(x, y) abs(y % TABLE_EXPANSION(x))
 
@@ -39,7 +39,7 @@ Hash_cell_control_CFL_t *contruct_hash_cell_control_CFL( void *input,
   return_value->hash_table = (int *)allocate_once_CFL(
       handle, sizeof(int) * TABLE_EXPANSION(cell_number));
   mark_cell_id(cell_number, return_value->cell_array);
-  mark_hash_table(TABLE_EXPANSION(cell_number) + CELL_SAFETY,
+  mark_hash_table(TABLE_EXPANSION(cell_number),
                   return_value->hash_table);
   return return_value;
 }
@@ -85,8 +85,9 @@ int Store_Name_CFL(Hash_cell_control_CFL_t *hash_cell_control,
 
   hash_cell = hash_cell_control->cell_array + hash_cell_control->current_number;
   hash_cell_control->current_number += 1;
-  hash_cell->name = name;
+  //hash_cell->name = name;
   hash_cell->hash = hash(name);
+  hash_cell->secondary_hash = JenkinsHash_CFL(name,strlen(name));
   hash_cell->link = -1;
 
   update_hash_table(hash_cell_control, hash_cell);
@@ -156,8 +157,8 @@ static int find_cell_location(Hash_cell_control_CFL_t *hash_cell_control,
   hash_cell = hash_cell_control->cell_array +
               get_hash_value(hash_cell_control, hash_index);
   while (1) {
-    if ((hash_cell->hash == hash_value) &&
-        (strcmp(hash_cell->name, name) == 0)) {
+    if ( (hash_cell->hash == hash_value) &&(hash_cell->secondary_hash == JenkinsHash_CFL(name,strlen(name)) )) {
+       // (strcmp(hash_cell->name, name) == 0)) {
       return hash_cell->id;
     }
     if (hash_cell->link >= 0) {
