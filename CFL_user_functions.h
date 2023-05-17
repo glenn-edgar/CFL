@@ -12,6 +12,8 @@ extern "C" {
 
 #include "Cfl_debug.h"
 
+// comment out to disable
+#define __PRIORITY_HEAP_DEBUG__
 #define NAME_SIZE_CFL(x) sizeof(x) / sizeof(char *)
 
 #define NO_TIME_OUT_CFL -1

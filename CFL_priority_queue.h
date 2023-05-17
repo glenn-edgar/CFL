@@ -1,7 +1,7 @@
 #ifndef __PRIORITY_HEAP_H__
 #define __PRIORITY_HEAP_H__
+#include "CFL_user_functions.h"
 
-#define __PRIORITY_HEAP_DEBUG__
 
 typedef struct Node_cell_CFL_t
 {

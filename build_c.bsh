@@ -1,0 +1,6 @@
+make clean
+make
+cd test_c
+make clean
+make
+./CFL_test
