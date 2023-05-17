@@ -4,7 +4,6 @@
 
 #include "test_assembler.h"
 
-static void test_assembly(Handle_config_CFL_t*);
+static void test_assembly(Handle_config_CFL_t *);
 
-void test_assembler() {
-}
+void test_assembler() {}
