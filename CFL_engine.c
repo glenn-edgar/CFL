@@ -99,8 +99,8 @@ static void check_for_undefined_columns(Handle_CFL_t *handle)
   {
     if (column->defined == false)
     {
-      ASSERT_PRINT("undefined column",
-                   (column_control->column_names->cell_array + i)->name);
+      ASSERT_PRINT_INT("undefined column",
+                   (column_control->column_names->cell_array + i)->id);
     }
     column++;
   }

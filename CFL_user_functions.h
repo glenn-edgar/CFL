@@ -421,7 +421,7 @@ bool Get_column_index_return_code_CFL(void* input, unsigned index);
 // these instructions apply to current active column
 void Set_current_column_return_code_CFL(void* input, bool state);
 bool Get_current_column_return_code_CFL(void* input);
-const char* Get_current_column_name_CFL(void* input);
+
 unsigned Get_current_column_index_CFL(void* input);
 unsigned Get_current_column_element_index_CFL(void* input);
 void Set_local_event_current_column_CFL(void* input, Event_data_CFL_t* data);

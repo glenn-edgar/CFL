@@ -84,10 +84,11 @@ static void inline enable_column_low(Handle_CFL_t *handle,
   {
     return; // this case is an already active column being reset
   }
-
+  
   PRH_enqueue_node_CFL(&column_control->node_control,
                        column_control->node_cell + index);
   column->active = true;
+ 
 }
 static inline Column_CFL_t *find_column_entry_CFL(Handle_CFL_t *handle,
                                                   unsigned column_index)
@@ -609,15 +610,8 @@ bool Get_current_column_return_code_CFL(void *input)
   return engine_control->current_column->fn_success;
 }
 
-const char *Get_current_column_name_CFL(void *input)
-{
-  Handle_CFL_t *handle;
-  Engine_control_CFL_t *engine_control;
 
-  handle = (Handle_CFL_t *)input;
-  engine_control = (Engine_control_CFL_t *)handle->engine_control;
-  return engine_control->current_column->name;
-}
+
 
 unsigned Get_current_column_element_index_CFL(void *input)
 {

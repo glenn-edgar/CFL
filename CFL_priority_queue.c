@@ -4,6 +4,13 @@
 
 static void check_node(Node_control_CFL_t *node_control, unsigned index) {
   Node_cell_CFL_t *node = node_control->nodes + index;
+  
+  if(node->id != index){
+    ASSERT_PRINT_INT("node id does not match index", node->id);
+  }
+  if(node->id >= node_control->size){
+    ASSERT_PRINT_INT("node id exceeds node size", node->id);
+  }
 
   if ((node->backward < -1) || (node->backward >= node_control->size)) {
     ASSERT_PRINT_INT("node backward is invalid",
@@ -194,7 +201,7 @@ Node_cell_CFL_t *PRH_dequeue_node_CFL(Node_control_CFL_t *node_control,
 
 void PRH_enqueue_node_CFL(Node_control_CFL_t *node_control,
                           Node_cell_CFL_t *node) {
-
+  
   if (node->id >= node_control->size) {
     ASSERT_PRINT_INT("invalid node id", node->id);
   }
