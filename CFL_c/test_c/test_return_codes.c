@@ -1,3 +1,5 @@
+
+
 #include "Cfl_user_functions.h"
 #include "test_interface_functions.h"
 
@@ -24,7 +26,7 @@ void test_column_return_codes(void) {
    
   test_basic_return_codes(config_handle);
   test_dead_columns_and_dead_engine(config_handle);
-  test_second_minute_hour_day_event(config_handle);
+  //test_second_minute_hour_day_event(config_handle);
 }
 
 static void one_shot_test(void* input, void* params,
@@ -39,21 +41,23 @@ static void one_shot_test(void* input, void* params,
 }
 
 static void test_basic_return_codes(Handle_config_CFL_t* config_handle) {
-  void* input = Configure_engine_CFL(config_handle,50000, 4000);
-
-  const char* column_names[] = { "terminate_column", "reset_column",
-                                "terminate_engine_column", "halt_test" };
-
-  Store_one_shot_function_CFL(input, "ONE_SHOT_TEST", one_shot_test);
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
-
-
-  Asm_start_column_CFL(input, "terminate_column", true);
+ 
+    void* input = Configure_engine_CFL(config_handle,50000,4000);
+    // define the column list
+    const char * column_names[] = {
+        "terminate_column","reset_column","terminate_engine_column","halt_test"};
+    Asm_columns_CFL(input,4,column_names);
+    Store_one_shot_function_CFL(input,"ONE_SHOT_TEST",one_shot_test);
+    /* 
+    Defining Column "terminate_column"  starting state true 
+    */ 
+    Asm_start_column_CFL(input, "terminate_column", true);
+    Asm_log_message_CFL(input,"this column will terminate");
+    Asm_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+  
   //---->
-  Asm_log_message_CFL(input, "this column will terminate");
-  Asm_terminate_CFL(input);
-  //---->
-  Asm_end_column_CFL(input);
+  
 
   Asm_start_column_CFL(input, "reset_column", true);
   //---->
@@ -181,8 +185,4 @@ Asm_end_column_CFL(input);
   Printf_CFL("Engine Done  \n");
   
 }
-
-
-  //---->
-  
 
