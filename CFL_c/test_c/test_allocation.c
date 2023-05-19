@@ -1,5 +1,3 @@
-
-
 #include "Cfl_user_functions.h"
 #include "test_interface_functions.h"
 
