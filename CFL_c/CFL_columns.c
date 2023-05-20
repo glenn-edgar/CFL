@@ -160,7 +160,7 @@ void Asm_start_column_CFL(void *input, const char *column_name,
   column = column_control->column + column_index;
   if (column->defined == true)
   {
-    ASSERT_PRINT(__func__, "column hash previous been defined");
+    ASSERT_PRINT("column name previous been defined",column_name);
   }
 
   handle->ref_column = column;

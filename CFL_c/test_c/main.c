@@ -25,7 +25,7 @@ int main (void )
  test_allocation();
  test_functions();
  test_column_return_codes();
-// test_while_verify();
+ test_while_verify();
 #if 0
   test_allocation();
   test_functions();
