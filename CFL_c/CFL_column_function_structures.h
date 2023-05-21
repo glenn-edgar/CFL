@@ -28,11 +28,11 @@ typedef struct Verify_control_CFL_t
 typedef struct While_event_control_CFL_t
 {
 
-   int number_of_events;
-   int event_index;
-   int current_count;
-   int time_out_ms;
-   bool terminate_flag;
+   unsigned  number_of_events;
+   unsigned     event_index;
+   unsigned short current_count;
+   int       time_out_ms;
+   bool      terminate_flag;
    void* user_data;
    One_shot_function_CFL_t user_termination_fn;
 
@@ -41,8 +41,8 @@ typedef struct While_event_control_CFL_t
 typedef struct While_time_control_CFL_t
 {
    Elasped_ms_fn ms_time;
-   unsigned long time_delay;
-   unsigned long ending_time;
+   unsigned time_delay;
+   unsigned ending_time;
 } While_time_control_CFL_t;
 
 typedef struct Column_index_CFL_t
@@ -57,7 +57,7 @@ typedef struct Column_index_CFL_t
 typedef struct Column_watch_dog_CFL_t
 {
    bool termination_flag;
-   unsigned column_index;
+   unsigned short column_index;
    unsigned trigger_count;
    unsigned current_count;
    One_shot_function_CFL_t trigger_function;

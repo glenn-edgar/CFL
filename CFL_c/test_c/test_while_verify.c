@@ -41,12 +41,12 @@ void test_while_verify(void) {
   config_handle->debug_out = debug_write;
    
   run_while_event_normal_test_a(config_handle);
-  //run_while_event_normal_test_b(config_handle);
-  //run_while_event_time_out_terminate_test(config_handle);
-  //run_while_event_time_out_reset_test(config_handle);
-  //test_verify_opcode(config_handle);
+  run_while_event_normal_test_b(config_handle);
+  run_while_event_time_out_reset_test(config_handle);
+  run_while_event_time_out_terminate_test(config_handle);
+  test_verify_opcode(config_handle);
   //test_while_opcode(config_handle);
-  //test_while_time_out(config_handle);
+  test_while_time_out(config_handle);
 }
 
 /*
@@ -97,55 +97,45 @@ static void run_while_event_normal_test_a(Handle_config_CFL_t* config_handle) {
 }
 static void run_while_event_normal_test_b(Handle_config_CFL_t* config_handle) {
 
-  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
-  const char* column_names[] = { "wait_event", "generate_event" };
-  Event_data_CFL_t my_event_data = { 23, 45, NULL };
+    void* input = Configure_engine_CFL(config_handle,50000,4000);
 
+    // define the column list
+    const char * column_names[] = {
+        "wait_event","generate_event"};
+    Asm_columns_CFL(input,2,column_names);
+    Event_data_CFL_t my_event_data = { 23, 45, NULL};
 
+   /* 
+    Defining Column "generate_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "generate_event", true);
+    Asm_wait_time_delay_CFL(input,1000);
+    Asm_send_event_CFL(input,&my_event_data);
+    Asm_log_message_CFL(input,"event has been sent");
+    Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
+    // This column has a time out but still should complete before timeout 
 
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
-
-  Asm_start_column_CFL(input, "generate_event", true);
-  //-->
-  Asm_log_message_CFL(input, "generate event starting");
-  Asm_wait_time_delay_CFL(input, 1000);
-  Asm_log_message_CFL(input, "time delay done");
-  Asm_send_event_CFL(input, &my_event_data);
-  Asm_log_message_CFL(input, "event sent");
-  Asm_reset_CFL(input);
-  //-->
-  Asm_end_column_CFL(input);
-
-  Asm_start_column_CFL(input, "wait_event", true);
-  //-->
-  Asm_log_message_CFL(input, "-------------------------> wait event is starting");
-  // test with a time out that passes -- failure will result in reset
-  Asm_wait_event_count_CFL(input, 23, 10, 50000, false, NULL, NULL);
-  Asm_log_message_CFL(input, "wait event is done");
-  Asm_engine_terminate_CFL(input);
-  //---->
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "wait_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "wait_event", true);
+    Asm_log_message_CFL(input,"waiting for event");
+    Asm_wait_event_count_CFL(input, 23, 10,50000, false, NULL, NULL);
+    Asm_log_message_CFL(input,"Wait Event is Done");
+    Asm_engine_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
-  Printf_CFL("Engine Done");
+  Printf_CFL("Engine Done\n");
   Destroy_engine_CFL(input);
  
 }
 
-#if 0
-typedef struct While_event_control_CFL_t {
-
-  int  number_of_events;
-  int  event_index;
-  int current_count;
-  int  time_out_ms;
-  bool terminate_flag;
-  void* user_data;
-  One_shot_function_CFL_t user_termination_fn;
-
-}While_event_control_CFL_t;
-#endif
+ 
 
 static const char* test_while_time_out_data = "This is my private data";
 static void test_while_time_out(void* input, void* params,
@@ -160,104 +150,107 @@ static void test_while_time_out(void* input, void* params,
 }
 
 static void
-run_while_event_time_out_terminate_test(Handle_config_CFL_t* config_handle) {
-  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
-  const char* column_names[] = { "terminate_engine", "wait_event",
-                                "generate_event" };
-  Event_data_CFL_t my_event_data = { 23, 45, NULL };
+run_while_event_time_out_reset_test(Handle_config_CFL_t* config_handle) {
 
+    void* input = Configure_engine_CFL(config_handle,50000,4000);
 
-  Store_one_shot_function_CFL(input, "test_while_time_out",
-    test_while_time_out);
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
+    // define the column list
+    const char * column_names[] = {
+        "terminate_engine","wait_event","generate_event"};
+    Asm_columns_CFL(input,3,column_names);
+    Event_data_CFL_t my_event_data = { 23, 45, NULL};
+    Store_one_shot_function_CFL(input,"test_while_time_out",test_while_time_out);
 
-  Asm_start_column_CFL(input, "terminate_engine", true);
-  //---------->
-  Asm_log_message_CFL(input, "terminate engine");
-  Asm_wait_time_delay_CFL(input, 15000);
-  Asm_log_message_CFL(input, "time delay done");
-  Asm_log_message_CFL(input, "terminate_engine");
-  //---------->
-  Asm_engine_terminate_CFL(input);
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "terminate_engine"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "terminate_engine", true);
+    Asm_wait_time_delay_CFL(input,10000);
+    Asm_log_message_CFL(input,"terminate_engine");
+    Asm_engine_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "generate_event", true);
-  //--->
-  Asm_wait_time_delay_CFL(input, 1000 - 100);
-  Asm_send_event_CFL(input, &my_event_data);
-  Asm_log_message_CFL(input, "event sent");
-  Asm_reset_CFL(input);
-  //---->
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "generate_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "generate_event", true);
+    Asm_wait_time_delay_CFL(input,1000);
+    Asm_send_event_CFL(input,&my_event_data);
+    Asm_log_message_CFL(input,"event has been sent");
+    Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
+    // This column has a time out but will not complete and generate a reset
 
-  Asm_start_column_CFL(input, "wait_event", true);
-  //---->
-  Asm_log_message_CFL(input, "wait event is starting");
-  // test with time out and terminate  no time out
-  Asm_wait_event_count_CFL(input, 23, 10, 9900, true, "test_while_time_out",
-    (void*)test_while_time_out_data);
-  Asm_log_message_CFL(input, "wait event is done");
-  Asm_engine_terminate_CFL(input);
-  //----->
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "wait_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "wait_event", true);
+    Asm_log_message_CFL(input,"column is starting again to reset");
+    Asm_wait_event_count_CFL(input, 23, 10,2000, false, "test_while_time_out", (void*)test_while_time_out_data);
+    Asm_log_message_CFL(input,"Wait Event is Done");
+    Asm_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
  Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
+
   Printf_CFL("Engine Done \n");
   Destroy_engine_CFL(input);
-  
 }
-
 static void
-run_while_event_time_out_reset_test(Handle_config_CFL_t* config_handle) {
-
-  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
-  const char* column_names[] = { "terminate_engine", "wait_event",
-                                "generate_event" };
-  Event_data_CFL_t my_event_data = { 23, 45, NULL };
+run_while_event_time_out_terminate_test(Handle_config_CFL_t* config_handle) {
 
 
-  Store_one_shot_function_CFL(input, "test_while_time_out",
-    test_while_time_out);
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
+    void* input = Configure_engine_CFL(config_handle,50000,4000);
 
-  Asm_start_column_CFL(input, "terminate_engine", true);
-  //---------->
-  Asm_log_message_CFL(input, "terminate engine");
-  Asm_wait_time_delay_CFL(input, 25000);
-  Asm_log_message_CFL(input, "time delay done");
-  Asm_log_message_CFL(input, "terminate_engine");
-  Asm_engine_terminate_CFL(input);
-  //---------------->
-  Asm_end_column_CFL(input);
+    // define the column list
+    const char * column_names[] = {
+        "terminate_engine","wait_event","generate_event"};
+    Asm_columns_CFL(input,3,column_names);
+    Event_data_CFL_t my_event_data = { 23, 45, NULL};
+    Store_one_shot_function_CFL(input,"test_while_time_out",test_while_time_out);
 
-  Asm_start_column_CFL(input, "generate_event", true);
-  //-------->
-  Asm_wait_time_delay_CFL(input, 1000);
-  Asm_send_event_CFL(input, &my_event_data);
-  Asm_log_message_CFL(input, "event sent");
-  Asm_reset_CFL(input);
-  //---------->
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "terminate_engine"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "terminate_engine", true);
+    Asm_wait_time_delay_CFL(input,10000);
+    Asm_log_message_CFL(input,"terminate_engine");
+    Asm_engine_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "wait_event", true);
-  //---------------->
-  Asm_log_message_CFL(input, "wait event is starting");
-  // test with timeout and reset
-  Asm_wait_event_count_CFL(input, 23, 10, 9100, false, "test_while_time_out",
-    (void*)test_while_time_out_data);
-  Asm_log_message_CFL(input, "wait event is done");
-  Asm_engine_terminate_CFL(input);
-  //---->
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "generate_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "generate_event", true);
+    Asm_wait_time_delay_CFL(input,1000);
+    Asm_send_event_CFL(input,&my_event_data);
+    Asm_log_message_CFL(input,"event has been sent");
+    Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
+    // This column has a time out but will not complete and generate a reset
 
+   /* 
+    Defining Column "wait_event"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "wait_event", true);
+    Asm_log_message_CFL(input,"column is starting should terminate");
+    Asm_wait_event_count_CFL(input, -23, 10,2000,true, "test_while_time_out", (void*)test_while_time_out_data);
+    Asm_log_message_CFL(input,"Wait Event is Done");
+    Asm_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
   Printf_CFL("Engine Done \n");
   Destroy_engine_CFL(input);
   
 }
-
 /*
 **
 ** Verify opcode
@@ -300,11 +293,7 @@ static bool verify_test(void* input, void* params,
 
 static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
 
-  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
-  //const char* for_array[1] = { "event_generator" };
-  const char* column_names[] = { "terminate_engine", "event_generator",
-                                "verify_reset", "verify_terminate" };
-  Event_data_CFL_t my_event_data = { 23, 45, NULL };
+  
   Verify_User_Data_t verify_user_data_reset;
   verify_user_data_reset.target_event = 23;
   verify_user_data_reset.target_event_count = 10;
@@ -315,45 +304,64 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
   verify_user_data_terminate.target_event_count = 5;
   verify_user_data_terminate.message = "-------------> termination event";
 
+    void* input = Configure_engine_CFL(config_handle,50000,2500);
 
-  Store_bool_function_CFL(input, "VERIFY_COUNT_EVENT", verify_test);
-  Store_one_shot_function_CFL(input, "VERIFY_END", verify_end);
+    // define the column list
+    const char * column_names[] = {
+        "terminate_engine","event_generator","verify_reset","verify_terminate"};
+    Asm_columns_CFL(input,4,column_names);
+    Event_data_CFL_t my_event_data = { 23, 45, NULL};
+    Store_bool_function_CFL(input,"VERIFY_COUNT_EVENT",verify_test);
+    Store_one_shot_function_CFL(input,"VERIFY_END",verify_end);
 
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
+   /* 
+    Defining Column "terminate_engine"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "terminate_engine", true);
+    Asm_log_message_CFL(input,"terminate engine start");
+    Asm_wait_time_delay_CFL(input,50000);
+    Asm_log_message_CFL(input,"wait done");
+    Asm_log_message_CFL(input,"stop engine");
+    Asm_engine_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "terminate_engine", true);
-  Asm_log_message_CFL(input, "terminate engine");
-  Asm_wait_time_delay_CFL(input, 50000);
-  Asm_log_message_CFL(input, "time delay done");
-  Asm_log_message_CFL(input, "terminate_engine");
-  Asm_engine_terminate_CFL(input);
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "event_generator"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "event_generator", true);
+    Asm_wait_time_delay_CFL(input,1000);
+    Asm_send_event_CFL(input,&my_event_data);
+    Asm_log_message_CFL(input,"event has been sent");
+    Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "event_generator", true);
-  Asm_wait_time_delay_CFL(input, 1000);
-  Asm_log_message_CFL(input, "generate_event");
-  Asm_send_event_CFL(input, &my_event_data);
-  Asm_reset_CFL(input);
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "verify_reset"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "verify_reset", true);
+    Asm_log_message_CFL(input,"verify terminate column");
+    Asm_log_message_CFL(input,"this column will reset");
+    Asm_verify_CFL(input,"VERIFY_COUNT_EVENT",false,"VERIFY_END",&verify_user_data_terminate);
+     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,true,time_out_fn, user_data);
+    Asm_log_message_CFL(input,"This should not happen");
+    Asm_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "verify_terminate", true);
-  Asm_log_message_CFL(input, "verify_terminate");
-  Asm_verify_CFL(input, "VERIFY_COUNT_EVENT", true, "VERIFY_END",
-    &verify_user_data_terminate);
-  Asm_wait_CFL(input, "FALSE", -1, false, NULL,
-    NULL); // this column will continually block
-  Asm_log_message_CFL(input, "this message should not happen");
-  Asm_end_column_CFL(input);
-
-  Asm_start_column_CFL(input, "verify_reset", true);
-  Asm_log_message_CFL(input, "verify_reset");
-  Asm_verify_CFL(input, "VERIFY_COUNT_EVENT", false, "VERIFY_END",
-    &verify_user_data_reset);
-  Asm_wait_CFL(input, "FALSE", -1, false, NULL,
-    NULL); // this column will continually block
-  Asm_log_message_CFL(input, "this message should not happen");
-  Asm_end_column_CFL(input);
-
+   /* 
+    Defining Column "verify_terminate"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "verify_terminate", true);
+    Asm_log_message_CFL(input,"verify terminate column");
+    Asm_log_message_CFL(input,"this column will terminate");
+    Asm_verify_CFL(input,"VERIFY_COUNT_EVENT",true,"VERIFY_END",&verify_user_data_terminate);
+     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,true,time_out_fn, user_data);
+    Asm_log_message_CFL(input,"This should not happen");
+    Asm_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
   Printf_CFL("starting engine");
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
@@ -361,10 +369,9 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
   Destroy_engine_CFL(input);
   
 }
-
 /*
 **
-** Verify opcode
+** while opcode
 */
 
 typedef struct While_User_Data_t {
@@ -476,33 +483,36 @@ static void test_while_opcode(Handle_config_CFL_t* config_handle) {
   Destroy_engine_CFL(input);
  
 }
-
 static void test_while_time_out(Handle_config_CFL_t* config_handle) {
 
-  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
-  const char* column_names[] = { "terminate_engine", "generate_event" };
- // Event_data_CFL_t my_event_data = { 23, 45, NULL };
 
+    void* input = Configure_engine_CFL(config_handle,50000,4000);
 
-  Store_one_shot_function_CFL(input, "test_while_time_out",
-    test_while_time_out);
-  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
+    // define the column list
+    const char * column_names[] = {
+        "reset_loop","terminate_engine"};
+    Asm_columns_CFL(input,2,column_names);
 
-  Asm_start_column_CFL(input, "terminate_engine", true);
-  Asm_log_message_CFL(input, "terminate engine");
-  Asm_wait_time_delay_CFL(input, 50000);
-  Asm_log_message_CFL(input, "time delay done");
-  Asm_log_message_CFL(input, "terminate_engine");
-  Asm_engine_terminate_CFL(input);
-  Asm_end_column_CFL(input);
+   /* 
+    Defining Column "terminate_engine"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "terminate_engine", true);
+    Asm_wait_time_delay_CFL(input,10000);
+    Asm_log_message_CFL(input,"time delay done");
+    Asm_log_message_CFL(input,"stop engine");
+    Asm_engine_terminate_CFL(input);
+    Asm_end_column_CFL(input);
+     
 
-  Asm_start_column_CFL(input, "generate_event", true);
-  Asm_log_message_CFL(input, "time delay start");
-  Asm_wait_time_delay_CFL(input, 5000);
-  Asm_log_message_CFL(input, "time delay over");
-  Asm_reset_CFL(input);
-  Asm_end_column_CFL(input);
-
+   /* 
+    Defining Column "reset_loop"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "reset_loop", true);
+    Asm_wait_time_delay_CFL(input,2000);
+    Asm_log_message_CFL(input,"wait reset");
+    Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
   Printf_CFL("Engine Done \n");

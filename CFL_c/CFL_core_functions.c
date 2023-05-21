@@ -150,6 +150,8 @@ static int while_handler(void* handle, void * aux_fn, void* params,
   while_ctrl = (While_control_CFL_t*)params;
 
   if (event_data->event_index == EVENT_INIT_CFL) {
+   
+    
     while_ctrl->current_count = 0;
     bool_fn(handle, while_ctrl->user_data, event_data);
     return CONTINUE_CFL;
@@ -166,7 +168,7 @@ static int while_handler(void* handle, void * aux_fn, void* params,
   }
 
   while_ctrl->current_count += event_data->event_data;
-
+  
   if (while_ctrl->current_count < while_ctrl->time_out_ms) {
     return HALT_CFL;
   }
