@@ -43,6 +43,7 @@ void default_idle_function(void *handle,
         timer_control->current_millis = get_elapsed_time_ms();
         timer_control->start_millis = timer_control->current_millis;
         event_data.event_index = TIMER_TICK_CFL;
+        
         event_data.event_data = timer_control->tick_ms;
         event_data.params = NULL;
         Queue_event_CFL(handle, &event_data);

@@ -1,6 +1,6 @@
 PXT.cwd("macros")
-dofile("asm_macros.lua")
 dofile("compile.lua")
+dofile("asm_macros.lua")
 PXT.cwd("../")
 compile_directory()
 os.exit()

@@ -143,7 +143,7 @@ static bool process_single_loop(Handle_CFL_t *handle)
     Disable_all_columns_CFL(handle);
     return false; // Engine terminate event
   }
-
+ 
   if (process_single_sweep_CFL(handle, current_event) == false)
   {
     return false; // Engine terminate event

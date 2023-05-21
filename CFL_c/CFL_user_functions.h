@@ -46,7 +46,7 @@ typedef struct Time_control_CFL_t
 typedef struct Event_data_CFL_t
 {
   short event_index;
-  double event_data;
+  float event_data;
   void* params;
 
 } Event_data_CFL_t;

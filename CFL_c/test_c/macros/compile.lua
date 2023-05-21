@@ -1,5 +1,6 @@
 
-
+-- insure file is global
+file = ""
 
 function compile_directory()
     PXT_files = PXT.read("./")
@@ -7,12 +8,12 @@ function compile_directory()
     for i, pxt_file in ipairs(PXT_files) do
         base_file = stripFileExtension(pxt_file)
         base_file = base_file..".c"
-        compile_file(pxt_file, base_file)
+       compile_file(pxt_file, base_file)
     end
 end
 
 function pass_c(input)
-    io.write(input)
+    file:write(input)
 end
 
 function stripFileExtension(fileString)
@@ -24,6 +25,7 @@ function stripFileExtension(fileString)
     end
 end
 
+--[[
 function saveOutputToFile(input_filefilePath)
     local file = io.open(filePath, "w")
     if file then
@@ -33,14 +35,16 @@ function saveOutputToFile(input_filefilePath)
         print("Error opening file for writing:", filePath)
     end
 end
+]]--
+
 
 function compile_file(input_file, output_file)
-    local oldout = io.output() -- without argument returns actual output
-    io.output(output_file) -- set to a filename
+   
+    file = io.open(output_file, "w")
+    
     dofile(input_file)
-    io.flush()
-    io.close()
-    io.output(oldout) --
+    file:flush()
+    file:close()
     print("Compiled "..input_file.." to "..output_file)
 end
 
