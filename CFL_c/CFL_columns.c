@@ -272,6 +272,7 @@ static short find_column_index(Column_control_CFL_t *column_control,
   index = Find_Name_CFL(column_control->column_names, column_name);
   if (index < 0)
   {
+ 
     ASSERT_PRINT("column not found", column_name);
   }
   if (index >= (int)column_control->max_number)

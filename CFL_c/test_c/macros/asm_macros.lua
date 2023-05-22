@@ -169,5 +169,16 @@ function Verify_terminate(bool_fn,end_fn,user_data)
     file:write(message)
 end
 
---[[
-]]
+function Set_watch_dog( time_out,term_flag, one_shot_term_fn)
+
+  time_out = tostring(time_out)
+  term_flag = tostring(term_flag)
+  one_shot_term_fn = tostring(one_shot_term_fn)
+  local message = string.format("    Asm_set_column_watch_dog_CFL(input,%s,%s,%s);\n",time_out,term_flag,one_shot_term_fn )
+  file:write(message)
+end
+
+function Clear_watch_dog()
+    file:write("    Asm_clear_column_watch_dog_CFL(input);\n")
+end
+

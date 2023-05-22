@@ -7,7 +7,7 @@ typedef struct Slot_CFL_t {
     unsigned short  type;
     unsigned short chain_id;
     unsigned short data_size;
-    void *data;
+    void *data;  // can be used to link to slots for hiearchical structures
 }Slot_CFL_t;
 
 enum Pipe_type_CFL_t {
