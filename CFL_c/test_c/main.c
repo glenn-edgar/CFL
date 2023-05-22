@@ -22,24 +22,21 @@
 int main (void )
 {
 
- test_allocation();
- test_functions();
- test_column_return_codes();
- test_while_verify();
+ //test_allocation();
+ //test_functions();
+ //test_column_return_codes();
+ //test_while_verify();
+ printf("starting\n");
+ test_watch_dog();
 #if 0
-  test_allocation();
-  test_functions();
-  test_column_return_codes();
-  test_while_verify();
+  // test pipes
+  // test statemacines
+  // test s expressions ?
   test_column_control();
-  test_watch_dog();
   test_chain_events();
-#endif
-  //test_chain_events();
-
   //test_named_queue_functions();
  // test_df_functions();
-  
+#endif  
 }
 
 

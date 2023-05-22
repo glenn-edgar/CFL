@@ -95,16 +95,17 @@ void Asm_send_event_CFL(void* input, Event_data_CFL_t* event_data) {
 void Asm_set_column_watch_dog_CFL(void* input, unsigned time_out_ms,
   bool term_flag,
   const char* one_shot_term_function) {
+ 
   Column_watch_dog_CFL_t* column_watch_dog;
 
-  column_watch_dog = (Column_watch_dog_CFL_t*)Allocate_once_malloc_CFL(
-    input, sizeof(Column_watch_dog_CFL_t));
+  column_watch_dog = (Column_watch_dog_CFL_t*)Allocate_once_malloc_CFL(input, sizeof(Column_watch_dog_CFL_t));
   column_watch_dog->termination_flag = term_flag;
   column_watch_dog->trigger_count = time_out_ms;
   column_watch_dog->trigger_function =
     Get_one_shot_function_CFL(input, one_shot_term_function);
 
   Asm_one_shot_CFL(input, "SET_COLUMN_WATCH_DOG", column_watch_dog);
+  
 }
 
 void Asm_clear_column_watch_dog_CFL(void* input) {
