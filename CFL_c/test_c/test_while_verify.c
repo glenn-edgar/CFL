@@ -45,7 +45,7 @@ void test_while_verify(void) {
   run_while_event_time_out_reset_test(config_handle);
   run_while_event_time_out_terminate_test(config_handle);
   test_verify_opcode(config_handle);
-  //test_while_opcode(config_handle);
+  test_while_opcode(config_handle);
   test_while_time_out(config_handle);
 }
 
@@ -303,7 +303,7 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
   verify_user_data_terminate.target_event = 23;
   verify_user_data_terminate.target_event_count = 5;
   verify_user_data_terminate.message = "-------------> termination event";
-
+ 
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
@@ -343,8 +343,8 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
     Asm_start_column_CFL(input, "verify_reset", true);
     Asm_log_message_CFL(input,"verify terminate column");
     Asm_log_message_CFL(input,"this column will reset");
-    Asm_verify_CFL(input,"VERIFY_COUNT_EVENT",false,"VERIFY_END",&verify_user_data_terminate);
-     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,true,time_out_fn, user_data);
+    Asm_verify_CFL(input,"VERIFY_COUNT_EVENT",false,"VERIFY_END",&verify_user_data_reset);
+     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,false,NULL,NULL);
     Asm_log_message_CFL(input,"This should not happen");
     Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
@@ -357,11 +357,12 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
     Asm_log_message_CFL(input,"verify terminate column");
     Asm_log_message_CFL(input,"this column will terminate");
     Asm_verify_CFL(input,"VERIFY_COUNT_EVENT",true,"VERIFY_END",&verify_user_data_terminate);
-     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,true,time_out_fn, user_data);
+     Asm_wait_CFL(input,"FALSE", NO_TIME_OUT_CFL,false,NULL,NULL);
     Asm_log_message_CFL(input,"This should not happen");
     Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
+
   Printf_CFL("starting engine");
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 

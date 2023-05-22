@@ -46,7 +46,7 @@ void test_while_verify(void) {
   run_while_event_time_out_reset_test(config_handle);
   run_while_event_time_out_terminate_test(config_handle);
   test_verify_opcode(config_handle);
-  //test_while_opcode(config_handle);
+  test_while_opcode(config_handle);
   test_while_time_out(config_handle);
 }
 
@@ -281,55 +281,54 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
   verify_user_data_terminate.target_event = 23;
   verify_user_data_terminate.target_event_count = 5;
   verify_user_data_terminate.message = "-------------> termination event";
-]])
+ ]])
 
 Conf_engine([[config_handle]],[[50000]],[[2500]])
- column_list = { [["terminate_engine"]], [["event_generator"]], [["verify_reset"]], [["verify_terminate"]] };
- Def_columns([[column_names]],column_list) 
- Generate_event([[my_event_data]],[[23]],[[45]],[[NULL]])
+column_list = { [["terminate_engine"]], [["event_generator"]], [["verify_reset"]], [["verify_terminate"]] };
+Def_columns([[column_names]],column_list) 
+Generate_event([[my_event_data]],[[23]],[[45]],[[NULL]])
   
+Store_boolean_fn([["VERIFY_COUNT_EVENT"]], [[verify_test]]);
+Store_one_shot( [["VERIFY_END"]], [[verify_end]]);
 
-  Boolean_fn([["VERIFY_COUNT_EVENT"]], [[verify_test]]);
-  Store_one_shot( [["VERIFY_END"]], [[verify_end]]);
-
- Start_column([["terminate_engine"]],true)
- Log_msg([["terminate engine start"]])
- Wait_delay(50000)
- Log_msg([["wait done"]])
- Log_msg([["stop engine"]])
- Stop_engine()
- End_column()
- 
-
-  Start_column([["event_generator"]],true)
-  Wait_delay(1000)
-  Send_event([[&my_event_data]])
-  Log_msg([["event has been sent"]])
-  Reset_column()
-  End_column()
-
-  Start_column([["verify_reset"]],true)
-  Log_msg([["verify terminate column"]])
-  Log_msg([["this column will reset"]])
-  Verify_reset([["VERIFY_COUNT_EVENT"]],[["VERIFY_END"]],[[&verify_user_data_terminate]])
-  Wait_terminate_no_time_out([["FALSE"]],[[NULL]],[[NULL]])
-  Log_msg([["This should not happen"]])
-  Term_column()
-  End_column()
-
-  Start_column([["verify_terminate"]],true)
-  Log_msg([["verify terminate column"]])
-  Log_msg([["this column will terminate"]])
-  Verify_terminate([["VERIFY_COUNT_EVENT"]],[["VERIFY_END"]],[[&verify_user_data_terminate]])
-  Wait_terminate_no_time_out([["FALSE"]],[[NULL]],[[NULL]])
-
-  Log_msg([["This should not happen"]])
-  Term_column()
-  End_column()
+Start_column([["terminate_engine"]],true)
+Log_msg([["terminate engine start"]])
+Wait_delay([[50000]])
+Log_msg([["wait done"]])
+Log_msg([["stop engine"]])
+Stop_engine()
+End_column()
 
 
-  
-pass_c([[
+Start_column([["event_generator"]],true)
+Wait_delay(1000)
+Send_event([[&my_event_data]])
+Log_msg([["event has been sent"]])
+Reset_column()
+End_column()
+
+Start_column([["verify_reset"]],true)
+Log_msg([["verify terminate column"]])
+Log_msg([["this column will reset"]])
+Verify_reset([["VERIFY_COUNT_EVENT"]],[["VERIFY_END"]],[[&verify_user_data_reset]])
+Wait_no_time_out_terminate([["FALSE"]],[[NULL]],[[NULL]])
+Log_msg([["This should not happen"]])
+Term_column()
+End_column()
+
+Start_column([["verify_terminate"]],true)
+Log_msg([["verify terminate column"]])
+Log_msg([["this column will terminate"]])
+Verify_terminate([["VERIFY_COUNT_EVENT"]],[["VERIFY_END"]],[[&verify_user_data_terminate]])
+Wait_no_time_out_terminate([["FALSE"]],[[NULL]],[[NULL]])
+Log_msg([["This should not happen"]])
+Term_column()
+End_column()
+
+
+
+  pass_c([[
+
   Printf_CFL("starting engine");
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
@@ -479,7 +478,6 @@ static void test_while_time_out(Handle_config_CFL_t* config_handle) {
   End_column()
 
 
-  
 pass_c([[
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 
@@ -489,6 +487,3 @@ pass_c([[
 }
 ]])
   
-  
-
-
