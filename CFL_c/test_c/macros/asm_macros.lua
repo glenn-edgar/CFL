@@ -37,7 +37,7 @@ function Store_one_shot(fn_string, fn_name)
     file:write(message) 
 end
 
-function Boolean_fn(fn_string, fn_parameter)
+function  Store_boolean_fn(fn_string, fn_parameter)
     local message = string.format("    Store_bool_function_CFL(input,%s,%s);\n",fn_string,fn_parameter)
     file:write(message) 
 end
@@ -138,14 +138,23 @@ function Wait_event_time_out_terminate(event_name, event_count,time_out_ms,one_s
     file:write(message)
 end
 
---void Asm_wait_CFL(void* input, const char* bool_fn_name, int time_out_ms, bool terminate_flag, const char* one_shot_time_out_fn, void* user_data);
-function Wait_reset_no_time_out( bool_fn,term_fn, user_data)
-    local message = string.format("     Asm_wait_CFL(input,%s, NO_TIME_OUT_CFL,false,time_out_fn, user_data);\n",tostring(bool_fn),tostring(term_fn),tostring(user_data))
+function Wait_terminate(bool_fn,time_out_ms,one_shot_fail_fn,fn_parameter)
+    local message = string.format("    Asm_wait_CFL(input,%s,%s,true,%s,%s);\n",tostring(bool_fn),tostring(time_out_ms),tostring(one_shot_fail_fn),tostring(fn_parameter))
     file:write(message)
 end
 
-function Wait_terminate_no_time_out( bool_fn,term_fn, user_data)
-    local message = string.format("     Asm_wait_CFL(input,%s, NO_TIME_OUT_CFL,true,time_out_fn, user_data);\n",tostring(bool_fn),tostring(term_fn),tostring(user_data))
+function Wait_reset(bool_fn,time_out_ms,one_shot_fail_fn,fn_parameter)
+    local message = string.format("    Asm_wait_CFL(input,%s,%s,false,%s,%s);\n",tostring(bool_fn),tostring(time_out_ms),tostring(one_shot_fail_fn),tostring(fn_parameter))
+    file:write(message)
+end
+
+function Wait_no_time_out_reset( bool_fn, user_data)
+    local message = string.format("     Asm_wait_CFL(input,%s, NO_TIME_OUT_CFL,false,NULL,%s);\n",tostring(bool_fn),tostring(user_data))
+    file:write(message)
+end
+
+function Wait_no_time_out_terminate( bool_fn, user_data)
+    local message = string.format("     Asm_wait_CFL(input,%s, NO_TIME_OUT_CFL,false,NULL,%s);\n",tostring(bool_fn),tostring(user_data))
     file:write(message)
 end
 

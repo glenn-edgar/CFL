@@ -1,5 +1,5 @@
-#ifndef __CFL_Asminitions_H__
-#define __CFL_Asminitions_H__
+#ifndef __CFL_definitions_H__
+#define __CFL_definitions_H__
 
 #include "Cfl_user_functions.h"
 #include "Cfl_priority_queue.h"
@@ -30,10 +30,11 @@ typedef struct Handle_CFL_t
     void *df_buf_control;
     void *sm_dictionary;
     void *state_dictionary;
-
+    void *pipe_control;
     // used for building state machines
     bool sm_assembly;
     unsigned short sm_control_index;
+
 
 } Handle_CFL_t;
 
