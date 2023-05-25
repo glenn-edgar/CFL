@@ -25,7 +25,7 @@ void test_allocation() {
 
 
 
-  Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
   
   
 

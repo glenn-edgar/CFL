@@ -8,7 +8,7 @@ static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle
 static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle);
 
 void test_column_return_codes(void) {
-  Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
   
   

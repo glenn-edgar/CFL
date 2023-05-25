@@ -26,7 +26,7 @@ static void test_while_time_out(Handle_config_CFL_t* config_handle);
 
 void test_while_verify(void) {
 
-  Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
   
 

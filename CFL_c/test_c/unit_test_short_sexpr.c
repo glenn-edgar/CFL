@@ -2,13 +2,14 @@
 #include "CFL_user_functions.h"
 #include "CFL_definitions.h"
 #include "CFL_s_short_expression.h"
+#include "test_interface_functions.h"
 
 
 static void test_short_array_functions(Handle_config_CFL_t* config);
 
 void s_expr_unit_short_tests(void){
    Printf_CFL("s_short_expr_unit_tests");
-   Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+   Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
    // no setting of parameters -- are parameters are set to zero
    test_short_array_functions(config_handle);
    free(config_handle);

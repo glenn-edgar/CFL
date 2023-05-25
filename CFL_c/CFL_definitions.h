@@ -33,7 +33,7 @@ typedef struct Handle_CFL_t
     void *pipe_control;
     // used for building state machines
     bool sm_assembly;
-    unsigned short sm_control_index;
+    unsigned short sm_index;
 
 
 } Handle_CFL_t;

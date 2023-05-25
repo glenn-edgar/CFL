@@ -5,18 +5,19 @@
 #include "CFL_functions.h"
 #include "CFL_local_heap_functions.h"
 #include "CFL_data_flow_buffers.h"
-#include "CFL_state_machine.h"
+#include "CFL_state_machine_util.h"
 #include "CFL_user_functions.h"
 
 
 
 
 
-Handle_config_CFL_t* Create_config_handle_CFL() {
+Handle_config_CFL_t* Create_config_handle_CFL(Debug_out_CFL_t debug_out){
 
   Handle_config_CFL_t* config;
   config = (Handle_config_CFL_t*)malloc(sizeof(Handle_config_CFL_t));
   memset(config, 0, sizeof(Handle_config_CFL_t));
+  config->debug_out = debug_out;
   return config;
 }
 
@@ -49,12 +50,7 @@ allocate_columns_CFL(handle, config->number_of_columns);
   
   allocate_df_buf_space_CFL(handle, config->number_df_buffers);
  
-  allocate_state_machine_CFL(handle, config->number_of_state_machines);
- 
-  allocate_state_space_CFL(handle, config->number_of_states);
-
-
-
+  Constuct_sm_system_CFL(handle, config);
   
  
   return handle;

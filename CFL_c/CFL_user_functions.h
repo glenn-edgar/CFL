@@ -9,6 +9,7 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #include "Cfl_debug.h"
 
@@ -181,7 +182,7 @@ typedef struct handle_config_CFL_t
   Debug_out_CFL_t debug_out;
 } Handle_config_CFL_t;
 
-Handle_config_CFL_t* Create_config_handle_CFL();
+Handle_config_CFL_t* Create_config_handle_CFL(Debug_out_CFL_t debug_out);
 
 void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_heap_size, unsigned private_heap_size);
 
