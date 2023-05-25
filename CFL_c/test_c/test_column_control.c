@@ -1,5 +1,6 @@
 #include "test_column_control.h"
 #include "Cfl_user_functions.h"
+#include "test_interface_functions.h"
 
 static void test_enable_disable_columns(Handle_config_CFL_t* config_handle);
 
@@ -30,7 +31,7 @@ void test_column_control() {
 
 
 
-  Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
   Printf_CFL("column control test");
   Printf_CFL("Freemem %d \n",freeMemory());

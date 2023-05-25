@@ -1,11 +1,12 @@
 #include "test_named_queue_functions.h"
 #include "CFL_user_functions.h"
+#include "test_interface_functions.h"
 
 static void test_named_queue_functions_basic_test(Handle_config_CFL_t* config_handle);
 static void test_server_activity(Handle_config_CFL_t* config_handle);
 void test_named_queue_functions(void) {
 
-    Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+    Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
     Printf_CFL("named event queue test");
     Printf_CFL("free memory %d \n",freeMemory());
 

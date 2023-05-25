@@ -1,5 +1,6 @@
 #include "test_column_events.h"
 #include "CFL_user_functions.h"
+#include "test_interface_functions.h"
 
 static void chain_events_for(Handle_config_CFL_t* config_handle);
 static void chain_events_while(Handle_config_CFL_t* config_handle);
@@ -11,7 +12,7 @@ void test_chain_events(void) {
 
 
 
-  Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
   Printf_CFL("test_allocation");
  Printf_CFL("Freemem %d \n",freeMemory());

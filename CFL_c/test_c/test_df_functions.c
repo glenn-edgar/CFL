@@ -1,6 +1,7 @@
 #include "CFL_user_functions.h"
 #include "CFL_debug.h"
 #include "CFL_data_flow_functions.h"
+#include "test_interface_functions.h"
 
 
 static void test_basic_df_functions(Handle_config_CFL_t* config);
@@ -13,7 +14,7 @@ void test_df_functions(void) {
     Printf_CFL("test_df_functions");
 
 
-    Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+    Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
     Printf_CFL("column control test");
      Printf_CFL("free memory %d \n",freeMemory());

@@ -1,5 +1,5 @@
 #include "Cfl_user_functions.h"
-#include <stdarg.h>
+
 #include "Cfl_debug.h"
 
 static Debug_out_CFL_t debug_fn;

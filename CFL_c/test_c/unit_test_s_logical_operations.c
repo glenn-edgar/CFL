@@ -1,6 +1,7 @@
 #include "CFL_user_functions.h"
 #include "CFL_debug.h"
 #include "CFL_s_logical_operations.h"
+#include "test_interface_functions.h"
 
 static void test_s_logic_operation_1(Handle_config_CFL_t *config);
 static void test_s_logic_operation_2(Handle_config_CFL_t *config);
@@ -8,7 +9,7 @@ static void test_s_logic_operation_2(Handle_config_CFL_t *config);
 void unit_test_s_logical_operations(void){
 
    Printf_CFL("s_int_expr_unit_tests");
-   Handle_config_CFL_t* config_handle = Create_config_handle_CFL();
+   Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
    
    config_handle->number_df_buffers = 2;
    
