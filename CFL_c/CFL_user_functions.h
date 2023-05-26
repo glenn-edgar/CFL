@@ -41,6 +41,7 @@ typedef struct Time_control_CFL_t
   unsigned char day;
   unsigned char dow;
   unsigned char month;
+  unsigned short day_of_year;
   unsigned short year;
 } Time_control_CFL_t;
 
