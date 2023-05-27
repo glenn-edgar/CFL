@@ -9,6 +9,7 @@
 #include "test_column_events.h"
 #include "test_named_queue_functions.h"
 #include "test_df_functions.h"
+#include "test_tod_functions.h"
 
 #include "unit_test_short_sexpr.h"
 
@@ -27,7 +28,8 @@ int main (void )
  //test_column_return_codes();
  //test_while_verify();
  printf("starting\n");
- test_watch_dog();
+ //test_watch_dog();
+ test_tod_functions();
 #if 0
   // test pipes
   // test statemacines

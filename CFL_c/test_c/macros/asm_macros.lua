@@ -182,3 +182,61 @@ function Clear_watch_dog()
     file:write("    Asm_clear_column_watch_dog_CFL(input);\n")
 end
 
+
+function Wait_tod_lt(doy, month, dow, hour, minute, second)
+    local message = string.format("    Asm_wait_tod_lt(input, %s, %s, %s, %s, %s, %s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),tostring(second))
+    file:write(message)
+end
+
+function Wait_tod_le(doy, month, dow, hour, minute, second)
+    local message = string.format("    Asm_wait_tod_le(input, %s, %s, %s, %s, %s, %s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),tostring(second))
+    file:write(message)
+end
+
+function Wait_tod_eq(doy, month, dow, hour, minute, second)
+    local message = string.format("    Asm_wait_tod_eq(input, %s, %s, %s, %s, %s, %s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),tostring(second))
+    file:write(message)
+end
+
+function Wait_tod_ge(doy, month, dow, hour, minute, second)
+    local message = string.format("    Asm_wait_tod_ge(input, %s, %s, %s, %s, %s, %s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),tostring(second))
+    file:write(message)
+end
+
+function Wait_tod_gt(doy, month, dow, hour, minute, second)
+    local message = string.format("    Asm_wait_tod_gt(input, %s, %s, %s, %s, %s, %s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),tostring(second))
+    file:write(message)
+end
+
+function Verify_tod_lt(doy, month, dow, hour, minute, second, terminate_flag,terminate_fn,user_data)
+    local message = string.format("    Asm_verify_tod_lt(input, %s, %s, %s, %s, %s, %s,%s,%s,%s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),
+                                                    tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
+    file:write(message)
+end
+
+function Verify_tod_le(doy, month, dow, hour, minute, second, terminate_flag,terminate_fn,user_data)
+    local message = string.format("    Asm_verify_tod_le(input, %s, %s, %s, %s, %s, %s,%s,%s,%s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),
+                                                                       tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
+    file:write(message)
+end
+
+function Verify_tod_eq(doy, month, dow, hour, minute, second, terminate_flag,terminate_fn,user_data)
+    local message = string.format("    Asm_verify_tod_eq(input, %s, %s, %s, %s, %s, %s,%s,%s,%s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),
+         tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
+    file:write(message)
+end
+
+function Verify_tod_ge(doy, month, dow, hour, minute, second, terminate_flag,terminate_fn,user_data)
+    local message = string.format("    Asm_verify_tod_ge(input, %s, %s, %s, %s, %s, %s,%s,%s,%s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),
+                                                   tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
+    file:write(message)
+end
+
+function Verify_tod_gt(doy, month, dow, hour, minute, second, terminate_flag,terminate_fn,user_data)
+    local message = string.format("    Asm_verify_tod_gt(input, %s, %s, %s, %s, %s, %s,%s,%s,%s);\n",tostring(doy),tostring(month),tostring(dow),tostring(hour),tostring(minute),
+                                                   tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
+    file:write(message)
+end
+
+
+
