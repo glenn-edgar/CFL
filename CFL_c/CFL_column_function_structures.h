@@ -148,4 +148,16 @@ typedef struct CFL_s_log_op_handle_t {
     void* s_short_compiled_handle;
     CFL_s_log_userdata_t user_data;
 } CFL_s_log_op_handle_t;
+
+typedef struct Wait_tod_CFL_t
+{
+    short day_of_year;
+    short month;
+    short day_of_week;
+    short hour;
+    short minute;
+    short second;
+    bool terminate_flag;
+    void *user_data;
+} Wait_tod_CFL_t;
 #endif

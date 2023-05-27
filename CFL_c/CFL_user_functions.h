@@ -305,6 +305,23 @@ void Asm_wait_time_delay_CFL(void* input, unsigned long time_delay_ms);
 
 void Asm_verify_CFL(void* input, const char* bool_fn_name, bool terminate_flag, const char* one_shot_failure_fn, void* user_data);
 
+
+// tod functions
+
+void Asm_wait_tod_lt(void *input, short doy, short month, short dow, short hour, short minute, short second);
+void Asm_wait_tod_le(void *input, short doy, short month, short dow, short hour, short minute, short second);
+void Asm_wait_tod_eq(void *input, short doy, short month, short dow, short hour, short minute, short second);
+void Asm_wait_tod_ge(void *input, short doy, short month, short dow, short hour, short minute, short second);
+void Asm_wait_tod_gt(void *input, short doy, short month, short dow, short hour, short minute,  short second);
+
+void Asm_verify_tod_lt(void *input, short doy, short month, short dow, short hour, short minute, short second, bool terminate_flag,const char* one_shot_failure_fn, void* user_data);
+void Asm_verify_tod_le(void *input, short doy, short month, short dow, short hour, short minute, short second, bool terminate_flag,const char* one_shot_failure_fn, void* user_data);
+void Asm_verify_tod_eq(void *input, short doy, short month, short dow, short hour, short minute, short second, bool terminate_flag,const char* one_shot_failure_fn, void* user_data);
+void Asm_verify_tod_ge(void *input, short doy, short month, short dow, short hour, short minute, short second, bool terminate_flag,const char* one_shot_failure_fn, void* user_data);
+void Asm_verify_tod_gt(void *input, short doy, short month, short dow, short hour, short minute, short second, bool terminate_flag,const char* one_shot_failure_fn, void* user_data);
+
+
+
 // column control
 void Asm_disable_columns_CFL(void* input, int number_of_columns, const char** column_names);
 void Asm_enable_columns_CFL(void* input, int number_of_columns, const char** column_names, bool terminate_flag);

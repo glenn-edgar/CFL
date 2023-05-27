@@ -7,6 +7,7 @@
 #include "CFL_data_flow_buffers.h"
 #include "CFL_state_machine_util.h"
 #include "CFL_user_functions.h"
+#include "CFL_tod_functions.h"
 
 
 
@@ -51,7 +52,7 @@ allocate_columns_CFL(handle, config->number_of_columns);
   allocate_df_buf_space_CFL(handle, config->number_df_buffers);
  
   Constuct_sm_system_CFL(handle, config);
-  
+  Initialize_bool_functions_CFL(handle);
  
   return handle;
 }
