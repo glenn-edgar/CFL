@@ -16,8 +16,7 @@ static S_short_fn_record_CFL_t s_verify_fn_tbl[] = {
 
 };
 #endif
-
-                       
+                      
 CFL_s_log_op_handle_t* Compile_s_log_op_CFL(void* input, unsigned buffer_index, const char* s_expression);
 bool Execute_s_log_op_CFL(void* input, CFL_s_log_op_handle_t* s_log_op_handle);
 void Free_s_log_op_handle_CFL(void* input, CFL_s_log_op_handle_t* s_log_op_handle);

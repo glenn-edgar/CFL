@@ -178,6 +178,7 @@ typedef struct handle_config_CFL_t
   unsigned number_of_try_functions;
   unsigned number_of_named_queues;
   unsigned number_df_buffers;
+  unsigned number_of_compiled_s_log_expressions;
   unsigned number_of_state_machines;
   unsigned number_of_states;
   Debug_out_CFL_t debug_out;
@@ -220,6 +221,9 @@ Symbol_table_handle_CFL_t Construct_symbol_table_CFL(void *input, unsigned short
 bool Get_symbol_table_entry_CFL(void* input, Symbol_table_handle_CFL_t symbol_hamdle, const char* name, int* value, int* type);
 
 
+void Store_s_expression_CFL(void* input,const char *s_expr_name, const char* s_expression);
+CFL_s_log_op_handle_t* Get_s_expression_index_CFL(void* input, const char* s_expr_name); 
+
 void Define_df_buf_CFL(void* input, const char* buf_name, unsigned short buf_size, unsigned short symbol_number, const Symbol_record_CFL_t* symbol_array);
 unsigned short Get_df_buf_index_CFL(void* input, const char* name);
 Symbol_table_handle_CFL_t Get_df_buf_symbol_table_CFL(void *input, unsigned short index);
@@ -261,7 +265,7 @@ void Asm_create_named_event_queue_CFL(void* input, const char* name, unsigned si
 ** Start engine
 **
 */
-void Attach_debug_out_CFL(void* handle, Debug_out_CFL_t debug_out);
+
 void Start_engine_CFL(void* handle, int ms_tick, int event_queue_depth, Idle_function_CFL_t idle_function, Calendar_function_CFL_t calendar_function);
 
 /*
@@ -365,27 +369,23 @@ void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, 
 */
 
 
-int reserve_df_column_function_space_CFL(void);
-void load_df_column_functions_CFL(void* input);
 
-int reserve_df_bool_function_space_CFL(void);
-int reserve_df_one_shot_function_space_CFL(void);
 
-void load_df_one_shot_function_state_CFL(void *input); 
-void  load_df_bool_functions_CFL(void *input);
 
-void Asm_reset_df_buffer(void *input, const char *buffer_name, bool value);
+void Asm_reset_df_buffer_CFL(void *input, const char *buffer_name, bool value);
 
-void Asm_set_df_buff_positions(void *input,const char *name, unsigned short number, const unsigned short *positions, bool value);
-void Asm_copy_df_buff_array(void *input, const char* from_bufF_name, const char* to_buff_name, unsigned short from_start, unsigned short to_start, unsigned short number);
-void Asm_shift_df_buffer(void* input, const char* buffer_name, short shift_number, unsigned start, unsigned number, bool back_fill, bool fill_bit);
+void Asm_set_df_buff_positions_CFL(void *input,const char *name, unsigned short number, const unsigned short *positions, bool value);
+void Asm_copy_df_buff_array_CFL(void *input, const char* from_bufF_name, const char* to_buff_name, unsigned short from_start, unsigned short to_start, unsigned short number);
+void Asm_shift_df_buffer_CFL(void* input, const char* buffer_name, short shift_number, unsigned start, unsigned number, bool back_fill, bool fill_bit);
 void Asm_print_df_buf_CFL(void *input, const char *buffer_name);
-void Asm_store_s_expression(void* input, const char* buffer_name,unsigned short store_index, const char* s_expression);
+void Asm_store_s_bit_CFL(void* input, const char* buffer_name,unsigned short store_index, const char* s_expression);
 
 void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int time_out_ms, char* one_shot_failure_fn, 
-             void* user_data, bool terminate_flag,const char* s_expression);
+             void* user_data, bool terminate_flag,const char* s_expression_name);
 
-void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, const char* s_expression, const char* one_shot_failure_fn, void* user_data, bool terminate_flag);             
+void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, 
+                                           const char* s_expression_name, const char* one_shot_failure_fn, 
+                                           void* user_data, bool terminate_flag);             
 
 /*
 ** For Debug
