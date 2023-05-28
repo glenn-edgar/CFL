@@ -31,6 +31,7 @@ typedef struct Handle_CFL_t
     void *sm_dictionary;
     void *state_dictionary;
     void *pipe_control;
+    void *s_logic_buffer;
     // used for building state machines
     bool sm_assembly;
     unsigned short sm_index;
@@ -162,5 +163,14 @@ typedef struct core_function_ref
     Column_function_CFL_t fn;
 
 } core_function_ref;
+
+int reserve_df_column_function_space_CFL(void);
+void load_df_column_functions_CFL(void* input);
+
+int reserve_df_bool_function_space_CFL(void);
+int reserve_df_one_shot_function_space_CFL(void);
+
+void load_df_one_shot_function_state_CFL(void *input); 
+void  load_df_bool_functions_CFL(void *input);
 
 #endif

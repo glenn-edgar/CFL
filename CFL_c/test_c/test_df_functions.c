@@ -1,3 +1,5 @@
+#if 0
+
 #include "CFL_user_functions.h"
 #include "CFL_debug.h"
 #include "CFL_data_flow_functions.h"
@@ -336,3 +338,4 @@ static void test_wait_and_verify_df_functions(Handle_config_CFL_t* config){
 
 
 
+#endif

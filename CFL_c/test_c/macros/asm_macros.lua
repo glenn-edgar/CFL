@@ -1,5 +1,8 @@
 
-
+function q(input)
+    input = tostring(input)
+    return '"' .. input .. '"'
+end
 
 function Conf_engine(config_handle,once_allocate_size,private_heap_size)
     local once_size = tostring(once_allocate_size)
@@ -237,6 +240,150 @@ function Verify_tod_gt(doy, month, dow, hour, minute, second, terminate_flag,ter
                                                    tostring(second),tostring(terminate_flag),tostring(terminate_fn),tostring(user_data))
     file:write(message)
 end
+
+--[[
+s expression operators    
+static S_short_fn_record_CFL_t s_verify_fn_tbl[] = {
+    {"&&", and_verify_fn}, // and
+    {"||", or_verify_fn},  // or
+    {"~", not_verify_fn},  // not
+    {"&@", and_tbl_verify_fn}, // input buffer positions result and of buffer positions
+    {"|@", or_tbl_verify_fn}, // input buffer positions result or of buffer positions
+    {"~@", not_tbl_verify_fn},// input buffer positions result not of buffer positions
+
+};
+
+]]--
+
+function Create_symbol_table(size)
+    
+    return {}
+end
+
+function Add_array_to_symbol_table(symbol_table, values)
+    for i = 1, #values do
+        Add_symbol(symbol_table, values[i][1], values[i][2])
+    end
+end
+function Add_symbol(symbol_table,symbol,value)
+    if type (symbol) ~= "string" then
+        print("Error: symbol must be a string")
+        os.exit()
+    end
+    if type (value) ~= "number" then
+        print("Error: value must be a number")
+        os.exit()
+    end
+    if value % 1 ~= 0 then
+        print("Error: value must be an integer")
+        os.exit()
+    end
+    if value < 0 then
+        print("Error: value must be a positive integer")
+        os.exit()
+    end
+    symbol_table[symbol] = value
+end
+
+function is_unsigned_integer(input)
+    return type(input) == "number" and input % 1 == 0 and input >= 0
+end
+
+function Expand_symbol_table(symbol_table,input_array)
+    translated_array = {}
+    for i = 1, #input_array do
+        local symbol = input_array[i]
+        if symbol_table[symbol] ~= nil then
+            local value = symbol_table[symbol]
+            table.insert(translated_array,value)
+        else
+            if(is_unsigned_integer(symbol)) then
+                table.insert(translated_array,symbol)
+            else
+                print("Error: symbol " .. symbol .. " not found in symbol table or is an unsigned integer")
+                os.exit()
+            end
+            table.insert(translated_array,symbol)
+        end
+    end
+    return translated_array
+end
+
+
+
+function Store_s_expression_CFL(s_expr_name, s_expression)
+    local message = string.format("    Asm_store_s_expression_CFL(input, %s, %s);\n",s_expr_name, s_expression)
+    file:write(message)
+end
+
+           
+function Print_df_buffer(name)
+    name = tostring(name)
+    local message = string.format("    Asm_print_df_buf_CFL(input, %s);\n",name)
+    file:write(message)
+end
+
+
+function Define_df_buffer(name,size)
+   name = tostring(name)
+   size = tostring(size)
+   local message = string.format("    Define_df_buf_CFL(input, %s, %s,0,NULL);\n",name,size)
+   file:write(message)
+end
+
+function Reset_df_buffer(name,value)
+   name = tostring(name)
+    value = tostring(value)
+   local message = string.format("    Asm_reset_df_buffer_CFL(input, %s, %s);\n",name,value)
+    file:write(message)
+end
+
+function Set_df_buff_positions(name,array_name,positions,value)
+   local table_positions = table.concat(positions,",")
+   array_name = tostring(array_name)
+   file:write("     unsigned short " .. array_name .. "[] = { " .. table_positions .. " };\n    ")
+   local message = string.format("    Asm_set_df_buff_positions_CFL(input, %s, %d,{ %s }, %s);\n",name,#positions,array_name,value)
+    file:write(message)
+end
+
+
+      
+function Copy_df_buff_array(from_bufF_name, to_buff_name, from_start, to_start, number)
+
+   local message = string.format("    Asm_copy_df_buff_array_CFL(input, %s, %s, %s, %s, %s);\n",
+                   tostring(from_bufF_name), tostring(to_buff_name), tostring(from_start), tostring(to_start), 
+                   tostring(number))
+    file:write(message)
+   
+end
+
+
+
+function Store_s_bit(name, bit_index, s_buffer_name)
+   local message = string.format("    Asm_store_s_expression_CFL(input, %s, %d, %s);\n",name,bit_index, s_buffer_name)
+    file:write(message)
+end
+
+
+function Wait_s_expr_no_time_out(name,s_buffer_name,one_short_fail_fn,user_data,terminate_flag)
+   local message = string.format("    Asm_wait_s_expression_CFL(input, %s, %s,%d, %s, %s, %s);\n",name,s_buffer_name,NO_TIME_OUT_CFL,one_short_fail_fn,
+                                    user_data,terminate_flag)
+    file:write(message)
+end
+
+function Wait_s_expr_time_out(name, s_buffer_name, time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+   local message = string.format("    Asm_wait_s_expression_CFL(input, %s, %s, %d, %s, %s, %s);\n",name, s_buffer_name,
+                                                time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+    file:write(message)
+end
+
+function Verify_s_expr(name, s_buffer_name,s_expr_buffer, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+   local message = string.format("    Asm_verify_s_expression_CFL(input, %s, %s,%s, %s, %s, %s);\n",name, s_buffer_name,s_expr_buffer,
+                                                 one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+    file:write(message)
+end
+
+
 
 
 

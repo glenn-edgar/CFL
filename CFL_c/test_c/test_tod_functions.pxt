@@ -21,9 +21,8 @@ void test_tod_functions(void){
   config_handle->number_if_functions = 50;
   config_handle->one_shot_functions = 50;
   config_handle->number_of_try_functions = 50;
-  config_handle->debug_out = debug_write;
-   config_handle->debug_out = debug_write;
-   
+  
+ 
   test_tod_functions(config_handle);
 }
 
