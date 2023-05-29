@@ -1,0 +1,45 @@
+
+lua_symbol_table_1 = {}
+lua_symbol_table_1.px_0 = 0
+lua_symbol_table_1.px_1 = 1
+lua_symbol_table_1.px_2 = 2
+lua_symbol_table_1.px_3 = 3
+lua_symbol_table_1.px_4 = 4
+lua_symbol_table_1.px_5 = 5
+lua_symbol_table_1.px_6 = 6
+lua_symbol_table_1.px_7 = 7
+lua_symbol_table_1.px_8 = 8
+lua_symbol_table_1.px_9 = 9
+lua_symbol_table_1.px_10 = 10
+lua_symbol_table_1.px_11 = 11
+lua_symbol_table_1.px_12 = 12
+lua_symbol_table_1.px_13 = 13
+lua_symbol_table_1.px_14 = 14
+lua_symbol_table_1.px_15 = 15
+lua_symbol_table_1.px_16 = 16
+lua_symbol_table_1.px_17 = 17
+lua_symbol_table_1.px_18 = 18
+lua_symbol_table_1.px_19 = 19
+
+
+lua_symbol_table_2 = {}
+lua_symbol_table_2.ox_0 = 0
+lua_symbol_table_2.ox_1 = 1
+lua_symbol_table_2.ox_2 = 2
+lua_symbol_table_2.ox_3 = 3
+lua_symbol_table_2.ox_4 = 4
+lua_symbol_table_2.ox_5 = 5
+lua_symbol_table_2.ox_6 = 6
+lua_symbol_table_2.ox_7 = 7
+lua_symbol_table_2.ox_8 = 8
+lua_symbol_table_2.ox_9 = 9
+lua_symbol_table_2.ox_10 = 10
+lua_symbol_table_2.ox_11 = 11
+lua_symbol_table_2.ox_12 = 12
+lua_symbol_table_2.ox_13 = 13
+lua_symbol_table_2.ox_14 = 14
+lua_symbol_table_2.ox_15 = 15
+lua_symbol_table_2.ox_16 = 16
+lua_symbol_table_2.ox_17 = 17
+lua_symbol_table_2.ox_18 = 18
+lua_symbol_table_2.ox_19 = 19

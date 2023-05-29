@@ -1,4 +1,6 @@
 
+print("Loading asm_macros.lua")
+
 function q(input)
     input = tostring(input)
     return '"' .. input .. '"'
@@ -253,65 +255,96 @@ static S_short_fn_record_CFL_t s_verify_fn_tbl[] = {
 
 };
 
-]]--
+--]]--
 
-function Create_symbol_table(size)
+
+function Init_df_buffers()
+    master_symbol_table = {}
+end
+
+function Verify_entry(symbol_table,size, token)
     
-    return {}
+    if symbol_table == nil then
+      symbol_table = {}
+    end
+    
+    local position = symbol_table[token]
+    if position == nil then
+      position = token
+    end
+    position = tonumber(position)
+    if type(position) ~= "number" then
+      print("Error: token " .. position .. " must be a number")
+      os.exit()
+    end
+    
+    if position % 1 ~= 0 then
+      print("Error: token " .. position .. " must be an integer")
+      os.exit()
+    end
+    
+    if position < 0 then
+      print("Error: token " .. position .. " must be greater than or equal to 0")
+      os.exit()
+    end
+    
+    if position > size-1 then
+      print("Error: token " .. position .. " must be less than " .. size)
+      os.exit()
+    end
+
+    return position
 end
 
-function Add_array_to_symbol_table(symbol_table, values)
-    for i = 1, #values do
-        Add_symbol(symbol_table, values[i][1], values[i][2])
-    end
-end
-function Add_symbol(symbol_table,symbol,value)
-    if type (symbol) ~= "string" then
-        print("Error: symbol must be a string")
+function Verify_positions(name,positions)
+    local temp = master_symbol_table[name]
+    if temp == nil then
+      print("Error: buffer " .. name .. " not found")
         os.exit()
+    end  
+    local symbol_table = temp[2]
+    local size = temp[1]
+    
+   
+    for i = 1, #positions do
+      
+      if symbol_table ~= nil then
+          local temp = symbol_table[positions[i]]
+          
+          if temp ~= nil then
+             positions[i] = temp
+             
+          end
+      end
+      positions[i] = tonumber(positions[i])
+      if type(positions[i]) ~= "number" then
+         print("Error: position " .. positions[i] .. " must be a number")
+         os.exit( )
+      end
+      
+      if positions[i] % 1 ~= 0 then
+          print("Error: position " .. positions[i] .. " must be an integer")
+          os.exit()
+      end
+     
+      if positions[i] < 0 then
+          print("Error: position " .. positions[i] .. " must be a positive integer")
+          os.exit()
+      end
+    
+        
+      if positions[i] > size-1 then
+         
+          print("Error: position " .. positions[i] .. " must be less than " .. size)
+          os.exit()
+      end   
+              
+     
     end
-    if type (value) ~= "number" then
-        print("Error: value must be a number")
-        os.exit()
-    end
-    if value % 1 ~= 0 then
-        print("Error: value must be an integer")
-        os.exit()
-    end
-    if value < 0 then
-        print("Error: value must be a positive integer")
-        os.exit()
-    end
-    symbol_table[symbol] = value
-end
+    return positions
+  end
 
-function is_unsigned_integer(input)
-    return type(input) == "number" and input % 1 == 0 and input >= 0
-end
-
-function Expand_symbol_table(symbol_table,input_array)
-    translated_array = {}
-    for i = 1, #input_array do
-        local symbol = input_array[i]
-        if symbol_table[symbol] ~= nil then
-            local value = symbol_table[symbol]
-            table.insert(translated_array,value)
-        else
-            if(is_unsigned_integer(symbol)) then
-                table.insert(translated_array,symbol)
-            else
-                print("Error: symbol " .. symbol .. " not found in symbol table or is an unsigned integer")
-                os.exit()
-            end
-            table.insert(translated_array,symbol)
-        end
-    end
-    return translated_array
-end
-
-
-
-function Store_s_expression_CFL(s_expr_name, s_expression)
+  function Store_s_expression_CFL(s_expr_name, s_expression)
     local message = string.format("    Asm_store_s_expression_CFL(input, %s, %s);\n",s_expr_name, s_expression)
     file:write(message)
 end
@@ -324,21 +357,25 @@ function Print_df_buffer(name)
 end
 
 
-function Define_df_buffer(name,size)
+function Define_df_buffer(name,size,symbol_table)
+    
    name = tostring(name)
-   size = tostring(size)
+    size = tostring(size)
+   master_symbol_table[name] = {size, symbol_table}
    local message = string.format("    Define_df_buf_CFL(input, %s, %s,0,NULL);\n",name,size)
    file:write(message)
 end
 
 function Reset_df_buffer(name,value)
-   name = tostring(name)
+    name = tostring(name)
     value = tostring(value)
    local message = string.format("    Asm_reset_df_buffer_CFL(input, %s, %s);\n",name,value)
     file:write(message)
 end
 
 function Set_df_buff_positions(name,array_name,positions,value)
+
+   positions = Verify_positions(name,positions) 
    local table_positions = table.concat(positions,",")
    array_name = tostring(array_name)
    file:write("     unsigned short " .. array_name .. "[] = { " .. table_positions .. " };\n    ")
@@ -383,7 +420,98 @@ function Verify_s_expr(name, s_buffer_name,s_expr_buffer, one_shot_failure_fn, u
     file:write(message)
 end
 
+--S_logic s expression functions
 
+
+function Generate_s_express(input_str, symbol_table,buffer_size)
+    
+   
+    input_str = insertSpacesAroundParentheses(input_str)
+   
+    if not is_balanced(input_str) then
+        print("Error: unbalanced parentheses in s-expression")
+        os.exit()
+    end
+    local tokens = tokenize(input_str)
+   
+    if #tokens == 0 then
+        print("Error: empty s-expression")
+        os.exit()
+    end
+    if tokens[1] ~= "(" then
+        print("Error: s-expression must start with ( instead of " .. tokens[1])
+        os.exit()
+    end
+    if tokens[#tokens] ~= ")" then
+        print("Error: s-expression must end with ) instead of " .. tokens[#tokens])
+        os.exit()
+    end
+    local op_state = false
+    for i = 1, #tokens - 1 do
+        if tokens[i] == ")" then
+            -- Skip this token
+        elseif tokens[i] == "(" then
+            op_state = true
+        elseif op_state then
+            check_opcode(tokens[i])
+            op_state = false
+        else
+          
+           tokens[i] = Verify_entry(symbol_table,buffer_size, tokens[i])
+        end
+    end
+    local s_expr = table.concat(tokens, " ")
+    --print(s_expr)
+    return s_expr
+end
+
+
+function insertSpacesAroundParentheses(str)
+    local result = ""
+    for i = 1, #str do
+      local char = str:sub(i, i)
+      if char == '(' or char == ')' then
+        result = result .. ' ' .. char .. ' '
+      else
+        result = result .. char
+      end
+    end
+    return result
+  end
+
+function is_balanced(str)
+    local count = 0
+    for char in str:gmatch(".") do
+        if char == "(" then
+            count = count + 1
+        elseif char == ")" then
+            count = count - 1
+            if count < 0 then
+                return false
+            end
+        end
+    end
+    return count == 0
+end
+
+function tokenize(str)
+    local tokens = {}
+    for token in str:gmatch("%S+") do
+        table.insert(tokens, token)
+    end
+    return tokens
+end
+
+function check_opcode(opcode)
+ 
+    local valid_opcodes = {"&&","||","~","&@","|@","~@"}
+    for i = 1, #valid_opcodes do
+        if opcode == valid_opcodes[i] then
+            return
+        end
+    end
+    print("Error: invalid opcode " .. opcode)
+end
 
 
 
