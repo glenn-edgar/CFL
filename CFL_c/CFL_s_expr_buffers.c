@@ -35,26 +35,29 @@ void Initialize_s_logical_expression_buffers_CFL(void* input, unsigned short num
 
 
 }
-void Store_s_expression_CFL(void* input,const char *buffer_name, const char* s_expression){
+    
+void Store_s_logical_expression_CFL(void* input,const char *buffer_name, const char *s_expr_name, const char* s_expression){
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     
+    unsigned short buffer_index = Get_df_buf_index_CFL(input,buffer_name);
+
     S_logic_expr_buffer_CFL_t *s_logical_expr_buffer = (S_logic_expr_buffer_CFL_t*)handle->s_logic_buffer;
     
     if(s_logical_expr_buffer->number >= s_logical_expr_buffer->max_number){
         ASSERT_PRINT_F("Error: s_logical_expr_buffer_CFL is full max number %d \n", s_logical_expr_buffer->max_number);
     }
     
-    unsigned short index = Store_Name_CFL(s_logical_expr_buffer->names, buffer_name);   
+    unsigned short index = Store_Name_CFL(s_logical_expr_buffer->names, s_expr_name); 
     
     s_logical_expr_buffer->number = s_logical_expr_buffer->number + 1;
 
-    CFL_s_log_op_handle_t* s_log_op_handle = Compile_s_log_op_CFL(input, index, s_expression);
+    CFL_s_log_op_handle_t* s_log_op_handle = Compile_s_log_op_CFL(input,buffer_index, s_expression);
     
     s_logical_expr_buffer->s_expr_buffer[index] = s_log_op_handle;
     
 }
 
-CFL_s_log_op_handle_t* Get_s_expression_index_CFL(void* input, const char* s_expr_name){
+CFL_s_log_op_handle_t* Get_s_logical_expression_index_CFL(void* input, const char* s_expr_name){
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     
     S_logic_expr_buffer_CFL_t *s_logical_expr_buffer = (S_logic_expr_buffer_CFL_t*)handle->s_logic_buffer;

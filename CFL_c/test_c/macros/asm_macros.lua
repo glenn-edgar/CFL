@@ -1,14 +1,66 @@
 
 print("Loading asm_macros.lua")
+table_names = {}
 
 function q(input)
     input = tostring(input)
     return '"' .. input .. '"'
 end
 
+function verify_defined_columns()
+    local column_state = true
+    for i, v in pairs(table_names) do
+        if v == false then
+            print("Column not defined: " .. i)
+            column_state = false
+        end
+    end
+    if column_state == false then
+        os.exit()
+    end
+end
+
+
+function validate_column_name(name)
+  
+    if table_names[name] == nil then
+        for k,v in pairs(table_names) do
+            if k == name then
+                print("Existing Column Name: -" .. k.. "-" .. tostring(v))
+            end
+            print("Existing Column Name: -" .. k.. "-" .. tostring(v))
+        end
+        print("Non Existant Column Name: -" .. name .. "-")
+        print(table_names[name])
+        os.exit()
+    end
+    table_names[name] = true
+end
+
+function Start_function(name)
+    print("Start_function: " .. name)
+    local message = string.format("static void %s(Handle_config_CFL_t* config_handle)\n",name)
+    file:write(message)
+    file:write("{\n")
+
+end
+function Dynamic_memory_size()
+    file:write('Printf_CFL("once heap size %d \\n", Allocate_once_remaining_heap_size_CFL(input));\n')
+    file:write('Printf_CFL("largest private heap free block %d \\n", Private_heap_largest_free_block_CFL(input));\n')
+
+end
+
+function Dump_private_heap_free_blocks()
+    file:write('Printf_CFL("Dumping private heap free blocks \\n");\n')
+    file:write(' Dump_private_heap_blocks_CFL(input);')
+
+end
+
 function Conf_engine(config_handle,once_allocate_size,private_heap_size)
     local once_size = tostring(once_allocate_size)
-    local private_size = tostring(private_heap_size)  
+    local private_size = tostring(private_heap_size)
+    table_names = {}  
+    Init_df_buffers()
     file:write("\n")
     local message = string.format("    void* input = Configure_engine_CFL(%s,%s,%s);\n\n",config_handle,once_size,private_size) 
     file:write(message)
@@ -23,6 +75,8 @@ function Def_columns(column_names,column_list)
     file:write("        ")
     for i, column in ipairs(column_list) do
         message = string.format("%s",column)
+        table_names[message] = false
+        
         file:write(message)
         if i < #column_list then
             file:write(",")
@@ -36,6 +90,27 @@ function Def_columns(column_names,column_list)
     file:write(message)
   
 end
+
+function Start_engine(tick_ms,queue_size, idle_function, calendar_function)
+    verify_defined_columns()
+    tick_ms = tostring(tick_ms)
+    queue_size = tostring(queue_size)
+    local message = string.format("    Start_engine_CFL(input, %s, %s, %s, %s);\n",tick_ms,queue_size,idle_function,calendar_function)
+    file:write(message)
+end
+
+
+
+function Destroy_engine(message)
+    
+    message = tostring(message)
+    file:write("    Destroy_engine_CFL(input);\n")
+    if message ~= nil then
+        file:write('   Printf_CFL("'..message..'");\n')
+    end
+    file:write("}\n")
+end
+
 
 function Store_one_shot(fn_string, fn_name)
     local message = string.format("    Store_one_shot_function_CFL(input,%s,%s);\n",fn_string,fn_name)
@@ -54,6 +129,7 @@ function Comment(input)
 end 
   
 function Start_column(name,initial_state)
+    validate_column_name(name)
     local message = string.format("\n   /* \n")
     file:write(message)
     local message = string.format("    Defining Column %s  starting initial running state %s \n",name,tostring(initial_state))
@@ -64,7 +140,10 @@ function Start_column(name,initial_state)
     file:write(message)
 end
 
-
+function Dump_nodes()
+   local message  = string.format("    Asm_dump_nodes_CFL(input);\n")
+    file:write(message)
+end
 
 function Log_msg(message)
     local message  = string.format("    Asm_log_message_CFL(input,%s);\n",message)
@@ -243,19 +322,19 @@ function Verify_tod_gt(doy, month, dow, hour, minute, second, terminate_flag,ter
     file:write(message)
 end
 
---[[
-s expression operators    
-static S_short_fn_record_CFL_t s_verify_fn_tbl[] = {
-    {"&&", and_verify_fn}, // and
-    {"||", or_verify_fn},  // or
-    {"~", not_verify_fn},  // not
-    {"&@", and_tbl_verify_fn}, // input buffer positions result and of buffer positions
-    {"|@", or_tbl_verify_fn}, // input buffer positions result or of buffer positions
-    {"~@", not_tbl_verify_fn},// input buffer positions result not of buffer positions
 
-};
+--s expression operators    
+--static S_short_fn_record_CFL_t s_verify_fn_tbl[] = {
+--    {"&&", and_verify_fn}, // and
+--    {"||", or_verify_fn},  // or
+--    {"~", not_verify_fn},  // not
+--    {"&@", and_tbl_verify_fn}, // input buffer positions result and of buffer positions
+--    {"|@", or_tbl_verify_fn}, // input buffer positions result or of buffer positions
+--    {"~@", not_tbl_verify_fn},// input buffer positions result not of buffer positions
+--
+--};
 
---]]--
+
 
 
 function Init_df_buffers()
@@ -309,208 +388,208 @@ function Verify_positions(name,positions)
     for i = 1, #positions do
       
       if symbol_table ~= nil then
-          local temp = symbol_table[positions[i]]
+          local temp = symbol_table[positions[i] ]
           
           if temp ~= nil then
-             positions[i] = temp
-             
-          end
-      end
-      positions[i] = tonumber(positions[i])
-      if type(positions[i]) ~= "number" then
-         print("Error: position " .. positions[i] .. " must be a number")
-         os.exit( )
-      end
-      
-      if positions[i] % 1 ~= 0 then
-          print("Error: position " .. positions[i] .. " must be an integer")
-          os.exit()
-      end
+            positions[i] = temp
+            
+         end
+     end
+     positions[i] = tonumber(positions[i])
+     if type(positions[i]) ~= "number" then
+        print("Error: position " .. positions[i] .. " must be a number")
+        os.exit( )
+     end
      
-      if positions[i] < 0 then
-          print("Error: position " .. positions[i] .. " must be a positive integer")
-          os.exit()
-      end
+     if positions[i] % 1 ~= 0 then
+         print("Error: position " .. positions[i] .. " must be an integer")
+         os.exit()
+     end
     
+     if positions[i] < 0 then
+         print("Error: position " .. positions[i] .. " must be a positive integer")
+         os.exit()
+     end
+   
+       
+     if positions[i] > size-1 then
         
-      if positions[i] > size-1 then
-         
-          print("Error: position " .. positions[i] .. " must be less than " .. size)
-          os.exit()
-      end   
-              
-     
-    end
-    return positions
-  end
+         print("Error: position " .. positions[i] .. " must be less than " .. size)
+         os.exit()
+     end   
+             
+    
+   end
+   return positions
+ end
 
-  function Store_s_expression_CFL(s_expr_name, s_expression)
-    local message = string.format("    Asm_store_s_expression_CFL(input, %s, %s);\n",s_expr_name, s_expression)
-    file:write(message)
+ function Store_s_expression_CFL(s_buffer_name, s_expr_name, s_expression)
+   local message = string.format("    Store_s_logical_expression_CFL(input, %s,%s, %s);\n",s_buffer_name,s_expr_name, s_expression)
+   file:write(message)
 end
 
-           
+          
 function Print_df_buffer(name)
-    name = tostring(name)
-    local message = string.format("    Asm_print_df_buf_CFL(input, %s);\n",name)
-    file:write(message)
+   name = tostring(name)
+   local message = string.format("    Asm_print_df_buf_CFL(input, %s);\n",name)
+   file:write(message)
 end
 
 
 function Define_df_buffer(name,size,symbol_table)
-    
-   name = tostring(name)
-    size = tostring(size)
-   master_symbol_table[name] = {size, symbol_table}
-   local message = string.format("    Define_df_buf_CFL(input, %s, %s,0,NULL);\n",name,size)
-   file:write(message)
+   
+  name = tostring(name)
+   size = tostring(size)
+  master_symbol_table[name] = {size, symbol_table}
+  local message = string.format("    Define_df_buf_CFL(input, %s, %s,0,NULL);\n",name,size)
+  file:write(message)
 end
 
 function Reset_df_buffer(name,value)
-    name = tostring(name)
-    value = tostring(value)
-   local message = string.format("    Asm_reset_df_buffer_CFL(input, %s, %s);\n",name,value)
-    file:write(message)
+   name = tostring(name)
+   value = tostring(value)
+  local message = string.format("    Asm_reset_df_buffer_CFL(input, %s, %s);\n",name,value)
+   file:write(message)
 end
 
 function Set_df_buff_positions(name,array_name,positions,value)
 
-   positions = Verify_positions(name,positions) 
-   local table_positions = table.concat(positions,",")
-   array_name = tostring(array_name)
-   file:write("     unsigned short " .. array_name .. "[] = { " .. table_positions .. " };\n    ")
-   local message = string.format("    Asm_set_df_buff_positions_CFL(input, %s, %d,{ %s }, %s);\n",name,#positions,array_name,value)
-    file:write(message)
+  positions = Verify_positions(name,positions) 
+  local table_positions = table.concat(positions,",")
+  array_name = tostring(array_name)
+  file:write("     unsigned short " .. array_name .. "[] = { " .. table_positions .. " };\n    ")
+  local message = string.format("    Asm_set_df_buff_positions_CFL(input, %s, %d,{ %s }, %s);\n",name,#positions,array_name,value)
+   file:write(message)
 end
 
 
-      
+     
 function Copy_df_buff_array(from_bufF_name, to_buff_name, from_start, to_start, number)
 
-   local message = string.format("    Asm_copy_df_buff_array_CFL(input, %s, %s, %s, %s, %s);\n",
-                   tostring(from_bufF_name), tostring(to_buff_name), tostring(from_start), tostring(to_start), 
-                   tostring(number))
-    file:write(message)
-   
+  local message = string.format("    Asm_copy_df_buff_array_CFL(input, %s, %s, %s, %s, %s);\n",
+                  tostring(from_bufF_name), tostring(to_buff_name), tostring(from_start), tostring(to_start), 
+                  tostring(number))
+   file:write(message)
+  
 end
 
 
 
 function Store_s_bit(name, bit_index, s_buffer_name)
-   local message = string.format("    Asm_store_s_expression_CFL(input, %s, %d, %s);\n",name,bit_index, s_buffer_name)
-    file:write(message)
+  local message = string.format("    Asm_store_s_expression_CFL(input, %s, %d, %s);\n",name,bit_index, s_buffer_name)
+   file:write(message)
 end
 
 
-function Wait_s_expr_no_time_out(name,s_buffer_name,one_short_fail_fn,user_data,terminate_flag)
-   local message = string.format("    Asm_wait_s_expression_CFL(input, %s, %s,%d, %s, %s, %s);\n",name,s_buffer_name,NO_TIME_OUT_CFL,one_short_fail_fn,
-                                    user_data,terminate_flag)
-    file:write(message)
+function Wait_s_expr_no_time_out(s_buffer_name,one_short_fail_fn,user_data,terminate_flag,s_expr_name)
+  local message = string.format("    Asm_wait_df_tokens_s_expression_CFL(input, %s,%d, %s, %s, %s,%s);\n",s_buffer_name,NO_TIME_OUT_CFL,one_short_fail_fn,
+                                   user_data,terminate_flag.s_expr_name)
+   file:write(message)
 end
 
-function Wait_s_expr_time_out(name, s_buffer_name, time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
-   local message = string.format("    Asm_wait_s_expression_CFL(input, %s, %s, %d, %s, %s, %s);\n",name, s_buffer_name,
-                                                time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
-    file:write(message)
+function Wait_s_expr_time_out(s_buffer_name, time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_name)
+  local message = string.format("    Asm_wait_df_tokens_s_expression_CFL(input, %s, %d, %s, %s, %s, %s);\n", s_buffer_name,
+                                               time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_name)
+   file:write(message)
 end
 
-function Verify_s_expr(name, s_buffer_name,s_expr_buffer, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
-   local message = string.format("    Asm_verify_s_expression_CFL(input, %s, %s,%s, %s, %s, %s);\n",name, s_buffer_name,s_expr_buffer,
-                                                 one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
-    file:write(message)
+function Verify_s_expr(s_buffer_name,s_expr_buffer, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+  local message = string.format("    Asm_verify_s_expression_CFL(input, %s,%s, %s, %s, %s);\n",s_buffer_name,s_expr_buffer,
+                                                one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+   file:write(message)
 end
 
 --S_logic s expression functions
 
 
 function Generate_s_express(input_str, symbol_table,buffer_size)
-    
    
-    input_str = insertSpacesAroundParentheses(input_str)
-   
-    if not is_balanced(input_str) then
-        print("Error: unbalanced parentheses in s-expression")
-        os.exit()
-    end
-    local tokens = tokenize(input_str)
-   
-    if #tokens == 0 then
-        print("Error: empty s-expression")
-        os.exit()
-    end
-    if tokens[1] ~= "(" then
-        print("Error: s-expression must start with ( instead of " .. tokens[1])
-        os.exit()
-    end
-    if tokens[#tokens] ~= ")" then
-        print("Error: s-expression must end with ) instead of " .. tokens[#tokens])
-        os.exit()
-    end
-    local op_state = false
-    for i = 1, #tokens - 1 do
-        if tokens[i] == ")" then
-            -- Skip this token
-        elseif tokens[i] == "(" then
-            op_state = true
-        elseif op_state then
-            check_opcode(tokens[i])
-            op_state = false
-        else
-          
-           tokens[i] = Verify_entry(symbol_table,buffer_size, tokens[i])
-        end
-    end
-    local s_expr = table.concat(tokens, " ")
-    --print(s_expr)
-    return s_expr
+  
+   input_str = insertSpacesAroundParentheses(input_str)
+  
+   if not is_balanced(input_str) then
+       print("Error: unbalanced parentheses in s-expression")
+       os.exit()
+   end
+   local tokens = tokenize(input_str)
+  
+   if #tokens == 0 then
+       print("Error: empty s-expression")
+       os.exit()
+   end
+   if tokens[1] ~= "(" then
+       print("Error: s-expression must start with ( instead of " .. tokens[1])
+       os.exit()
+   end
+   if tokens[#tokens] ~= ")" then
+       print("Error: s-expression must end with ) instead of " .. tokens[#tokens])
+       os.exit()
+   end
+   local op_state = false
+   for i = 1, #tokens - 1 do
+       if tokens[i] == ")" then
+           -- Skip this token
+       elseif tokens[i] == "(" then
+           op_state = true
+       elseif op_state then
+           check_opcode(tokens[i])
+           op_state = false
+       else
+         
+          tokens[i] = Verify_entry(symbol_table,buffer_size, tokens[i])
+       end
+   end
+   local s_expr = table.concat(tokens, " ")
+   --print(s_expr)
+   return '"'..s_expr..'"'
 end
 
 
 function insertSpacesAroundParentheses(str)
-    local result = ""
-    for i = 1, #str do
-      local char = str:sub(i, i)
-      if char == '(' or char == ')' then
-        result = result .. ' ' .. char .. ' '
-      else
-        result = result .. char
-      end
-    end
-    return result
-  end
+   local result = ""
+   for i = 1, #str do
+     local char = str:sub(i, i)
+     if char == '(' or char == ')' then
+       result = result .. ' ' .. char .. ' '
+     else
+       result = result .. char
+     end
+   end
+   return result
+ end
 
 function is_balanced(str)
-    local count = 0
-    for char in str:gmatch(".") do
-        if char == "(" then
-            count = count + 1
-        elseif char == ")" then
-            count = count - 1
-            if count < 0 then
-                return false
-            end
-        end
-    end
-    return count == 0
+   local count = 0
+   for char in str:gmatch(".") do
+       if char == "(" then
+           count = count + 1
+       elseif char == ")" then
+           count = count - 1
+           if count < 0 then
+               return false
+           end
+       end
+   end
+   return count == 0
 end
 
 function tokenize(str)
-    local tokens = {}
-    for token in str:gmatch("%S+") do
-        table.insert(tokens, token)
-    end
-    return tokens
+   local tokens = {}
+   for token in str:gmatch("%S+") do
+       table.insert(tokens, token)
+   end
+   return tokens
 end
 
 function check_opcode(opcode)
- 
-    local valid_opcodes = {"&&","||","~","&@","|@","~@"}
-    for i = 1, #valid_opcodes do
-        if opcode == valid_opcodes[i] then
-            return
-        end
-    end
-    print("Error: invalid opcode " .. opcode)
+
+   local valid_opcodes = {"&&","||","~","&@","|@","~@"}
+   for i = 1, #valid_opcodes do
+       if opcode == valid_opcodes[i] then
+           return
+       end
+   end
+   print("Error: invalid opcode " .. opcode)
 end
 
 

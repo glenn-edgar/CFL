@@ -2,6 +2,7 @@
 #include "CFL_definitions.h"
 #include "CFL_data_flow_functions.h"
 #include "CFL_s_logical_operations.h"
+#include "CFL_s_expr_buffers.h"
 
 typedef struct df_buf_shift {
   unsigned short buf_index;
@@ -33,18 +34,8 @@ typedef struct df_buf_reset_t {
 }df_buf_reset_t;
 
 
-typedef struct df_s_expression_t {
-  unsigned short buf_index;
-  unsigned short  buf_size;
-  unsigned short  store_index;
-  CFL_s_log_op_handle_t* s_log_op_handle;
-  
-}df_s_expression_t;
 
-typedef struct df_wait_data_t {
-  df_s_expression_t* s_expression;
-  void* user_data;
-}df_wait_data_t;
+
 
 static inline void verify_bit_positions(void* handle, unsigned buf_index, unsigned bit_number, const bool* positions) {
   unsigned buf_size = Get_df_buf_size_CFL(handle, buf_index);
@@ -57,9 +48,7 @@ static inline void verify_bit_positions(void* handle, unsigned buf_index, unsign
 }
 
 
-void Asm_store_df_s_expression_CFL(void* input, const char* s_expr_name, const char* s_expression) {
-  Store_s_expression_CFL(input, s_expr_name, s_expression);
-}
+
 
 void Asm_reset_df_buffer_CFL(void* input, const char* buffer_name, bool value) {
   df_buf_reset_t* df_buf_reset = (df_buf_reset_t*)Allocate_once_malloc_CFL(input, sizeof(df_buf_reset_t));
@@ -135,14 +124,14 @@ void Asm_store_s_bit_CFL(void* input, const char* buffer_name,unsigned short sto
   df_s_expression->buf_size = Get_df_buf_size_CFL(input,df_s_expression->buf_index);
   
   df_s_expression->store_index = store_index;
-  df_s_expression->s_log_op_handle = Get_s_expression_index_CFL(input, s_expression);
+  df_s_expression->s_log_op_handle = Get_s_logical_expression_index_CFL(input, s_expression);
   Asm_one_shot_CFL(input, "STORE_S_EXPRESSION", df_s_expression);
 }
 
 
 
 
-void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int time_out_ms, char* one_shot_failure_fn, 
+void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int time_out_ms,const char* one_shot_failure_fn, 
              void* user_data, bool terminate_flag,const char* s_expression_name) {
 
   df_s_expression_t* df_s_expression = (df_s_expression_t*)Allocate_once_malloc_CFL(input, sizeof(df_s_expression_t));
@@ -150,7 +139,7 @@ void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int 
   
   df_s_expression->buf_size = Get_df_buf_size_CFL(input,df_s_expression->buf_index);
   df_s_expression->store_index = 0;
-  df_s_expression->s_log_op_handle = Get_s_expression_index_CFL(input, s_expression_name);
+  df_s_expression->s_log_op_handle = Get_s_logical_expression_index_CFL(input, s_expression_name);
   
   df_wait_data_t* df_wait_data = (df_wait_data_t*)Allocate_once_malloc_CFL(input, sizeof(df_wait_data_t));
   df_wait_data->s_expression = df_s_expression;
@@ -164,14 +153,16 @@ void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int 
 }
 
 
-void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, const char* s_expression, const char* one_shot_failure_fn, void* user_data, bool terminate_flag) {
+void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, const char* one_shot_failure_fn, 
+     void* user_data, bool terminate_flag,const char* s_expression_name) {
 
  df_s_expression_t* df_s_expression = (df_s_expression_t*)Allocate_once_malloc_CFL(input, sizeof(df_s_expression_t));
   df_s_expression->buf_index = Get_df_buf_index_CFL(input, buf_name);
   
   df_s_expression->buf_size = Get_df_buf_size_CFL(input,df_s_expression->buf_index);
   df_s_expression->store_index = 0;
-  df_s_expression->s_log_op_handle = Compile_s_log_op_CFL(input,df_s_expression->buf_index,s_expression);
+  df_s_expression->s_log_op_handle =  Get_s_logical_expression_index_CFL(input, s_expression_name);
+  
   
   df_wait_data_t* df_wait_data = (df_wait_data_t*)Allocate_once_malloc_CFL(input, sizeof(df_wait_data_t));
   df_wait_data->s_expression = df_s_expression;

@@ -41,7 +41,7 @@ end
 function compile_file(input_file, output_file)
    
     file = io.open(output_file, "w")
-    
+    print("Compiling "..input_file.." to "..output_file)
     dofile(input_file)
     file:flush()
     file:close()
