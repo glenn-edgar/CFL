@@ -160,4 +160,18 @@ typedef struct Wait_tod_CFL_t
     bool terminate_flag;
     void *user_data;
 } Wait_tod_CFL_t;
+
+typedef struct df_s_expression_t {
+  unsigned short buf_index;
+  unsigned short  buf_size;
+  unsigned short  store_index;
+  CFL_s_log_op_handle_t* s_log_op_handle;
+  
+}df_s_expression_t;
+
+typedef struct df_wait_data_t {
+  df_s_expression_t* s_expression;
+  void* user_data;
+}df_wait_data_t;
+
 #endif

@@ -368,6 +368,8 @@ void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, 
 **  Data flow functions
 */
 
+void Store_s_logical_expression_CFL(void* input,const char *buffer_name, const char *s_expr_name, const char* s_expression);
+CFL_s_log_op_handle_t* Get_s_logical_expression_index_CFL(void* input, const char* s_expr_name);
 
 
 
@@ -380,12 +382,11 @@ void Asm_shift_df_buffer_CFL(void* input, const char* buffer_name, short shift_n
 void Asm_print_df_buf_CFL(void *input, const char *buffer_name);
 void Asm_store_s_bit_CFL(void* input, const char* buffer_name,unsigned short store_index, const char* s_expression);
 
-void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int time_out_ms, char* one_shot_failure_fn, 
+void Asm_wait_df_tokens_s_expression_CFL(void* input, const char* buf_name, int time_out_ms, const char* one_shot_failure_fn, 
              void* user_data, bool terminate_flag,const char* s_expression_name);
 
-void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, 
-                                           const char* s_expression_name, const char* one_shot_failure_fn, 
-                                           void* user_data, bool terminate_flag);             
+void Asm_verify_df_tokens_s_expression_CFL(void* input, const char* buf_name, const char* one_shot_failure_fn, 
+                                           void* user_data, bool terminate_flag,const char* s_expression_name);             
 
 /*
 ** For Debug

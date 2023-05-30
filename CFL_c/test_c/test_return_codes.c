@@ -21,8 +21,7 @@ void test_column_return_codes(void) {
   config_handle->number_if_functions = 50;
   config_handle->one_shot_functions = 50;
   config_handle->number_of_try_functions = 50;
-  config_handle->debug_out = debug_write;
-   config_handle->debug_out = debug_write;
+  
    
   test_basic_return_codes(config_handle);
   test_dead_columns_and_dead_engine(config_handle);
@@ -38,9 +37,8 @@ static void one_shot_test(void* input, void* params,
     Printf_CFL("one shot test termination \n");
   }
 }
-
-static void test_basic_return_codes(Handle_config_CFL_t* config_handle) {
- 
+static void test_basic_return_codes(Handle_config_CFL_t* config_handle)
+{
 
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
@@ -94,27 +92,26 @@ static void test_basic_return_codes(Handle_config_CFL_t* config_handle) {
     Asm_halt_CFL(input);
     Asm_end_column_CFL(input);
      
-  Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
-
-  Destroy_engine_CFL(input);
-  Printf_CFL("Engine Done\n");
+    Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
+    Destroy_engine_CFL(input);
+   Printf_CFL("Engine Done\n");
 }
- static void
-test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle) {
+static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle)
+{
 
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
     const char * column_names[] = {
-        "terminate_column","terminate_engine_column" };
+        "terminate_column","terminate_engine_column"};
     Asm_columns_CFL(input,2,column_names);
 
    /* 
     Defining Column "terminate_column"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "terminate_column", true);
-    Asm_log_message_CFL(input, "column will terminate a now active column elements");
-    //  "column will end because of no active column elements
+    Asm_log_message_CFL(input,"column will terminate a now active column elements");
+    // "column will end because of no active column elements"
     Asm_end_column_CFL(input);
      
 
@@ -122,29 +119,30 @@ test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle) {
     Defining Column "terminate_engine_column"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "terminate_engine_column", true);
-    Asm_log_message_CFL(input, "column will terminate a now active column elements");
+    Asm_log_message_CFL(input,"column will terminate a now active column elements");
     Asm_wait_time_delay_CFL(input,2000);
-    Asm_log_message_CFL(input, "column will terminate and engine will because no active columns");
+    Asm_log_message_CFL(input,"column will terminate and engine will because no active columns");
     Asm_end_column_CFL(input);
      
-  Destroy_engine_CFL(input);
-  Printf_CFL("Engine Done \n");
-}  
-static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle) {
-
+    Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
+    Destroy_engine_CFL(input);
+   Printf_CFL("Engine Done\n");
+}
+static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle)
+{
 
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
     const char * column_names[] = {
-         "second_event","minute_event" , "hour_event","day_event" };
+        "second_event","minute_event","hour_event","day_event"};
     Asm_columns_CFL(input,4,column_names);
 
    /* 
     Defining Column "second_event"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "second_event", true);
-    Asm_log_message_CFL(input,"-------------------------> second_event is starting"  );
+    Asm_log_message_CFL(input,"-------------------------> second_event is starting");
     Asm_wait_event_count_CFL(input, SECOND_TICK_CFL , 2 , NO_TIME_OUT_CFL, false, NULL, NULL);
     //  The TIMER_TICK_CFL blocks starting the count on the next time
     Asm_wait_event_count_CFL(input, TIMER_TICK_CFL , 1 , NO_TIME_OUT_CFL, false, NULL, NULL);
@@ -162,7 +160,7 @@ static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle
     Defining Column "minute_event"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "minute_event", true);
-    Asm_log_message_CFL(input,"-------------------------> minute_event is starting"  );
+    Asm_log_message_CFL(input,"-------------------------> minute_event is starting");
     Asm_wait_event_count_CFL(input, MINUTE_TICK_CFL , 1 , NO_TIME_OUT_CFL, false, NULL, NULL);
     Asm_log_message_CFL(input,"minute event is done");
     Asm_terminate_CFL(input);
@@ -173,7 +171,7 @@ static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle
     Defining Column "hour_event"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "hour_event", true);
-    Asm_log_message_CFL(input,"-------------------------> hour_event is starting"  );
+    Asm_log_message_CFL(input,"-------------------------> hour_event is starting");
     Asm_wait_event_count_CFL(input, HOUR_TICK_CFL , 1 , NO_TIME_OUT_CFL, false, NULL, NULL);
     Asm_log_message_CFL(input,"hour event is done");
     Asm_terminate_CFL(input);
@@ -184,17 +182,13 @@ static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle
     Defining Column "day_event"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "day_event", true);
-    Asm_log_message_CFL(input,"-------------------------> day_event is starting"  );
+    Asm_log_message_CFL(input,"-------------------------> day_event is starting");
     Asm_wait_event_count_CFL(input, DAY_TICK_CFL , 1 , NO_TIME_OUT_CFL, false, NULL, NULL);
     Asm_log_message_CFL(input,"day event is done");
     Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
-
- Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
-
-  Destroy_engine_CFL(input);
-  Printf_CFL("Engine Done  \n");
-  
+    Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
+    Destroy_engine_CFL(input);
+   Printf_CFL("Engine Done\n");
 }
-

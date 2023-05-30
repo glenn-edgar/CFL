@@ -69,7 +69,8 @@ CFL_s_log_op_handle_t *Compile_s_log_op_CFL(void *input, unsigned buffer_index, 
     Evaluate_s_short_expression_CFL(input, s_log_op_handle->s_short_compiled_handle, &s_log_op_handle->user_data);
     Free_s_short_expression_CFL(input, s_log_op_handle->s_short_compiled_handle);
     // Free_s_short_expression(handle, s_log_op_handle->s_short_compiled_handle);
-    s_log_op_handle->s_short_compiled_handle = Parse_s_short_expression_CFL(handle, S_EXECUTION_FN_TABLE_SIZE, s_exec_fn_tbl, s_expression, symbol_table_handle);
+    s_log_op_handle->s_short_compiled_handle = Parse_s_short_expression_CFL(handle, S_EXECUTION_FN_TABLE_SIZE, s_exec_fn_tbl, 
+          s_expression, symbol_table_handle);
     s_log_op_handle->user_data.buf_index = buffer_index;
     s_log_op_handle->user_data.buf_size = Get_df_buf_size_CFL(input, s_log_op_handle->user_data.buf_index);
 

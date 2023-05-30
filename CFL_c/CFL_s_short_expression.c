@@ -11,26 +11,26 @@ typedef struct S_record_CFL_t {
 
 
 typedef struct r_stack_t {
-    int param_stack_index;
+    short param_stack_index;
     S_short_fn_type_CFL_t fn;
 }r_stack_t;
 
 
 typedef struct S_record_control_CFL_t {
-    int token_number;
-    int max_nesting;
+    short token_number;
+    short max_nesting;
     S_record_CFL_t* token_array;
-    int number_of_fn_records;
+    short number_of_fn_records;
     S_short_fn_record_CFL_t* fn_records;
 } S_record_Control_CFL_t;
 
 
 
-static void verify_matched_tokens(char* str, int* max_nesting);
+static void verify_matched_tokens(char* str, short* max_nesting);
 
 static void match_function(int number_of_records, S_short_fn_record_CFL_t* records, int* match_index, char* input);
 static char* format_string(void* handle, const char* str);
-static void tokenize_string(char* str, char** tokens, int max_tokens, int* num_tokens);
+static void tokenize_string(char* str, char** tokens, short max_tokens, short* num_tokens);
 static S_record_CFL_t* parse_tokens(void* handle, int fn_number, S_short_fn_record_CFL_t* s_record, int token_number, char** string_token_array, Symbol_table_handle_CFL_t);
 
 
@@ -108,10 +108,11 @@ void Free_s_short_expression_CFL(void* handle, void* s_handle) {
 
 void* Parse_s_short_expression_CFL(void* handle, int fn_number, S_short_fn_record_CFL_t* s_functions, const char* input, Symbol_table_handle_CFL_t symbol_table) {
     char* ref_buffer;
-    int  token_array_size = strlen(input);
+    short  token_array_size = strlen(input);
 
     char** token_array = (char**)Private_heap_malloc_CFL(handle, sizeof(char*) * token_array_size);
 
+   
     S_record_Control_CFL_t* s_record_control = (S_record_Control_CFL_t*)Private_heap_malloc_CFL(handle, sizeof(S_record_Control_CFL_t));
 
     s_record_control->number_of_fn_records = fn_number;
@@ -126,7 +127,7 @@ void* Parse_s_short_expression_CFL(void* handle, int fn_number, S_short_fn_recor
     tokenize_string(ref_buffer, token_array, token_array_size, &s_record_control->token_number);
 
 
-
+   
     s_record_control->token_array = parse_tokens(handle, fn_number, s_functions, s_record_control->token_number, token_array, symbol_table);
 
 
@@ -145,7 +146,7 @@ void* Parse_s_short_expression_CFL(void* handle, int fn_number, S_short_fn_recor
 
 static S_record_CFL_t* parse_tokens(void* handle, int fn_number, S_short_fn_record_CFL_t* s_record, int token_number, char** string_token_array,
     Symbol_table_handle_CFL_t symbol_table) {
-
+    
     S_record_CFL_t* token_array = (S_record_CFL_t*)Private_heap_malloc_CFL(handle, sizeof(S_record_CFL_t) * token_number);
     char* token;
     for (int i = 0; i < token_number; i++) {
@@ -231,12 +232,12 @@ static void match_function(int number_of_records, S_short_fn_record_CFL_t* recor
             return;
         }
     }
-
-    ASSERT_PRINT("Missed match starting closing {} ", input);
+    ASSERT_PRINT("Error: Invalid function name",input);
+   
 }
 
 
-void verify_matched_tokens(char* str, int* max_nesting) {
+void verify_matched_tokens(char* str, short* max_nesting) {
     int count = 0;
     int nesting = 0;
     int max_nesting_local = 0;
@@ -296,7 +297,7 @@ static char* format_string(void* handle, const char* str) {
     return new_str;
 }
 
-static void tokenize_string(char* str, char** tokens, int max_tokens, int* num_tokens) {
+static void tokenize_string(char* str, char** tokens, short max_tokens, short* num_tokens) {
     char* token = strtok(str, " ,");  // get first token
 
     *num_tokens = 0;
