@@ -96,13 +96,16 @@ typedef struct end_message_t{
 }end_message_t;
    
 const char *while_termination_data = "while_termination_data";
-
+const char *verify_term_data = "verify_term_data";
+const char *verify_reset_data = "verify_reset_data";
+const char *wait_and_fail_terminate = "wait_and_fail_terminate";
+const char *should_not_happen = "should_not_happen";
 
 static void while_termination(void *input,void *params,Event_data_CFL_t *event_data) {
    df_wait_data_t* df_wait_data = (df_wait_data_t* )params;
    
-    
-     Printf_CFL("while_termination: %s\n",df_wait_data->user_data);
+     Printf_CFL("while_termination function called\n");
+     Printf_CFL("user data: %s\n",df_wait_data->user_data);
 }
 
 
@@ -114,17 +117,18 @@ Start_function('test_wait_and_verify_df_functions')
 dofile("data_flow_buffers.lua")
 Conf_engine('config_handle',50000,2500)
 set_positions = { "px_1","px_3","px_5","px_7","px_9","px_11","px_13","px_15","px_17","px_19"}
-column_names =  { q("setup_buffer") ,
-                     q("shut_down_engine"),
-                     q("wait_and_fail_terminate"),
-                     q("wait_and_fail_reset")}
-                     -- q("wait_verify_pass"),
-                    --  q("wait_verify_fail_terminate"),
-                    --  q("wait_verify_fail_reset") }
+column_names =  { q('setup_buffer') ,
+                     q('shut_down_engine'),
+                     q('wait_and_fail_reset'),
+                      q('wait_and_fail_terminate'),
+                     q('wait_verify_fail_terminate'),
+                     q('test_store_bit')}
+                     --q('wait_verify_fail_terminate')}
+                    --  q('wait_verify_fail_reset') }
 
 true_expression_raw =  '(|| (&@ px_1 px_3 px_5  px_7 px_9)(&@ px_1 px_3 px_5  px_7 px_9))'
 false_expression_raw = '(&& (&@ 1 3 5  7 9)(&@ px_2 px_3 px_5  px_7 px_9))'
-spare_expression_raw = '(&& (&@ 1 3 5  7 9)(&@ 2 3 5 7 9))'
+
 
 Store_one_shot(q('ONE_SHOT_TERM'),'while_termination');
 
@@ -134,7 +138,7 @@ true_expression = Generate_s_express(true_expression_raw, lua_symbol_table_1,32)
 
 false_expression = Generate_s_express(false_expression_raw, lua_symbol_table_1,32)
 
-spare_expression = Generate_s_express(spare_expression_raw, nil ,32)
+
 Store_s_expression_CFL(q('test_1'),  q('true_s_expr'),true_expression)
 
 Store_s_expression_CFL(q('test_1'),  q('false_s_expr'),false_expression)
@@ -170,13 +174,38 @@ Start_column(q("wait_and_fail_terminate"),true)
 End_column()
 
 Start_column(q("wait_and_fail_reset"),true) 
-  Log_msg(q('wait_and_fail_terminate starting should reset every 5 seconds'))
-  
+  Log_msg(q('wait_and_fail_reset starting should reset every 5 seconds'))
+   Verify_s_expr(q('test_1'),q('ONE_SHOT_TERM'),'(char *)verify_reset_data',false,q('true_s_expr'))
   Wait_s_expr_time_out(q('test_1'), 5000, 'NULL','NULL',false,q('false_s_expr'))
-
-  Log_msg(q('should not get here'))
+  Log_msg(q('will get here only when s_bit px_2 is set'))
   Halt_column()
 End_column()
+
+Start_column(q("wait_verify_fail_terminate"),true) 
+  Log_msg(q('wait_verify_fail_terminate starting should terminate in 5 seconds'))
+  Wait_delay(5000)
+  Wait_s_expr_time_out(q('test_1'), 5000, 'NULL','NULL',true,q('true_s_expr'))
+  Log_msg(q('testing verify fail'))
+  Verify_s_expr(q('test_1'),q('ONE_SHOT_TERM'),'(char *)wait_and_fail_terminate',true,q('false_s_expr'))
+  Halt_column()
+End_column()
+
+Start_column(q('test_store_bit'),true) 
+  Log_msg(q('test_store_bit waiting 10 seconds'))
+  Wait_delay(10000)
+  Log_msg(q('testing store bit'))
+
+  Store_s_bit(q('test_1'),'px_2', q('true_s_expr'))
+  
+  Verify_s_expr(q('test_1'),q('ONE_SHOT_TERM'),'(char *)should_not_happen',true,q('false_s_expr'))
+   Log_msg(q('test passed'))
+  Halt_column()
+End_column()
+
+Dynamic_memory_size()
+Start_engine(10,30,'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n') 
+
 
 
 --[[
@@ -225,7 +254,4 @@ End_column()
 
 ]]--
 
-Dynamic_memory_size()
-Start_engine(10,30,'default_idle_function', 'default_calendar_function')
-
-Destroy_engine('Engine Done\\n')  
+ 

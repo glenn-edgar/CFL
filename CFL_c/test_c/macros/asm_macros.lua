@@ -22,7 +22,10 @@ end
 
 
 function validate_column_name(name)
-  
+    if table_names[name] == true then
+        print("Column Name already defined: -" .. name .. "-")
+        os.exit()
+    end
     if table_names[name] == nil then
         for k,v in pairs(table_names) do
             if k == name then
@@ -31,7 +34,7 @@ function validate_column_name(name)
             print("Existing Column Name: -" .. k.. "-" .. tostring(v))
         end
         print("Non Existant Column Name: -" .. name .. "-")
-        print(table_names[name])
+       
         os.exit()
     end
     table_names[name] = true
@@ -375,50 +378,64 @@ function Verify_entry(symbol_table,size, token)
     return position
 end
 
-function Verify_positions(name,positions)
-    local temp = master_symbol_table[name]
-    if temp == nil then
-      print("Error: buffer " .. name .. " not found")
+function Verify_position(name,position)
+  
+    local table = master_symbol_table[name]
+
+    if table == nil then
+        print("Error: buffer " .. name .. " not found")
         os.exit()
     end  
-    local symbol_table = temp[2]
-    local size = temp[1]
+    local symbol_table = table[2]
+    local size = table[1]
+    
+    
+   
+      
+    if symbol_table ~= nil then
+          local temp = symbol_table[position]
+          
+          if temp ~= nil then
+            position = temp
+            
+         end
+    end
+   
+    position = tonumber(position)
+   
+    if type(position) ~= "number" then
+        print("Error: position " .. position .. " must be a number")
+        os.exit( )
+    end
+    
+    if position % 1 ~= 0 then
+        print("Error: position " .. position .. " must be an integer")
+        os.exit()
+    end
+   
+    if position < 0 then
+        print("Error: position " .. position .. " must be a positive integer")
+        os.exit()
+    end
+  
+      
+    if position > size-1 then
+       
+        print("Error: position " .. position .. " must be less than " .. size)
+        os.exit()
+    end
+    
+    return position
+end
+
+
+function Verify_positions(name,positions)
+  
     
    
     for i = 1, #positions do
+      positions[i] = Verify_position(name,positions[i])
       
-      if symbol_table ~= nil then
-          local temp = symbol_table[positions[i] ]
-          
-          if temp ~= nil then
-            positions[i] = temp
-            
-         end
-     end
-     positions[i] = tonumber(positions[i])
-     if type(positions[i]) ~= "number" then
-        print("Error: position " .. positions[i] .. " must be a number")
-        os.exit( )
-     end
-     
-     if positions[i] % 1 ~= 0 then
-         print("Error: position " .. positions[i] .. " must be an integer")
-         os.exit()
-     end
-    
-     if positions[i] < 0 then
-         print("Error: position " .. positions[i] .. " must be a positive integer")
-         os.exit()
-     end
-   
-       
-     if positions[i] > size-1 then
-        
-         print("Error: position " .. positions[i] .. " must be less than " .. size)
-         os.exit()
-     end   
-             
-    
    end
    return positions
  end
@@ -475,11 +492,14 @@ end
 
 
 
-function Store_s_bit(name, bit_index, s_buffer_name)
-  local message = string.format("    Asm_store_s_expression_CFL(input, %s, %d, %s);\n",name,bit_index, s_buffer_name)
+function Store_s_bit( buffer_name,s_bit, s_expr)
+ 
+  bit_index = Verify_position(buffer_name,s_bit)
+  
+  local message = string.format("    Asm_store_s_bit_CFL(input, %s, %s, %s);\n",buffer_name,bit_index, s_expr)
    file:write(message)
 end
-
+--void Asm_store_s_bit_CFL(void* input, const char* buffer_name,unsigned short store_index, const char* s_expression);
 
 function Wait_s_expr_no_time_out(s_buffer_name,one_short_fail_fn,user_data,terminate_flag,s_expr_name)
   local message = string.format("    Asm_wait_df_tokens_s_expression_CFL(input, %s,%d, %s, %s, %s,%s);\n",s_buffer_name,NO_TIME_OUT_CFL,one_short_fail_fn,
@@ -492,9 +512,9 @@ function Wait_s_expr_time_out(s_buffer_name, time_out_ms, one_shot_failure_fn, u
                                                time_out_ms, one_shot_failure_fn, user_data, terminate_flag, s_expr_name)
    file:write(message)
 end
-
-function Verify_s_expr(s_buffer_name,s_expr_buffer, one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
-  local message = string.format("    Asm_verify_s_expression_CFL(input, %s,%s, %s, %s, %s);\n",s_buffer_name,s_expr_buffer,
+          
+function Verify_s_expr(s_buffer_name,one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
+  local message = string.format("    Asm_verify_df_tokens_s_expression_CFL(input, %s,%s, %s, %s, %s);\n",s_buffer_name,
                                                 one_shot_failure_fn, user_data, terminate_flag, s_expr_buffer)
    file:write(message)
 end

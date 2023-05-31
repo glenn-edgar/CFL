@@ -476,7 +476,7 @@ static void test_while_opcode(Handle_config_CFL_t* config_handle) {
     &while_user_data_normal);
   Asm_log_message_CFL(input, "This message will hapen");
   Asm_end_column_CFL(input);
-
+  
   Printf_CFL("starting engine");
   Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
 

@@ -106,13 +106,16 @@ typedef struct end_message_t{
 }end_message_t;
    
 const char *while_termination_data = "while_termination_data";
-
+const char *verify_term_data = "verify_term_data";
+const char *verify_reset_data = "verify_reset_data";
+const char *wait_and_fail_terminate = "wait_and_fail_terminate";
+const char *should_not_happen = "should_not_happen";
 
 static void while_termination(void *input,void *params,Event_data_CFL_t *event_data) {
    df_wait_data_t* df_wait_data = (df_wait_data_t* )params;
    
-    
-     Printf_CFL("while_termination: %s\n",df_wait_data->user_data);
+     Printf_CFL("while_termination function called\n");
+     Printf_CFL("user data: %s\n",df_wait_data->user_data);
 }
 
 
@@ -127,8 +130,8 @@ static void test_wait_and_verify_df_functions(Handle_config_CFL_t* config_handle
     Store_s_logical_expression_CFL(input, "test_1","false_s_expr", "( && ( &@ 1 3 5 7 9 ) ( &@ 2 3 5 7 9 ) )");
     // define the column list
     const char * column_names[] = {
-        "setup_buffer","shut_down_engine","wait_and_fail_terminate","wait_and_fail_reset"};
-    Asm_columns_CFL(input,4,column_names);
+        "setup_buffer","shut_down_engine","wait_and_fail_reset","wait_and_fail_terminate","wait_verify_fail_terminate","test_store_bit"};
+    Asm_columns_CFL(input,6,column_names);
 
    /* 
     Defining Column "setup_buffer"  starting initial running state true 
@@ -170,9 +173,37 @@ static void test_wait_and_verify_df_functions(Handle_config_CFL_t* config_handle
     Defining Column "wait_and_fail_reset"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "wait_and_fail_reset", true);
-    Asm_log_message_CFL(input,"wait_and_fail_terminate starting should reset every 5 seconds");
+    Asm_log_message_CFL(input,"wait_and_fail_reset starting should reset every 5 seconds");
+    Asm_verify_df_tokens_s_expression_CFL(input, "test_1","ONE_SHOT_TERM", (char *)verify_reset_data, false, "true_s_expr");
     Asm_wait_df_tokens_s_expression_CFL(input, "test_1", 5000, NULL, NULL, false, "false_s_expr");
-    Asm_log_message_CFL(input,"should not get here");
+    Asm_log_message_CFL(input,"will get here only when s_bit px_2 is set");
+    Asm_halt_CFL(input);
+    Asm_end_column_CFL(input);
+     
+
+   /* 
+    Defining Column "wait_verify_fail_terminate"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "wait_verify_fail_terminate", true);
+    Asm_log_message_CFL(input,"wait_verify_fail_terminate starting should terminate in 5 seconds");
+    Asm_wait_time_delay_CFL(input,5000);
+    Asm_wait_df_tokens_s_expression_CFL(input, "test_1", 5000, NULL, NULL, true, "true_s_expr");
+    Asm_log_message_CFL(input,"testing verify fail");
+    Asm_verify_df_tokens_s_expression_CFL(input, "test_1","ONE_SHOT_TERM", (char *)wait_and_fail_terminate, true, "false_s_expr");
+    Asm_halt_CFL(input);
+    Asm_end_column_CFL(input);
+     
+
+   /* 
+    Defining Column "test_store_bit"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "test_store_bit", true);
+    Asm_log_message_CFL(input,"test_store_bit waiting 10 seconds");
+    Asm_wait_time_delay_CFL(input,10000);
+    Asm_log_message_CFL(input,"testing store bit");
+    Asm_store_s_bit_CFL(input, "test_1", 2, "true_s_expr");
+    Asm_verify_df_tokens_s_expression_CFL(input, "test_1","ONE_SHOT_TERM", (char *)should_not_happen, true, "false_s_expr");
+    Asm_log_message_CFL(input,"test passed");
     Asm_halt_CFL(input);
     Asm_end_column_CFL(input);
      
