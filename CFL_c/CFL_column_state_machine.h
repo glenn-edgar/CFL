@@ -24,12 +24,12 @@ void Asm_process_event_CFL(void *input,const char *event_handler,
 
 
 
-void Asm_change_column_state_CFL(void *input, unsigned new_state);
+void Asm_change_column_state_CFL(void *input, unsigned short new_state);
 
 
 
 // runtime function
 
-void Change_local_column_state_CFL(void *input, signed new_state);
+void Change_local_column_state_CFL(void *input, unsigned short new_state);
 
 #endif // __CFL_COLUMN_STATE_MACHINES_H__
