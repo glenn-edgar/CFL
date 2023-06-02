@@ -16,7 +16,35 @@ static inline void restore_ref_engine_event(Engine_control_CFL_t *engine_control
   *event_data = engine_control->ref_event_data;
 }
 
+static void inline change_column_state(Handle_CFL_t *handle,Column_CFL_t *column){
 
+   unsigned short new_state;
+   unsigned short state_number;
+   Column_element_CFL_t *column_element;
+   if(column->column_state_machine != true){
+     ASSERT_PRINT_INT("column state machine not enabled",column->id);
+   }
+   state_number = column->end_state - column->start_state;
+   new_state = column->new_state;
+   if(new_state >= state_number){
+     ASSERT_PRINT_INT("invalid state",new_state);
+   }
+   for(unsigned i = column->start_state; i < column->end_state; i++){
+    column_element = column->starting_column_element + i;
+    if ((column_element->active == true) &&
+        (column_element->initialized == true))
+    {
+       column_element->fn(handle, column_element->aux_function,
+                         column_element->params, &term_event);
+    }
+    column_element->active = false;
+    column_element->initialized = false;
+   }
+    column_element = column->starting_column_element + new_state;
+    column_element->active = true;
+    column_element->initialized = false;
+
+}
 
 static void inline send_terminal_event(Handle_CFL_t *handle,
                                        Column_control_CFL_t *column_control,
@@ -159,7 +187,7 @@ static inline int process_column_element(Handle_CFL_t *handle,
                                          Column_element_CFL_t *column_element,
                                          Event_data_CFL_t *event_data)
 {
- 
+
   if (column_element->initialized == false)
   {
 
@@ -167,7 +195,7 @@ static inline int process_column_element(Handle_CFL_t *handle,
                        column_element->params, &init_event);
     column_element->initialized = true;
   }
-  return column_element->fn(handle, column_element->aux_function,
+   return column_element->fn(handle, column_element->aux_function,
                             column_element->params, event_data);
 }
 
@@ -215,9 +243,9 @@ static inline bool inner_process_column(Handle_CFL_t *handle,
 
     if (return_code == COLUMN_STATE_CHANGE_CFL)
     {
-      // verify condition for column state change
-      // disable column states
-      // enable new column
+      column_element->active = false;
+      column_element->initialized = false;
+      change_column_state(handle,column);
       return true;  // terminates column processing
     }
 
@@ -669,7 +697,7 @@ void Clear_column_watch_dog_CFL(void *input, void *params,
 }
 
 
-void Change_local_column_state_CFL(void *input, signed new_state){
+void Change_local_column_state_CFL(void *input, unsigned short new_state){
  Handle_CFL_t *handle;
   Engine_control_CFL_t *engine_control;
   handle = (Handle_CFL_t *)input;
