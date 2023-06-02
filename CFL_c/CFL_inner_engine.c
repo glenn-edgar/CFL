@@ -146,6 +146,8 @@ static inline void validate_return_code(int return_code)
   case RESET_CFL:
   case TERMINATE_CFL:
   case ENGINE_TERMINATE_CFL:
+  case COLUMN_STATE_CHANGE_CFL:
+
     return;
   default:
 
@@ -208,8 +210,16 @@ static inline bool inner_process_column(Handle_CFL_t *handle,
     return_code = process_column_element(handle, column_element, event_data);
 
     validate_return_code(return_code);
-
+    // CONTINUE_CFL is ignored so for loop continues
     // restoring reference events
+
+    if (return_code == COLUMN_STATE_CHANGE_CFL)
+    {
+      // verify condition for column state change
+      // disable column states
+      // enable new column
+      return true;  // terminates column processing
+    }
 
     if (return_code == ENGINE_TERMINATE_CFL)
     {
@@ -656,4 +666,28 @@ void Clear_column_watch_dog_CFL(void *input, void *params,
 
   engine_control = (Engine_control_CFL_t *)handle->engine_control;
   engine_control->current_column->watch_dog_control = NULL;
+}
+
+
+void Change_local_column_state_CFL(void *input, signed new_state){
+ Handle_CFL_t *handle;
+  Engine_control_CFL_t *engine_control;
+  handle = (Handle_CFL_t *)input;
+
+  engine_control = (Engine_control_CFL_t *)handle->engine_control;
+  Column_CFL_t *column = engine_control->current_column;
+  if(column->column_state_machine == true){
+    column->column_state_change_request = true;
+    column->new_state = new_state;
+  }
+  else{
+    ASSERT_PRINT("Column is not a column state machine","");
+  }
+  unsigned state_number = column->end_state - column->start_state;
+  if(new_state >= state_number){
+    ASSERT_PRINT_INT("New state is out of range",new_state);
+  }
+  else{
+    column->new_state = new_state;
+  }
 }

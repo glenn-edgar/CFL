@@ -7,6 +7,7 @@
 #include "Cfl_element_storeage.h"
 #include "Cfl_functions.h"
 #include "Cfl_local_heap_functions.h"
+#include "CFL_column_state_machine.h"
 #include "Cfl_user_functions.h"
 
 typedef struct Column_Function_t {
@@ -84,8 +85,13 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   handle = (Handle_CFL_t *)input;
 
 
+
+void store_one_shot_column_sm_functions_CFL(void *input);
+
   number_column_functions += reserve_column_function_space_CFL();
   number_column_functions += reserve_df_column_function_space_CFL();
+  number_column_functions += reserve_column_sm_function_space_CFL();
+
   control = (Function_Control_t *)allocate_once_CFL(handle,
                                                     sizeof(Function_Control_t));
   allocate_column_functions(handle, control, number_column_functions);
@@ -101,6 +107,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
 
   number_one_shot_functions += reserve_one_shot_function_space_CFL();
   number_one_shot_functions += reserve_df_one_shot_function_space_CFL();
+  number_one_shot_functions += reserve_column_sm_one_shot_function_space_CFL();
   allocate_one_shot_functions(handle, control, number_one_shot_functions);
 
   number_of_try_functions += reserve_try_function_space_CFL();

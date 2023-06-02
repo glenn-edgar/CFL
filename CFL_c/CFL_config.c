@@ -9,6 +9,7 @@
 #include "CFL_user_functions.h"
 #include "CFL_tod_functions.h"
 #include "CFL_s_expr_buffers.h"
+#include "CFL_column_state_machine.h"
 
 
 
@@ -55,6 +56,7 @@ allocate_columns_CFL(handle, config->number_of_columns);
   Constuct_sm_system_CFL(handle, config);
   Initialize_bool_functions_CFL(handle);
   Initialize_s_logical_expression_buffers_CFL(handle,config->number_of_compiled_s_log_expressions);
+  Initialize_column_state_machine_CFL(handle);
   return handle;
 }
 

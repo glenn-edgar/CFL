@@ -96,21 +96,25 @@ typedef struct Column_element_control_CFL_t
 
 typedef struct Column_CFL_t
 {
-    unsigned short             id;
-    unsigned short                      column_element_number;
+    unsigned short                 id;
+    unsigned short                 column_element_number;
     
     unsigned                       defined:1;
     unsigned                       auto_start:1;
     unsigned                       active:1;
-    unsigned                       fn_success:1;
-    unsigned                   reset_state:1;   // whether column is in reset state
+    unsigned                       fn_success:1;  // ---- not sure what this is used for
+    unsigned                       reset_state:1;   // whether column is in reset state
+    unsigned                       column_state_machine:1; // whether column is a state machine
+    unsigned                       column_state_change_request:1; // pending state change request
+    unsigned                       start_state:8;   // whether column is in start state
+    unsigned                       end_state:8; // current state of column
+    unsigned                       new_state:8; // new state of column
+    Column_element_CFL_t*          starting_column_element;
    
-    Column_element_CFL_t* starting_column_element;
-   
-    Event_data_CFL_t* local_event;
+    Event_data_CFL_t*             local_event;
     
-    Event_control_CFL_t* named_event_queue;
-    Column_watch_dog_CFL_t* watch_dog_control;
+    Event_control_CFL_t*           named_event_queue;
+    Column_watch_dog_CFL_t*         watch_dog_control;
    
 } Column_CFL_t;
 
