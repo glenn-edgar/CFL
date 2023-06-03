@@ -16,6 +16,7 @@
 
 
 #include "unit_test_s_logical_operations.h"
+#include "test_column_state_machine.h"
 
 
 
@@ -31,7 +32,8 @@ int main (void )
  printf("starting\n");
  //test_watch_dog();
  //test_tod_functions();
- test_data_flow_functions();
+ //test_data_flow_functions();
+ test_column_state_machine();
 #if 0
   // test pipes
   // test statemacines

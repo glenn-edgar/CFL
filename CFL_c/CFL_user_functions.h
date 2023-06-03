@@ -476,6 +476,8 @@ void Private_heap_free_CFL(void* input, void* ptr);
 int Private_heap_largest_free_block_CFL(void* input);
 void Dump_private_heap_blocks_CFL(void *input);
 
+#include "CFL_column_state_machine.h"
+
 #ifdef __cplusplus
 }
 #endif

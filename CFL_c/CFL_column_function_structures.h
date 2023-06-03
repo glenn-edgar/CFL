@@ -173,5 +173,12 @@ typedef struct df_wait_data_t {
   df_s_expression_t* s_expression;
   void* user_data;
 }df_wait_data_t;
-
+typedef struct process_event_t_CFL
+{
+    unsigned short event_number;
+    short *event_indexes;
+    bool block_flag;
+    short return_value;
+    void *user_data;
+} process_event_t_CFL;
 #endif
