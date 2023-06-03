@@ -18,32 +18,28 @@ static inline void restore_ref_engine_event(Engine_control_CFL_t *engine_control
 
 static void inline change_column_state(Handle_CFL_t *handle,Column_CFL_t *column){
 
-   unsigned short new_state;
-   unsigned short state_number;
+   
+   
+
    Column_element_CFL_t *column_element;
+   
    if(column->column_state_machine != true){
      ASSERT_PRINT_INT("column state machine not enabled",column->id);
    }
-   state_number = column->end_state - column->start_state;
-   new_state = column->new_state;
-   if(new_state >= state_number){
-     ASSERT_PRINT_INT("invalid state",new_state);
-   }
+   
+   
    for(unsigned i = column->start_state; i < column->end_state; i++){
     column_element = column->starting_column_element + i;
-    if ((column_element->active == true) &&
-        (column_element->initialized == true))
-    {
-       column_element->fn(handle, column_element->aux_function,
-                         column_element->params, &term_event);
-    }
+    
+    
     column_element->active = false;
     column_element->initialized = false;
    }
-    column_element = column->starting_column_element + new_state;
+   
+    column_element = column->starting_column_element + column->new_state;
     column_element->active = true;
     column_element->initialized = false;
-
+   
 }
 
 static void inline send_terminal_event(Handle_CFL_t *handle,
@@ -245,6 +241,8 @@ static inline bool inner_process_column(Handle_CFL_t *handle,
     {
       column_element->active = false;
       column_element->initialized = false;
+      column_element->fn(handle, column_element->aux_function,
+                         column_element->params, &term_event);
       change_column_state(handle,column);
       return true;  // terminates column processing
     }
@@ -704,11 +702,7 @@ void Change_local_column_state_CFL(void *input, unsigned short new_state){
 
   engine_control = (Engine_control_CFL_t *)handle->engine_control;
   Column_CFL_t *column = engine_control->current_column;
-  if(column->column_state_machine == true){
-    column->column_state_change_request = true;
-    column->new_state = new_state;
-  }
-  else{
+  if(column->column_state_machine != true){
     ASSERT_PRINT("Column is not a column state machine","");
   }
   unsigned state_number = column->end_state - column->start_state;
@@ -716,6 +710,7 @@ void Change_local_column_state_CFL(void *input, unsigned short new_state){
     ASSERT_PRINT_INT("New state is out of range",new_state);
   }
   else{
-    column->new_state = new_state;
+    
+    column->new_state = column->start_state + new_state;
   }
 }

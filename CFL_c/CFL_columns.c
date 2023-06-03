@@ -182,8 +182,10 @@ void Asm_end_column_CFL(void *input)
   Column_CFL_t *column = (Column_CFL_t *)handle->ref_column;
   if (column->column_state_machine == true)
   {
-    if (column->start_state <= column->end_state)
+  
+    if (column->start_state >column->end_state){
       ASSERT_PRINT("column state machine is not complete","");
+    }
 
   }
   handle->ref_column = NULL;
