@@ -37,6 +37,7 @@ function saveOutputToFile(input_filefilePath)
 end
 ]]--
 
+dofile("template_processor.lua")
 
 function compile_file(input_file, output_file)
    
