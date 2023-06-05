@@ -480,57 +480,6 @@ void Asm_for_columns_CFL(void* input, int number_of_times,
   Asm_store_column_element_CFL(input, "FOR_COLUMN", NULL, (void*)for_control);
 }
 
-/******************************************** Event Queue Functions */
-
-
-static inline Send_named_event_t* assemble_event_indexes(void* input, unsigned number, const char** event_queue_names) {
-
-  Send_named_event_t* send_event;
-
-  send_event = (Send_named_event_t*)Allocate_once_malloc_CFL(input, sizeof(Send_named_event_t));
-  send_event->event_queue_indexes = (unsigned short*)Allocate_once_malloc_CFL(input, sizeof(unsigned) * number);
-  send_event->queue_number = number;
-  for (unsigned i = 0; i < number; i++) {
-    send_event->event_queue_indexes[i] =
-      Get_named_event_queue_index_CFL(input, event_queue_names[i]);
-  }
-  return send_event;
-}
-
-void Asm_send_named_events_CFL(void* input, unsigned number,
-  const char** event_queue_names,
-  Event_data_CFL_t* event_data) {
-
-  Send_named_event_t* send_event;
-
-  send_event = assemble_event_indexes(input, number, event_queue_names);
-  send_event->event_data.event_index = event_data->event_index;
-  send_event->event_data.event_data = event_data->event_data;
-  send_event->event_data.params = event_data->params;
-  Asm_one_shot_CFL(input, "SEND_NAMED_EVENTS_IMMEDIATE", send_event);
-}
-
-void Asm_send_named_events_fn_CFL(void* input, unsigned number,
-  const char** event_queue_names,
-  const char* event_function, void* user_data) {
-
-  Send_named_event_t* send_event;
-
-  send_event = assemble_event_indexes(input, number, event_queue_names);
-  send_event->fn = Get_one_shot_function_CFL(input, event_function);
-  send_event->user_data = user_data;
-  Asm_one_shot_CFL(input, "SEND_NAMED_EVENTS_FN", send_event);
-}
-
-
-
-
-void Asm_reset_named_event_queues_CFL(void* input, unsigned number, const char** event_queue_names) {
-  Send_named_event_t* send_event;
-  send_event = assemble_event_indexes(input, number, event_queue_names);
-  Asm_one_shot_CFL(input, "RESET_NAMED_EVENT_QUEUES", send_event);
-}
-
 
 
 void Asm_attach_event_handler_CFL(void* input, short event_index, const char* fn_name, void* user_data) {

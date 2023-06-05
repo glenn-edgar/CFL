@@ -1,8 +1,11 @@
-#include "CFL_named_event_queue_manager.h"
+#include "CFL_user_functions.h"
+#include "CFL_column_function_structures.h" 
+
 #include "CFL_definitions.h"
 #include "CFL_event_manager.h"
 #include "CFL_user_functions.h"
 #include "Cfl_element_storeage.h"
+
 
 typedef struct Named_event_queue_control_CFL_t {
   unsigned max_number;
@@ -11,9 +14,19 @@ typedef struct Named_event_queue_control_CFL_t {
   Event_control_CFL_t *event_queues;
 } Named_event_queue_control_CFL_t;
 
-void allocate_named_event_queue_space_CFL(Handle_CFL_t *handle,
+static void send_named_events_immediate_handler(void *handle, void *params,
+                                                Event_data_CFL_t *event_data);
+static void send_named_events_fn_handler(void *handle, void *params,
+                                         Event_data_CFL_t *event_data);
+
+static void reset_named_event_queue(void *handle, void *params,
+                                    Event_data_CFL_t *event_data);
+
+
+void allocate_named_event_queue_space_CFL(void *input,
                                           unsigned number) {
 
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
   Named_event_queue_control_CFL_t *named_event_queue_control;
 
   named_event_queue_control =
@@ -36,7 +49,21 @@ void allocate_named_event_queue_space_CFL(Handle_CFL_t *handle,
   handle->named_event_queue = named_event_queue_control;
 }
 
-void Asm_create_named_event_queue_CFL(void *input, const char *name, unsigned size ) {
+unsigned named_event_reserve_one_shot_functions_CFL(){
+
+      return 3;
+
+}
+
+void named_events_load_one_shot_functions(void *input){
+  Store_one_shot_function_CFL(input, "SEND_NAMED_EVENTS_IMMEDIATE", send_named_events_immediate_handler);
+   Store_one_shot_function_CFL(input, "SEND_NAMED_EVENTS_FN", send_named_events_fn_handler);  
+   Store_one_shot_function_CFL(input, "RESET_NAMED_EVENT_QUEUES", reset_named_event_queue);                         
+}
+
+
+
+void Define_named_event_queue_CFL(void *input, const char *name, unsigned size ){
   Handle_CFL_t *handle;
   Named_event_queue_control_CFL_t *named_event_control;
   Event_control_CFL_t *event_control;
@@ -57,6 +84,115 @@ void Asm_create_named_event_queue_CFL(void *input, const char *name, unsigned si
   event_control = named_event_control->event_queues+id;
   initialize_event_data_CFL(handle, event_control, id, size);
 }
+    
+  
+  
+/******************************************** Event Queue Functions */
+
+
+static inline Send_named_event_t* assemble_event_indexes(void* input, unsigned number, const char** event_queue_names) {
+
+  Send_named_event_t* send_event;
+
+  send_event = (Send_named_event_t*)Allocate_once_malloc_CFL(input, sizeof(Send_named_event_t));
+  send_event->event_queue_indexes = (unsigned short*)Allocate_once_malloc_CFL(input, sizeof(unsigned) * number);
+  send_event->queue_number = number;
+  for (unsigned i = 0; i < number; i++) {
+    send_event->event_queue_indexes[i] =
+      Get_named_event_queue_index_CFL(input, event_queue_names[i]);
+  }
+  return send_event;
+}
+
+void Asm_send_named_events_CFL(void* input, unsigned number,
+  const char** event_queue_names,
+  Event_data_CFL_t* event_data) {
+
+  Send_named_event_t* send_event;
+
+  send_event = assemble_event_indexes(input, number, event_queue_names);
+  send_event->event_data.event_index = event_data->event_index;
+  send_event->event_data.event_data = event_data->event_data;
+  send_event->event_data.params = event_data->params;
+  Asm_one_shot_CFL(input, "SEND_NAMED_EVENTS_IMMEDIATE", send_event);
+}
+
+void Asm_send_named_events_fn_CFL(void* input, unsigned number,
+  const char** event_queue_names,
+  const char* event_function, void* user_data) {
+
+  Send_named_event_t* send_event;
+
+  send_event = assemble_event_indexes(input, number, event_queue_names);
+  send_event->fn = Get_one_shot_function_CFL(input, event_function);
+  send_event->user_data = user_data;
+  Asm_one_shot_CFL(input, "SEND_NAMED_EVENTS_FN", send_event);
+}
+
+
+
+
+void Asm_reset_named_event_queues_CFL(void* input, unsigned number, const char** event_queue_names) {
+  Send_named_event_t* send_event;
+  send_event = assemble_event_indexes(input, number, event_queue_names);
+  Asm_one_shot_CFL(input, "RESET_NAMED_EVENT_QUEUES", send_event);
+}
+
+
+ 
+ 
+
+
+static void send_named_events_immediate_handler(void *handle, void *params,
+                                                Event_data_CFL_t *event_data)
+{
+  (void)event_data;
+  Send_named_event_t *send_event;
+  send_event = (Send_named_event_t *)params;
+
+  for (unsigned i = 0; i < send_event->queue_number; i++)
+  {
+
+    Send_named_event_CFL(handle, send_event->event_queue_indexes[i],
+                         &send_event->event_data);
+  }
+}
+static void send_named_events_fn_handler(void *handle, void *params,
+                                         Event_data_CFL_t *event_data)
+{
+  (void)event_data;
+  Send_named_event_t *send_event;
+  send_event = (Send_named_event_t *)params;
+
+  send_event->fn(handle, send_event->user_data, &send_event->event_data);
+
+  for (unsigned i = 0; i < send_event->queue_number; i++)
+  {
+
+    Send_named_event_CFL(handle, send_event->event_queue_indexes[i],
+                         &send_event->event_data);
+  }
+}
+
+static void reset_named_event_queue(void *handle, void *params,
+                                    Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+  Send_named_event_t *send_event = (Send_named_event_t *)params;
+
+  for (unsigned i = 0; i < send_event->queue_number; i++)
+  {
+
+    Reset_named_event_queue_CFL(handle, send_event->event_queue_indexes[i]);
+  }
+}
+
+
+
+
+
+
 
 unsigned Get_named_event_queue_index_CFL(void *input, const char *name) {
   Handle_CFL_t *handle;

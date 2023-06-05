@@ -70,13 +70,7 @@ static void set_column_event_handler(void *handle, void *params,
 static void set_current_column_event_handler(void *handle, void *params,
                                              Event_data_CFL_t *event_data);
 
-static void send_named_events_immediate_handler(void *handle, void *params,
-                                                Event_data_CFL_t *event_data);
-static void send_named_events_fn_handler(void *handle, void *params,
-                                         Event_data_CFL_t *event_data);
 
-static void reset_named_event_queue(void *handle, void *params,
-                                    Event_data_CFL_t *event_data);
 
 static const one_shot_function_ref one_shot_functions[] = {
     {"NULL", null_function},
@@ -92,10 +86,7 @@ static const one_shot_function_ref one_shot_functions[] = {
     {"DUMP_NODES", dump_nodes_handler},
     {"VERIFY_NODES", verify_nodes_handler},
 
-    {"SEND_NAMED_EVENTS_IMMEDIATE", send_named_events_immediate_handler},
-    {"SEND_NAMED_EVENTS_FN", send_named_events_fn_handler},
-
-    {"RESET_NAMED_EVENT_QUEUES", reset_named_event_queue},
+    
     {"SET_CURRENT_COLUMN_EVENT", set_current_column_event_handler},
     {"SET_COLUMNS_EVENT", set_column_event_handler},
 
@@ -354,50 +345,6 @@ static void verify_nodes_handler(void *input, void *params,
   Verify_column_links_CFL(input);
 }
 
-static void send_named_events_immediate_handler(void *handle, void *params,
-                                                Event_data_CFL_t *event_data)
-{
-  (void)event_data;
-  Send_named_event_t *send_event;
-  send_event = (Send_named_event_t *)params;
-
-  for (unsigned i = 0; i < send_event->queue_number; i++)
-  {
-
-    Send_named_event_CFL(handle, send_event->event_queue_indexes[i],
-                         &send_event->event_data);
-  }
-}
-static void send_named_events_fn_handler(void *handle, void *params,
-                                         Event_data_CFL_t *event_data)
-{
-  (void)event_data;
-  Send_named_event_t *send_event;
-  send_event = (Send_named_event_t *)params;
-
-  send_event->fn(handle, send_event->user_data, &send_event->event_data);
-
-  for (unsigned i = 0; i < send_event->queue_number; i++)
-  {
-
-    Send_named_event_CFL(handle, send_event->event_queue_indexes[i],
-                         &send_event->event_data);
-  }
-}
-
-static void reset_named_event_queue(void *handle, void *params,
-                                    Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-  Send_named_event_t *send_event = (Send_named_event_t *)params;
-
-  for (unsigned i = 0; i < send_event->queue_number; i++)
-  {
-
-    Reset_named_event_queue_CFL(handle, send_event->event_queue_indexes[i]);
-  }
-}
 
 /*
 

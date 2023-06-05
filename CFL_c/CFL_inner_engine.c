@@ -299,17 +299,14 @@ static bool inline process_column_named_events(Handle_CFL_t *handle,
     return true;
   }
 
-  if (column->reset_state == false)
-  {
-    return true;
-  }
+  
 
   if (is_queue_empty_CFL(column->named_event_queue) == true)
   {
     return true;
   }
 
-  column->reset_state = false;
+  
   while (true)
   {
 
@@ -318,7 +315,7 @@ static bool inline process_column_named_events(Handle_CFL_t *handle,
 
       return true;
     }
-    column->reset_state = false;
+    
 
     temp = peak_event_CFL(column->named_event_queue);
 
@@ -331,6 +328,10 @@ static bool inline process_column_named_events(Handle_CFL_t *handle,
     event_data->params = temp->params;
 
     result = inner_process_column(handle, engine_control, column_control, column, event_data);
+    if (result == false)
+    {
+      return false;
+    }
 
     event_data->event_index = engine_control->ref_event_data.event_index;
     event_data->event_data = engine_control->ref_event_data.event_data;
@@ -340,10 +341,7 @@ static bool inline process_column_named_events(Handle_CFL_t *handle,
     {
       dequeue_event_CFL(column->named_event_queue);
     }
-    if (column->reset_state == false)
-    {
-      return result; // column did not reset or terminate
-    }
+    
   }
   return true; // should never get here
 }

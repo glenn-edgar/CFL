@@ -50,7 +50,7 @@ typedef struct process_event_t_CFL
 #define event_9 25
 #define event_10 26
 
-const char *user_data_0 = "state machine 0 user data \n";
+static const char *user_data_0 = "state machine 0 user data \n";
 
 static void sm_0_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -75,7 +75,7 @@ static void sm_0_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *user_data_1 = "state machine 1 user data \n";
+static const char *user_data_1 = "state machine 1 user data \n";
 
 static void sm_1_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -100,7 +100,7 @@ static void sm_1_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *user_data_2 = "state machine 2 user data \n";
+static const char *user_data_2 = "state machine 2 user data \n";
 
 static void sm_2_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -124,7 +124,7 @@ static void sm_2_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 
 }
-const char *user_data_3 = "state machine 3 user data \n";
+static const char *user_data_3 = "state machine 3 user data \n";
 
 static void sm_3_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -148,7 +148,7 @@ static void sm_3_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *filter_event_data = "filter event user data \n";
+static const char *filter_event_data = "filter event user data \n";
 
 static void filter_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -180,8 +180,8 @@ static void test_column_state_machine_a(Handle_config_CFL_t* config_handle)
 
     // define the column list
     const char * column_names[] = {
-        "test_column_state_machine","event_generator"};
-    Asm_columns_CFL(input,2,column_names);
+        "test_column_state_machine","event_generator","time_out"};
+    Asm_columns_CFL(input,3,column_names);
     Event_data_CFL_t event_data_1 = { 12, 45.2, NULL};
     Event_data_CFL_t event_data_2 = { 13, 46.3, NULL};
     Event_data_CFL_t event_data_3 = { 14, 47.4, NULL};
@@ -270,6 +270,16 @@ static void test_column_state_machine_a(Handle_config_CFL_t* config_handle)
     Asm_send_event_CFL(input,&filter_event_2);
     Asm_wait_time_delay_CFL(input,1000);
     Asm_reset_CFL(input);
+    Asm_end_column_CFL(input);
+     
+
+   /* 
+    Defining Column "time_out"  starting initial running state true 
+    */ 
+    Asm_start_column_CFL(input, "time_out", true);
+    Asm_log_message_CFL(input,"starting time_out column");
+    Asm_wait_time_delay_CFL(input,60000);
+    Asm_engine_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);

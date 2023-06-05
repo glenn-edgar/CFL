@@ -8,6 +8,7 @@
 #include "Cfl_functions.h"
 #include "Cfl_local_heap_functions.h"
 #include "CFL_column_state_machine.h"
+#include "CFL_named_event_queue_manager.h"
 #include "Cfl_user_functions.h"
 
 typedef struct Column_Function_t {
@@ -78,38 +79,36 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
                                  int number_bool_functions,
                                  int number_if_functions,
                                  int number_one_shot_functions,
-                                 int number_of_try_functions) {
+                                 int number_of_try_functions){
+  
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
 
-  Handle_CFL_t *handle;
-  Function_Control_t *control;
-  handle = (Handle_CFL_t *)input;
-
-
-
-void store_one_shot_column_sm_functions_CFL(void *input);
-
+  
   number_column_functions += reserve_column_function_space_CFL();
   number_column_functions += reserve_df_column_function_space_CFL();
   number_column_functions += reserve_column_sm_function_space_CFL();
 
-  control = (Function_Control_t *)allocate_once_CFL(handle,
-                                                    sizeof(Function_Control_t));
+  Function_Control_t*control = (Function_Control_t *)Allocate_once_malloc_CFL(handle,sizeof(Function_Control_t));
   allocate_column_functions(handle, control, number_column_functions);
 
 
-
+ 
   number_bool_functions += reserve_bool_function_space_CFL();
   number_bool_functions += reserve_df_bool_function_space_CFL();
   allocate_bool_functions(handle, control, number_bool_functions);
-
+  
+  
   number_if_functions += reserve_if_function_space_CFL();
   allocate_if_functions(handle, control, number_if_functions);
 
+  
   number_one_shot_functions += reserve_one_shot_function_space_CFL();
   number_one_shot_functions += reserve_df_one_shot_function_space_CFL();
   number_one_shot_functions += reserve_column_sm_one_shot_function_space_CFL();
+  number_one_shot_functions += named_event_reserve_one_shot_functions_CFL();
   allocate_one_shot_functions(handle, control, number_one_shot_functions);
 
+  
   number_of_try_functions += reserve_try_function_space_CFL();
   allocate_try_functions(handle, control, number_of_try_functions);
 
@@ -118,11 +117,12 @@ void store_one_shot_column_sm_functions_CFL(void *input);
   load_column_functions_CFL(handle);
   load_df_column_functions_CFL(handle);
 
-  load_one_shot_function_state_CFL(input);
+  load_one_shot_function_state_CFL(handle);
   load_df_one_shot_function_state_CFL(input);
-
+ 
   load_bool_functions_CFL(input);
   load_df_bool_functions_CFL(input);
+  named_events_load_one_shot_functions(input);
   
   load_if_functions_CFL(input);
 
