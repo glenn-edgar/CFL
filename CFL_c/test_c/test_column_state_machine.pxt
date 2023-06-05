@@ -53,7 +53,7 @@ typedef struct process_event_t_CFL
 #define event_9 25
 #define event_10 26
 
-const char *user_data_0 = "state machine 0 user data \n";
+static const char *user_data_0 = "state machine 0 user data \n";
 
 static void sm_0_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -78,7 +78,7 @@ static void sm_0_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *user_data_1 = "state machine 1 user data \n";
+static const char *user_data_1 = "state machine 1 user data \n";
 
 static void sm_1_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -103,7 +103,7 @@ static void sm_1_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *user_data_2 = "state machine 2 user data \n";
+static const char *user_data_2 = "state machine 2 user data \n";
 
 static void sm_2_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -127,7 +127,7 @@ static void sm_2_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 
 }
-const char *user_data_3 = "state machine 3 user data \n";
+static const char *user_data_3 = "state machine 3 user data \n";
 
 static void sm_3_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -151,7 +151,7 @@ static void sm_3_handler(void* input, void *params, Event_data_CFL_t *event_data
 
 }
 
-const char *filter_event_data = "filter event user data \n";
+static const char *filter_event_data = "filter event user data \n";
 
 static void filter_handler(void* input, void *params, Event_data_CFL_t *event_data){
    process_event_t_CFL *process_event = (process_event_t_CFL *)params;
@@ -182,7 +182,7 @@ static void filter_handler(void* input, void *params, Event_data_CFL_t *event_da
 Start_function('test_column_state_machine_a')
   
 Conf_engine('config_handle',50000,4000)
-Def_columns('column_names',{ q('test_column_state_machine'),q('event_generator') }) 
+Def_columns('column_names',{ q('test_column_state_machine'),q('event_generator'),q('time_out') }) 
 
 local event_1 =  12
 local event_2 =  13
@@ -297,6 +297,12 @@ Start_column(q('event_generator'),true)
    Send_event('&filter_event_2') -- testing event filter
   Wait_delay(1000)
   Reset_column()
+End_column()
+
+Start_column(q('time_out'),true)
+  Log_msg(q('starting time_out column'))
+  Wait_delay(60000)
+  Stop_engine()
 End_column()
 
 

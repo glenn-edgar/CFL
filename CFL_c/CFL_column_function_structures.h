@@ -101,7 +101,6 @@ typedef struct Event_handler_fn_CFL_t {
    unsigned short          event_number;
    short* event_indexes;
 }Event_handler_fn_CFL_t;
-
 typedef struct Send_named_event_t {
    unsigned short     queue_number;
    unsigned short* event_queue_indexes;
@@ -109,6 +108,7 @@ typedef struct Send_named_event_t {
    One_shot_function_CFL_t fn;
    void* user_data;
 } Send_named_event_t;
+
 
 
 typedef struct Column_events_CFL_t {

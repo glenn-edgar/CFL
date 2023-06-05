@@ -225,6 +225,9 @@ bool Get_symbol_table_entry_CFL(void* input, Symbol_table_handle_CFL_t symbol_ha
 void Store_s_expression_CFL(void* input,const char *s_expr_name, const char* s_expression);
 CFL_s_log_op_handle_t* Get_s_expression_index_CFL(void* input, const char* s_expr_name); 
 
+
+
+
 void Define_df_buf_CFL(void* input, const char* buf_name, unsigned short buf_size, unsigned short symbol_number, const Symbol_record_CFL_t* symbol_array);
 unsigned short Get_df_buf_index_CFL(void* input, const char* name);
 Symbol_table_handle_CFL_t Get_df_buf_symbol_table_CFL(void *input, unsigned short index);
@@ -256,8 +259,7 @@ void Asm_start_column_event_queue_CFL(void* input, const char* column_name, bool
 void Asm_store_column_element_CFL(void* input, const char* name, void* fn, void* params);
 void Asm_store_column_element_direct_CFL(void* input, Column_function_CFL_t fn, void* aux_fun, void* params);
 void Asm_end_column_CFL(void* input);
-/**********************************************   named events  ****************************************************************/
-void Asm_create_named_event_queue_CFL(void* input, const char* name, unsigned size);
+
 
 
 
@@ -344,17 +346,7 @@ void Asm_do_while_columns_CFL(void* input, const char* bool_fn_name, int number_
 void Asm_for_columns_CFL(void* input, int number_of_times, int number_of_columns, const char** column_names,
   char* one_shot_function_name, void* user_data);
 
-/*
-   named event queues
 
-*/
-
-
-void Asm_send_named_events_CFL(void* input, unsigned number, const char** event_queue_names, Event_data_CFL_t* event_data);
-
-void Asm_send_named_events_fn_CFL(void* input, unsigned number, const char** event_queue_names, const char* event_function, void* user_data);
-
-void Asm_reset_named_event_queues_CFL(void* input, unsigned number, const char** name);
 
 
 void Asm_attach_event_handler_CFL(void* input, short event_index, const char* fn_name, void* user_data);
@@ -397,21 +389,8 @@ void Asm_dump_nodes_CFL(void* input);
 
 void Verify_nodes_CFL(void* input);
 
-/************************************* Run Time Functions *********************************/
-/*
-   Named Event Queue Functions
-
-*/
-unsigned Get_named_event_queue_index_CFL(void* input, const char* name);
-Event_control_CFL_t* Get_named_event_queue_CFL(void* input, unsigned index);
 
 
-void Send_named_event_CFL(void* handle, unsigned index, Event_data_CFL_t* event_data);
-Event_data_CFL_t* Peak_named_event_CFL(void* handle, unsigned index);
-Event_data_CFL_t* Pop_named_event_CFL(void* handle, unsigned index);
-unsigned Get_named_event_queue_number_CFL(void* handle, unsigned index);
-
-void Reset_named_event_queue_CFL(void* handle, unsigned index);
 /*
 ** Engine Functions
 */
@@ -477,6 +456,14 @@ int Private_heap_largest_free_block_CFL(void* input);
 void Dump_private_heap_blocks_CFL(void *input);
 
 #include "CFL_column_state_machine.h"
+// prevent recursive include files
+
+void Send_named_event_CFL(void *input, unsigned index,Event_data_CFL_t *event_data);
+Event_control_CFL_t *Get_named_event_queue_CFL(void *input, unsigned index);
+Event_data_CFL_t *Get_named_event_CFL(void *input, unsigned index);
+Event_data_CFL_t *Peak_named_event_CFL(void *input, unsigned index);
+Event_data_CFL_t *Pop_named_event_CFL(void *input, unsigned index);
+#include "CFL_named_event_queue_manager.h"
 
 #ifdef __cplusplus
 }

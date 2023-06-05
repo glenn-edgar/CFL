@@ -14,12 +14,7 @@ static unsigned number_Of_active_columns(void *input, unsigned column_number,
                                          unsigned short *column_indexes);
 static void enable_if_indexes(void *input, If_control_CFL_t *if_control);
 
-typedef struct core_function_ref
-{
-  const char *name;
-  Column_function_CFL_t fn;
 
-} core_function_ref;
 
 /*
    default column functions
