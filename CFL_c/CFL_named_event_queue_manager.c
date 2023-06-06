@@ -138,9 +138,58 @@ void Asm_reset_named_event_queues_CFL(void* input, unsigned number, const char**
   Asm_one_shot_CFL(input, "RESET_NAMED_EVENT_QUEUES", send_event);
 }
 
+void Asm_prepare_rpc_message(void *input){
+    Asm_one_shot_CFL(input, "PREPARE_RPC_MESSAGE", NULL);
+}
 
+
+
+void Asm_send_rpc_message(void *input, unsigned queue_index){
+    Asm_one_shot_CFL(input, "SEND_RPC_MESSAGE", &queue_index);
+}
+
+typedef struct Wait_rpc_message {
+    unsigned named_queue_index
+} Wait_rpc_message_t;
+
+void Asm_wait_rpc_message(void *input,const char * named_queue){
+    unsigned name_queue_index = Get_named_event_queue_index_CFL(input, named_queue);
+    Wait_rpc_message_t *wait_rpc_message = (Wait_rpc_message_t *)Allocate_once_malloc_CFL(input, sizeof(Wait_rpc_message_t));
+    wait_rpc_message->named_queue_index = name_queue_index;
+    Asm_wait_CFL(input,"WAIT_QUEUE_RPC",NO_TIME_OUT_CFL,true,NULL,wait_rpc_message);
+}
+
+void Asm_dispose_rpc_message(void *input){
+    Asm_one_shot_CFL(input, "DISPOSE_RPC_MESSAGE", NULL);
+} 
+
+typedef struct RPC_message_CLF_t {
+    unsigned short return_queue_index;
+    unsigned short rpc_action_id;
+    unsigned short size;
+    void *data;
+} RPC_message_CLF_t;
+
+static void free_rpc_message_CFL(RPC_message_CLF_t *rpc_message){
+    
+    
+}
  
- 
+static void dispose_rpc_message(void *input, void *params,
+                                Event_data_CFL_t *event_data) {
+  (void)event_data;
+  (void)params;              
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  Engine_control_CFL_t *engine_control = (Engine_control_CFL_t*)handle->engine_control;
+  Column_CFL_t *column = (Column_CFL_t*)engine_control->current_column;
+  Event_data_CFL_t *rpc_event = column->local_event;
+  column->local_event = NULL;
+  RPC_message_CLF_t *rpc_message = (RPC_message_CLF_t*)rpc_event->params;
+  Private_heap_free_CFL(input,rpc_message->data);
+  Private_heap_free_CFL(rpc_message);
+  Private_heap_element_t()
+  
+}
 
 
 static void send_named_events_immediate_handler(void *handle, void *params,
