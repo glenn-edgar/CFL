@@ -21,7 +21,7 @@ void test_named_queue_functions(void) {
     config_handle->number_of_try_functions = 50;
     config_handle->number_of_named_queues = 20;
     test_basic_functions(config_handle);
-    //test_rpc_server_client(config_handle);
+    test_rpc_server_client(config_handle);
 }
 
 
@@ -297,35 +297,32 @@ static void test_basic_functions(Handle_config_CFL_t* config_handle)
    Printf_CFL("nil");
 }
 
-
-static void generate_rpc_client_message_1(void *input, void *params, Event_data_CFL_t *event_data){
-
-
-
+static const char *rpc_server_user_data_1 = "rpc_server_user_data_1";
+static void rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
 }
 
-static void process_rpc_client_message_1(void *input, void *params, Event_data_CFL_t *event_data){
+static const char *rpc_server_user_data_2 = "rpc_server_user_data_2";
+static void rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
+}     
 
 
-}
-
-
-static void generate_rpc_client_message_2(void *input, void *params, Event_data_CFL_t *event_data){
-
-
-}
-
-static void process_rpc_client_message_2(void *input , void *params, Event_data_CFL_t *event_data){
-
-
-}
-
-static void process_rpc_server_message(void *input, void *params, Event_data_CFL_t *event_data){
- 
+static const char *rpc_client_user_data_1 = "rpc_client_user_data_1";
+static void rpc_client_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
   ;
 }
 
 
+static const char *rpc_client_failure_user_data_1 = "rpc_client_failure_user_data_1";
+
+static void rpc_client_failure_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
+}
 
 
 static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
@@ -341,11 +338,6 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     Define_named_event_queue_CFL(input,"rpc_server",16);
     Define_named_event_queue_CFL(input,"rpc_client_1",16);
     Define_named_event_queue_CFL(input,"rpc_client_2",16);
-    Store_one_shot_function_CFL(input,"GENERATE_RPC_MESSAGE_1",generate_rpc_client_message_1);
-    Store_one_shot_function_CFL(input,"PROCESS_RPC_MESSAGE_1",process_rpc_client_message_1);
-    Store_one_shot_function_CFL(input,"GENERATE_RPC_MESSAGE_2",generate_rpc_client_message_2);
-    Store_one_shot_function_CFL(input,"PROCESS_RPC_MESSAGE_2",process_rpc_client_message_2);
-    Store_one_shot_function_CFL(input,"Process_RPC_Server_Message",process_rpc_server_message);
 
    /* 
     Defining Column "init_columns"  starting initial running state true 
@@ -356,13 +348,19 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
+    Store_one_shot_function_CFL(input,"RPC_ACTION_1",rpc_server_action_1);
+    Store_one_shot_function_CFL(input,"RPC_ACTION_2",rpc_server_action_2);
+    Store_one_shot_function_CFL(input,"RPC_ACTION_1",rpc_client_action_1);
+    Store_one_shot_function_CFL(input,"RPC_FAILURE_1",rpc_client_failure_1);
 
    /* 
     Defining Column "rpc_server"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "rpc_server", true);
     Asm_log_message_CFL(input,"starting rpc_server");
-    Asm_one_shot_CFL(input,"Process_RPC_Server_Message",NULL);
+      Asm_wait_for_rpc_CFL(input,45,"RPC_ACTION_1",(void *)rpc_server_user_data_1);
+      Asm_wait_for_rpc_CFL(input,45,"RPC_ACTION_2",(void *)rpc_server_user_data_2);
+      Asm_send_rpc_bad_response_CFL(input,45);
     Asm_reset_CFL(input);
     Asm_end_column_CFL(input);
      
@@ -372,8 +370,8 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     */ 
     Asm_start_column_CFL(input, "rpc_client_1", true);
     Asm_log_message_CFL(input,"starting rpc_client_1");
-    Asm_one_shot_CFL(input,"GENERATE_RPC_MESSAGE_1",NULL);
-    Asm_one_shot_CFL(input,"PROCESS_RPC_MESSAGE_1",NULL);
+      Asm_send_receive_rpc_CFL(input,45,"RPC_ACTION_1",(void *)rpc_client_user_data_1,"RPC_FAILURE_1",(void *)rpc_client_failure_user_data_1,1000,true);
+    Asm_log_message_CFL(input,"rpc_client_1 received response");
     Asm_wait_time_delay_CFL(input,3000);
     Asm_reset_CFL(input);
     Asm_end_column_CFL(input);
@@ -383,11 +381,7 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     Defining Column "rpc_client_2"  starting initial running state true 
     */ 
     Asm_start_column_CFL(input, "rpc_client_2", true);
-    Asm_log_message_CFL(input,"starting rpc_client_2");
-    Asm_one_shot_CFL(input,"GENERATE_RPC_MESSAGE_2",NULL);
-    Asm_one_shot_CFL(input,"PROCESS_RPC_MESSAGE_2",NULL);
-    Asm_wait_time_delay_CFL(input,3000);
-    Asm_reset_CFL(input);
+    Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
 

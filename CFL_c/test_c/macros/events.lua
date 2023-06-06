@@ -46,46 +46,51 @@ function Send_event_queue(queue_table,event_data_ptr)
 end
 
 function Reset_event_queues(queue_table)
-    print("made it here")
+   
     local array_name = queue_table.array_name
     local queue_number = queue_table.queue_number
     message = string.format("     Asm_reset_named_event_queues_CFL(input,%s,%s);\n",queue_number,array_name)
     file:write(message)
 end
 
+---
+--- RPC functions
+---
 
-function Prepare_rpc_message()
-    -- TBD
+function Wait_rpc_message(rpc_event,rpc_message_handle, -- a boolean function true message handled false message not handled
+                                        rpc_user_data) -- user data to be passed to the function name
+     
+    rpc_event = tostring(rpc_event)
+    rpc_message_handle = tostring(rpc_message_handle) 
+    rpc_user_data = tostring(rpc_user_data)
+    local message = string.format("      Asm_wait_for_rpc_CFL(input,%s,%s,%s);\n",rpc_event,rpc_message_handle,rpc_user_data)                                  
+    file:write(message)
 end
 
-function Send_rpc_server(server_queue)
-    -- TBD
+function Send_bad_rpc_response_message(rpc_event) -- send a bad response message and cleans up the sent rpc message
+     rpc_event = tostring(rpc_event)
+     local message = string.format("      Asm_send_rpc_bad_response_CFL(input,%s);\n",rpc_event)
+     file:write(message)
 end
 
-function Wait_rpc_message(queue)
+--- a one shot function to handle the reply
+-- a one shot function to handle the failure
+-- termination flag either reset column or terminate column true is terminate false is reset
+-- time out in ms
+                                           
+function Send_receive_rpc_message(rpc_event,message_handler,message_user_data, 
+                                            failure_handler,failure_user_data, 
+                                             time_out,termination_flag) 
+    local message = string.format("      Asm_send_receive_rpc_CFL(input,%s,%s,%s,%s,%s,%s,%s);\n",
+                            rpc_event,message_handler,message_user_data,failure_handler,failure_user_data,time_out,termination_flag)
+    file:write(message)
 
-    -- TBD
 end
 
-function Dispose_rpc_message()
 
-    -- TBD
-end
-
-function Wait_rpc_message(queue)
-
-    -- TBD
-end 
-
-function Wait_rpc_response_message(queue)
-
-    -- TBD
-end
-
-function  Send_rpc_response_message()
-
-    -- TBD
-end
+---
+--- utility functions
+---
 
 function Generate_event_queues(queue_name,queue_list)
     

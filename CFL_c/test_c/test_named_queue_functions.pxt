@@ -22,7 +22,7 @@ void test_named_queue_functions(void) {
     config_handle->number_of_try_functions = 50;
     config_handle->number_of_named_queues = 20;
     test_basic_functions(config_handle);
-    //test_rpc_server_client(config_handle);
+    test_rpc_server_client(config_handle);
 }
 
 ]])
@@ -327,38 +327,36 @@ Destroy_engine(input, 'Engine Done\\n');
 
 pass_c([[
 
-
-static void generate_rpc_client_message_1(void *input, void *params, Event_data_CFL_t *event_data){
-
-
-
+static const char *rpc_server_user_data_1 = "rpc_server_user_data_1";
+static void rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
 }
 
-static void process_rpc_client_message_1(void *input, void *params, Event_data_CFL_t *event_data){
+static const char *rpc_server_user_data_2 = "rpc_server_user_data_2";
+static void rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
+}     
 
 
-}
-
-
-static void generate_rpc_client_message_2(void *input, void *params, Event_data_CFL_t *event_data){
-
-
-}
-
-static void process_rpc_client_message_2(void *input , void *params, Event_data_CFL_t *event_data){
-
-
-}
-
-static void process_rpc_server_message(void *input, void *params, Event_data_CFL_t *event_data){
- 
+static const char *rpc_client_user_data_1 = "rpc_client_user_data_1";
+static void rpc_client_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
   ;
 }
 
 
+static const char *rpc_client_failure_user_data_1 = "rpc_client_failure_user_data_1";
+
+static void rpc_client_failure_1(void *input, void *params, Event_data_CFL_t *event_data)
+{
+  ;
+}
 
 
 ]])
+
 
 Start_function('test_rpc_server_client')
 
@@ -378,11 +376,8 @@ for i,k in ipairs( queue_list) do
   Define_event_queue(k,16)
 end
 
-Store_one_shot(q('GENERATE_RPC_MESSAGE_1'),'generate_rpc_client_message_1')
-Store_one_shot( q('PROCESS_RPC_MESSAGE_1'),'process_rpc_client_message_1')
-Store_one_shot(q('GENERATE_RPC_MESSAGE_2'),'generate_rpc_client_message_2')
-Store_one_shot(q('PROCESS_RPC_MESSAGE_2'),'process_rpc_client_message_2')
-Store_one_shot(q('Process_RPC_Server_Message'),'process_rpc_server_message')
+
+
 
 Start_column(q('init_columns'),true)
   Log_msg(q('starting int_columns'))
@@ -390,39 +385,58 @@ Start_column(q('init_columns'),true)
   Term_column()
 End_column()
 
+RPC_EVENT = 45
+
+rpc_server_action_1 = q('RPC_ACTION_1')
+rpc_server_user_data_1 = '(void *)rpc_server_user_data_1'
+rpc_server_action_2 = q('RPC_ACTION_2')
+rpc_server_user_data_2 = '(void *)rpc_server_user_data_2'
+rpc_client_action_1 = q('RPC_ACTION_1')
+
+
+rpc_client_user_data_1 = '(void *)rpc_client_user_data_1'
+
+rpc_client_failure_1 = q('RPC_FAILURE_1')
+rpc_client_failure_user_data_1 = '(void *)rpc_client_failure_user_data_1'
+Store_one_shot(rpc_server_action_1,'rpc_server_action_1')
+Store_one_shot(rpc_server_action_2,'rpc_server_action_2')
+Store_one_shot(rpc_client_action_1,'rpc_client_action_1')
+Store_one_shot(rpc_client_failure_1,'rpc_client_failure_1')
+
 
 Start_column(q('rpc_server'),true)
   Log_msg(q('starting rpc_server'))
-  Wait_rpc_message(rpc_server_queue)
-  One_shot(q("Process_RPC_Server_Message"),'NULL')
-  Send_rpc_response_message()
-  Dispose_rpc_message()
+  -- handle a specific rpc requests
+  Wait_rpc_message(RPC_EVENT,rpc_server_action_1,rpc_server_user_data_1)
+   -- handle a specific rpc requests
+  Wait_rpc_message(RPC_EVENT,rpc_server_action_2,rpc_server_user_data_2)
+  -- required to a respond to bad requests
+  Send_bad_rpc_response_message(RPC_EVENT)
   Reset_column()
 End_column()
 
 Start_column(q('rpc_client_1'),true)
   Log_msg(q('starting rpc_client_1'))
-  Prepare_rpc_message()
-  One_shot(q("GENERATE_RPC_MESSAGE_1"),'NULL')
-  Send_rpc_server(rpc_server_queue)
-  Wait_rpc_response_message(rpc_client_1_queue)
-  One_shot(q("PROCESS_RPC_MESSAGE_1"),'NULL')
-  Dispose_rpc_message()
+  
+  Send_receive_rpc_message(RPC_EVENT,rpc_client_action_1,rpc_client_user_data_1,
+                                   rpc_client_failure_1,rpc_client_failure_user_data_1,1000,true)
+  Log_msg(q('rpc_client_1 received response'))
   Wait_delay(3000)
   Reset_column()
 End_column()
 
 
 Start_column(q('rpc_client_2'),true)
-  Log_msg(q('starting rpc_client_2'))
-  Prepare_rpc_message()
-  One_shot(q("GENERATE_RPC_MESSAGE_2"),'NULL')
-  Send_rpc_server(rpc_server_queue)
-  Wait_rpc_response_message(rpc_client_2_queue)
-  One_shot(q("PROCESS_RPC_MESSAGE_2"),'NULL')
-  Dispose_rpc_message()
-  Wait_delay(3000)
-  Reset_column()
+  --Log_msg(q('starting rpc_client_2'))
+  --Prepare_rpc_message()
+  --One_shot(q("GENERATE_RPC_MESSAGE_2"),'NULL')
+  --Send_rpc_server(rpc_server_queue)
+  --Wait_rpc_response_message(rpc_client_2_queue)
+  --One_shot(q("PROCESS_RPC_MESSAGE_2"),'NULL')
+  --Dispose_rpc_message()
+  --Wait_delay(3000)
+  --Reset_column()
+  Term_column()
 End_column()
 
 

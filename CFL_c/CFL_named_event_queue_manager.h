@@ -21,10 +21,11 @@ void Asm_send_named_events_fn_CFL(void* input, unsigned number, const char** eve
 void Asm_reset_named_event_queues_CFL(void* input, unsigned number, const char** name);
 
 
-
-
-
-
+void Asm_wait_for_rpc_CFL(void *input,unsigned short rpc_event,const char *message_handler, void *user_data);
+void Asm_send_rpc_bad_response_CFL(void *input, short rpc_event);
+void Asm_send_receive_rpc_CFL(void* input,unsigned short rpc_event, const char *message_handler, void *message_user_data,
+      const char *failure_handler, void *failure_user_data, short time_out, bool termination_flag);
+                           
 /************************************* Run Time Functions *********************************/
 /*
    Named Event Queue Functions
