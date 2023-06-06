@@ -101,6 +101,7 @@ typedef struct Column_CFL_t
     
     unsigned                       defined:1;
     unsigned                       auto_start:1;
+    unsigned                       named_queue_active:1;
     unsigned                       active:1;
     unsigned                       fn_success:1;  // ---- not sure what this is used for
     unsigned                       reset_state:1;   // whether column is in reset state

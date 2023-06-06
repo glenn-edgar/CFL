@@ -395,7 +395,7 @@ bool process_single_sweep_CFL(Handle_CFL_t *handle,
     engine_control->current_column_index = column->id;
 
     result = true;
-    if (column->named_event_queue != NULL)
+    if (column->named_queue_active == true)
     {
 
       result = process_column_named_events(handle, engine_control, column_control, column, event_data);

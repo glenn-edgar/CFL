@@ -129,6 +129,7 @@ void Asm_start_column_event_queue_CFL(void *input, const char *column_name, bool
   column = (Column_CFL_t *)handle->ref_column;
   index = Get_named_event_queue_index_CFL(input, named_event_queue);
   column->named_event_queue = Get_named_event_queue_CFL(input, index);
+  column->named_queue_active = true;
 }
 
 void Asm_start_column_CFL(void *input, const char *column_name,
@@ -155,8 +156,9 @@ void Asm_start_column_CFL(void *input, const char *column_name,
   {
     ASSERT_PRINT("column name previous been defined", column_name);
   }
-
+  
   handle->ref_column = column;
+  column->named_queue_active = false;
   column->defined = true;
   column->auto_start = start_flag;
   column->active = false;

@@ -33,7 +33,7 @@ void intialize_pipe_control_CFL(void *input,unsigned short slot_size, unsigned s
 unsigned short Pipe_length_CFL(void *input, unsigned short pipe_id);
 
 // returns NULL if pipe is empty
-Slot_CFL_t  *Pop_pine_CFL(void *input, unsigned short pipe_id);
+Slot_CFL_t  *Pop_pipe_CFL(void *input, unsigned short pipe_id);
 
 // returns number of elements in the pipe
 unsigned short Push_pipe_CFL(void *input, unsigned short pipe_id, Slot_CFL_t *slot);

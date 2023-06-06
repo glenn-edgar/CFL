@@ -33,7 +33,7 @@ int main (void )
  //test_watch_dog();
  //test_tod_functions();
  //test_data_flow_functions();
-  test_column_state_machine();
+  //test_column_state_machine();
    test_named_queue_functions();
 #if 0
   // test pipes
