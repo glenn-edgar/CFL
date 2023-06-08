@@ -20,6 +20,7 @@ typedef struct Handle_CFL_t
     void *engine_control;
 
     void *named_event_queue;
+    void *pipe_pool_control;
 
     void *ref_column;
     void *time_control;
