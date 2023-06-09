@@ -12,7 +12,7 @@ enum {
     Chain_element_type_CFL_t = 6
 } Pipe_type_CFL_t;
 
-
+void Reset_pipe_CFL(void *input, unsigned pipe_id);
 
 
 
