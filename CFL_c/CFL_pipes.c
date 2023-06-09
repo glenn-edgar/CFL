@@ -77,11 +77,6 @@ typedef struct Column_pipe_index_CFL_t
 
 } Column_pipe_index_CFL_t;
 
-typedef struct Column_pipe_control_CFL_t
-{
-    unsigned short number_of_columns;
-    Column_pipe_index_CFL_t *column_pipe_index;
-} Column_pipe_control_CFL_t;
 
 typedef struct Pipe_stack_element_CFL_t
 {
@@ -100,7 +95,7 @@ typedef struct Pipe_stack_CFL_t
 typedef struct Pipe_control_CFL_t
 {
     unsigned short id;
-    Pipe_stack_CFL_t pipe_stack;
+    Pipe_stack_CFL_t *pipe_stack;
     unsigned short current_index;
     unsigned short max_number;
     Pipe_Slot_CFL_t *pipe_slots;
@@ -123,8 +118,7 @@ static unsigned short get_column_pipe_index(void* input);
 static void set_column_pipe_index_CFL(void *input, unsigned short column_id, unsigned short pipe_id);
 static int walk_data_pipe(void *input, void *fn_aux, void *params, Event_data_CFL_t *event_data);
 static void store_column_data(void *input, void *params, Event_data_CFL_t *event_data);
-static void initialize_pipe_column_index_CFL(void *input, unsigned short number_of_columns,
-                                             Column_pipe_index_CFL_t *column_pipe_index);
+
 static void start_data_pipe(void *input, void *params, Event_data_CFL_t *event_data);
 static void reset_data_pipe(void *input, void *params, Event_data_CFL_t *event_data);
 
@@ -188,6 +182,7 @@ void Create_pipe_control_CFL(void *input, const char *pipe_name, unsigned number
     {
         ASSERT_PRINT_INT("Pipe Pool exceeded", pipe_pool->current_pipe_index);
     }
+    unsigned short number_of_columns = pipe_pool->number_of_columns;
     unsigned short pipe_id = (unsigned short)Store_Name_CFL(pipe_pool->names, pipe_name);
     if (pipe_id != pipe_pool->current_pipe_index)
     {
@@ -196,12 +191,21 @@ void Create_pipe_control_CFL(void *input, const char *pipe_name, unsigned number
     pipe_pool->current_pipe_index++;
     Pipe_control_CFL_t *pipe_control = (Pipe_control_CFL_t *)pipe_pool->pipes+pipe_id;
     pipe_control->id = pipe_id;
-    initializialize_pipe_stack_CFL(input, number_of_levels, pipe_control->pipe_stack);
+ 
+    pipe_control->pipe_stack = (Pipe_stack_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_stack_CFL_t));
+    pipe_control->pipe_stack->current_level = 0;
+    pipe_control->pipe_stack->max_levels = number_of_levels;
+    pipe_control->pipe_stack->pipe_stack_elements = 
+         (Pipe_stack_element_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_stack_element_CFL_t) * number_of_levels);
     pipe_control->pipe_slots = (Pipe_Slot_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_Slot_CFL_t) * number_of_slots);
     pipe_control->max_number = number_of_slots;
     pipe_control->current_index = 0;
     pipe_control->number_of_columns = pipe_pool->number_of_columns;
-    initialize_pipe_column_index_CFL(input, pipe_control->number_of_columns, pipe_control->column_pipe_index);
+    pipe_control->column_pipe_index = (Column_pipe_index_CFL_t *)
+              Allocate_once_malloc_CFL(input, sizeof(Column_pipe_index_CFL_t)*number_of_columns);
+    for (unsigned short i = 0; i < number_of_columns; i++){
+        pipe_control->column_pipe_index[i].active = false;
+    }
 
     
 }
@@ -215,9 +219,9 @@ typedef struct start_data_pipe
 
 void Asm_start_data_pipe_CFL(void *input, const char *pipe_name)
 {
-    start_data_pipe_t *start_data_pipe = (start_data_pipe_t *)(input, sizeof(start_data_pipe_t));
+    start_data_pipe_t *start_data_pipe = (start_data_pipe_t *)Allocate_once_malloc_CFL(input, sizeof(start_data_pipe_t));
     start_data_pipe->pipe_id = get_pipe_id_CFL(input, pipe_name);
-    Asm_one_shot_CFL(input, "START_DATA_PIPE", pipe_name);
+    Asm_one_shot_CFL(input, "START_DATA_PIPE", start_data_pipe);
 }
 
 /*
@@ -260,38 +264,39 @@ typedef struct walk_data_pipe
 void Asm_walk_data_pipe_CFL(void *input, const char *pipe_name, const char *reduce_function, void *user_data)
 {
     walk_data_pipe_t *parameters = (walk_data_pipe_t *)Allocate_once_malloc_CFL(input, sizeof(walk_data_pipe_t));
-    parameters->pipe_id = (input, pipe_name);
+    parameters->pipe_id = 0;
     parameters->walk_function = Get_bool_function_CFL(input, reduce_function);
     parameters->user_data = user_data;
     parameters->pipe_slot = NULL;
-    Asm_store_column_element_CFL(input, "WALK_DATA_PIPE", (void *)fn, (void *)parameters);
+    Asm_store_column_element_CFL(input, "WALK_DATA_PIPE", parameters->walk_function, (void *)parameters);
 }
 
 /*
    One shot implementation for "WALK_DATA_PIPE"
 */
-static int walk_data_pipe(void *input, const void *aux_fn, void *params, Event_data_CFL_t *event_data)
+static int walk_data_pipe(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
     if (event_data->event_index != EVENT_INIT_CFL)
     {
 
         Handle_CFL_t *handle = (Handle_CFL_t *)input;
         walk_data_pipe_t *parameters = (walk_data_pipe_t *)params;
-        unsigned short pipe_id = parameters->pipe_id;
+        unsigned short pipe_id = get_column_pipe_index(input);
+        Bool_function_CFL_t walk_function = (Bool_function_CFL_t )aux_fn;
         Pipe_pool_CFL_t *pipe_pool_control = (Pipe_pool_CFL_t *)handle->pipe_pool_control;
-        Pipe_control_CFL_t *pipe_control = (Pipe_control_CFL_t *)pipe_pool_control->pipes[pipe_id];
+        Pipe_control_CFL_t *pipe_control = (Pipe_control_CFL_t *)pipe_pool_control->pipes+pipe_id;
         for (unsigned short i = 0; i < pipe_control->current_index; i++)
         {
-            Pipe_Slot_CFL_t pipe_slot = pipe_control->pipe_slots[i];
+            Pipe_Slot_CFL_t *pipe_slot = pipe_control->pipe_slots+i;
 
             parameters->pipe_slot = pipe_slot;
-            if (!walk_function(input,parameters,event_data))
+            if (!walk_function(input,parameters,event_data)== false)
             {
                 break;
             }
         }
     }
-    return DISABLE_CFL
+    return DISABLE_CFL;
 }
 
 void Asm_pipe_store_column_data_CFL(void *input, void *data)
@@ -303,7 +308,7 @@ void Asm_pipe_store_column_data_CFL(void *input, void *data)
 
 static void store_column_data(void *input, void *params, Event_data_CFL_t *event_data)
 {
-    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    //Handle_CFL_t *handle = (Handle_CFL_t *)input;
     // get column index
     // find pipe element
     // if pipe set data ptr to the column element
@@ -313,6 +318,14 @@ static void store_column_data(void *input, void *params, Event_data_CFL_t *event
    C runtime functions these commands work in the background when column control functions are called
 
 */
+void Reset_pipe_CFL(void *input, unsigned pipe_id){
+     // walk through pipe slots
+     //    if column element then free data pointer
+     //Reset pipe control
+     //Reset pipe control stack
+}
+
+
 void Create_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
 {
     ;
@@ -350,7 +363,7 @@ void Create_try_end_CFL(void *input, bool success, bool inverse_flag)
 
 void Create_chain_element_CFL(void *input)
 {
-    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    //Handle_CFL_t *handle = (Handle_CFL_t *)input;
     // get column index
     // if pipe is active
     // store pipe element
@@ -364,12 +377,13 @@ void Create_chain_element_CFL(void *input)
 
 static unsigned short get_pipe_id_CFL(void *input, const char *pipe_name)
 {
-
+    return 0;
     ; // TBD
 }
 
 static unsigned short get_column_pipe_index(void *input)
 {
+     return 0;
     //Column_CFL_t *column = (Column_CFL_t *)get_column_index(input);
 
 }
