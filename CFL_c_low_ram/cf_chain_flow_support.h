@@ -91,11 +91,37 @@ typedef struct ROM_COLUMN_CONTROL_T
    RAM_COLUMN_CONTROL_T       *ram_column_control;
 }ROM_COLUMN_CONTROL_T;
 
-Configure_engine_CFL(%s,%s,%s);\n\n",config_handle,once_size,private_size) 
-function Start_function(name)
 
-void *Start_engine_CFL(void *input,tick_ms,queue_size,idle_function,calendar_function);
-Destroy_engine_CFL(input);
+typedef long long unsigned (*Elasped_ms_fn)(void);
+
+typedef struct Time_control_CFL_t
+{
+  int tick_ms;
+  Elasped_ms_fn ms_fn;
+  unsigned short current_millis;
+  unsigned short start_millis;
+  unsigned char second;
+  unsigned char minute;
+  unsigned char hour;
+  unsigned char day;
+  unsigned char dow;
+  unsigned char month;
+  unsigned short day_of_year;
+  unsigned short year;
+} Time_control_CFL_t;
+
+typedef void (*Idle_function_CFL_t)(void* handle, Time_control_CFL_t* timer_control, bool init_flag);
+typedef void (*Calendar_function_CFL_t)(void* handle, Time_control_CFL_t* timer_control, bool init_flag);
+
+void *Configure_engine_CFL(const ROM_COLUMN_CONTROL_T *rom_column_control,unsigned allocate_once_size);
+ 
+
+
+void *Start_engine_CFL(void *input,unsigned short tick_ms, unsigned short queue_size,
+                         Idle_function_CFL_t idle_function,Calendar_function_CFL_t calendar_function);
+
+
+
 
 #if 0
 
