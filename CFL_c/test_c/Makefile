@@ -1,10 +1,13 @@
 # Variables
 CXX = g++
-CXXFLAGS = -Wall -std=c++11 -I../
+CXXFLAGS = -Wall -std=c++11 -I../include -I./include
 LIB_DIR = ../lib
 LIBS = -lCFL
-SRC = $(wildcard *.c)
+SRC = $(wildcard *.c) $(wildcard basics/*.c) $(wildcard unit_tests/*.c) \
+               $(wildcard state_machine/*.c) $(wildcard named_and_column_events/*.c) \
+			   $(wildcard data_flow/*.c)
 OBJ_DIR = obj
+OBJ_SUBDIRS = $(sort $(dir $(OBJ)))
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 TARGET = CFL_test
 
@@ -28,4 +31,9 @@ $(OBJ_DIR)/%.o: %.c
 
 # Cleaning up
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET)
+	rm -rf $(OBJ_DIR)/*  $(TARGET)
+
+$(OBJ_SUBDIRS):
+	@mkdir -p $@
+
+$(OBJ): | $(OBJ_SUBDIRS)
