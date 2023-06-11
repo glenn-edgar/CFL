@@ -27,14 +27,14 @@ int main (void )
 
  //test_allocation();
  //test_functions();
- //test_column_return_codes();
+   test_column_return_codes();
  //test_while_verify();
  printf("starting\n");
  //test_watch_dog();
  //test_tod_functions();
  //test_data_flow_functions();
   //test_column_state_machine();
-   test_named_queue_functions();
+   //test_named_queue_functions();
 #if 0
   // test pipes
   // test statemacines
