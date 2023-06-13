@@ -5,7 +5,7 @@
 #include "CFL_functions.h"
 #include "CFL_local_heap_functions.h"
 #include "CFL_data_flow_buffers.h"
-#include "CFL_state_machine_util.h"
+#include "CFL_state_machine.h"
 #include "CFL_user_functions.h"
 #include "CFL_tod_functions.h"
 #include "CFL_s_expr_buffers.h"
@@ -23,6 +23,7 @@ Handle_config_CFL_t* Create_config_handle_CFL(Debug_out_CFL_t debug_out){
   config->debug_out = debug_out;
   return config;
 }
+  
 
 void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_heap_size, unsigned private_heap_size) {
   Handle_CFL_t* handle;

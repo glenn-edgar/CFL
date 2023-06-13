@@ -30,7 +30,7 @@ typedef struct Handle_CFL_t
     void *delay_function;
     void *df_buf_control;
     void *sm_dictionary;
-    void *state_dictionary;
+    
     void *pipe_control;
     void *s_logic_buffer;
     // used for building state machines
