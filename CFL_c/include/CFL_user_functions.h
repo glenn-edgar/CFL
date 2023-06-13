@@ -181,7 +181,6 @@ typedef struct handle_config_CFL_t
   unsigned number_df_buffers;
   unsigned number_of_compiled_s_log_expressions;
   unsigned number_of_state_machines;
-  unsigned number_of_states;
   Debug_out_CFL_t debug_out;
 } Handle_config_CFL_t;
 

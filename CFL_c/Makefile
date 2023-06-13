@@ -12,7 +12,7 @@ INCFLAGS := $(foreach dir,$(INCDIRS),-I$(dir))
 
 # Source file directories
 SRCDIR := .
-SUBDIRS := named_queues engine heap storeage state_machines basic_chain_flow bit_register_operations
+SUBDIRS := named_queues engine heap storeage  basic_chain_flow bit_register_operations
 
 # Source files
 SOURCES := $(wildcard $(SRCDIR)/*.c)
