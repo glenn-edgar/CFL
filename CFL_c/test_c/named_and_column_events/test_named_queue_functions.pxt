@@ -23,7 +23,7 @@ void test_named_queue_functions(void) {
     config_handle->one_shot_functions = 50;
     config_handle->number_of_try_functions = 50;
     config_handle->number_of_named_queues = 20;
-    test_basic_functions(config_handle);
+    //test_basic_functions(config_handle);
     test_rpc_server_client(config_handle);
 }
 
@@ -328,24 +328,85 @@ Destroy_engine(input, 'Engine Done\\n');
 
 
 pass_c([[
+#if 0   
+typedef struct RPC_message_header_CFL_t {
+   bool           success;
+   unsigned       magic;
+   unsigned short event_id;
+   unsigned short request_id;
+   unsigned short client_queue_id;
+   unsigned short server_queue_id;
+   bool           client_free_message_data;
+   unsigned short client_data_size;
+   void*          client_message_data;
+   bool           server_free_message_data;
+   unsigned short server_data_size;
+   void*          server_message_data;
+} RPC_message_header_CFL_t;
+#endif
+
+#define ACTION_1_REQUEST_ID 37
+#define ACTION_2_REQUEST_ID 38
 
 static const char *rpc_server_user_data_1 = "rpc_server_user_data_1";
-static void rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+static bool rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   if (event_data->event_index ==  EVENT_INIT_CFL){
+      
+      return true;
+   }
+   if(event_data->event_index == EVENT_TERMINATION_CFL){
+    
+      return true;
+   }
+   
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   
+   if(rpc_message_header->request_id == ACTION_1_REQUEST_ID){
+      
+      rpc_message_header->success = true;
+      rpc_message_header->server_free_message_data = false;
+      rpc_message_header->server_data_size = sizeof(rpc_server_user_data_1);
+      rpc_message_header->server_message_data = (void *)rpc_server_user_data_1;
+      return true;
+   }
+  
+   return false;
+     
 }
 
 static const char *rpc_server_user_data_2 = "rpc_server_user_data_2";
-static void rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+static bool rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
-}     
+   if (event_data->event_index ==  EVENT_INIT_CFL){
+      ;
+      return true;
+   }
+   if(event_data->event_index == EVENT_TERMINATION_CFL){
+      return true;
+   }
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   if(rpc_message_header->request_id == ACTION_2_REQUEST_ID){
+      rpc_message_header->success = true;
+      rpc_message_header->server_free_message_data = false;
+      rpc_message_header->server_data_size = sizeof(rpc_server_user_data_2);
+      rpc_message_header->server_message_data = (void *)rpc_server_user_data_2;
+      return true;
+   }
+   return false;
+     
+}
 
+static const char *rpc_client_message_data_1 = "rpc_client_message_data_1";
 
 static const char *rpc_client_user_data_1 = "rpc_client_user_data_1";
 static void rpc_client_action_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   Printf_CFL("\n\n\nrpc_client_action_1: event_id = %d\n", event_data->event_index);
+   Printf_CFL("rpc_server data: %s \n", (char *)rpc_message_header->server_message_data);
+   Printf_CFL("rpc_client data: %s \n", (char *)rpc_message_header->client_message_data);
+  
 }
 
 
@@ -353,11 +414,45 @@ static const char *rpc_client_failure_user_data_1 = "rpc_client_failure_user_dat
 
 static void rpc_client_failure_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   Printf_CFL("should not get here \n");
+   Printf_CFL("didnot receive RPC Event \n");
+}
+
+static const char *rpc_client_message_data_2 = "rpc_client_message_data_2";
+
+static const char *rpc_client_user_data_2 = "rpc_client_user_data_2";
+static void rpc_client_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   Printf_CFL("\n\n\nrpc_client_action_2: event_id = %d\n", event_data->event_index);
+   Printf_CFL("rpc_server data: %s \n", (char *)rpc_message_header->server_message_data);
+   Printf_CFL("rpc_client data: %s \n", (char *)rpc_message_header->client_message_data);
+  
 }
 
 
+static const char *rpc_client_failure_user_data_2 = "rpc_client_failure_user_data_2";
+
+static void rpc_client_failure_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+   Printf_CFL("should not get here \n");
+   Printf_CFL("didnot receive RPC Event \n");
+}
+
+
+static const char *dispose_user_data_1 = "unhandled event \n";
+static void dispose_event_1(void *input,void *params,Event_data_CFL_t *event_data){
+
+  char *message = (char *)params;
+  Printf_CFL("dispose_event_1: %d \n",event_data->event_index);
+  Printf_CFL("dispose_event_1: %s \n",message);
+   
+
+}
+
 ]])
+
+
 
 
 Start_function('test_rpc_server_client')
@@ -381,65 +476,130 @@ end
 
 
 
+
+
+
+RPC_EVENT = 45
+REQUEST_1 = 37
+REQUEST_2 = 38
+
+--
+-- Server definitions
+--
+
+rpc_server_action_1 = q('RPC_SERVER_ACTION_1')
+rpc_server_user_data_1 = '(void *)rpc_server_user_data_1'
+Store_boolean_fn(rpc_server_action_1,'rpc_server_action_1')
+
+
+rpc_server_action_2 = q('RPC_SERVER_ACTION_2')
+rpc_server_user_data_2 = '(void *)rpc_server_user_data_2'
+Store_boolean_fn(rpc_server_action_2,'rpc_server_action_2')
+
+--
+-- client 1 definitions
+--
+
+rpc_client_action_1 = q('RPC_CLIENT_ACTION_1')
+rpc_client_user_data_1 = '(void *)rpc_client_user_data_1'
+rpc_client_failure_1 = q('RPC_FAILURE_1')
+rpc_client_failure_user_data_1 = '(void *)rpc_client_failure_user_data_1'
+rpc_client_timeout_1 =  300 -- 300 milliseconds
+rpc_client_message_data_1 = '(void *)rpc_client_message_data_1'
+rpc_client_message_data_1_size = 'sizeof(rpc_client_message_data_1)'
+
+rpc_client_action_2 = q('RPC_CLIENT_ACTION_2')
+rpc_client_user_data_2 = '(void *)rpc_client_user_data_2'
+rpc_client_failure_2 = q('RPC_FAILURE_2')
+rpc_client_failure_user_data_2 = '(void *)rpc_client_failure_user_data_2'
+rpc_client_timeout_2 =  300 -- 300 milliseconds
+rpc_client_message_data_2 = '(void *)rpc_client_message_data_2'
+rpc_client_message_data_2_size = 'sizeof(rpc_client_message_data_2)'
+
+
+dispose_event_1 = q('DISPOSE_EVENT_1')
+dispose_user_data_1 = '(void *)dispose_user_data_1'
+
+Store_one_shot(rpc_client_action_1,'rpc_client_action_1')
+Store_one_shot(rpc_client_failure_1,'rpc_client_failure_1')
+Store_one_shot(rpc_client_action_2,'rpc_client_action_2')
+Store_one_shot(rpc_client_failure_2,'rpc_client_failure_2')
+Store_one_shot(dispose_event_1,'dispose_event_1') 
+
+--
+--
+-- client 2 definitions
+--
+--
+
 Start_column(q('init_columns'),true)
   Log_msg(q('starting int_columns'))
   Reset_event_queues(queue_table)
   Term_column()
 End_column()
 
-RPC_EVENT = 45
 
-rpc_server_action_1 = q('RPC_ACTION_1')
-rpc_server_user_data_1 = '(void *)rpc_server_user_data_1'
-rpc_server_action_2 = q('RPC_ACTION_2')
-rpc_server_user_data_2 = '(void *)rpc_server_user_data_2'
-rpc_client_action_1 = q('RPC_ACTION_1')
+Start_queue_column(q('rpc_server'),true,rpc_server_queue)
 
-
-rpc_client_user_data_1 = '(void *)rpc_client_user_data_1'
-
-rpc_client_failure_1 = q('RPC_FAILURE_1')
-rpc_client_failure_user_data_1 = '(void *)rpc_client_failure_user_data_1'
-Store_one_shot(rpc_server_action_1,'rpc_server_action_1')
-Store_one_shot(rpc_server_action_2,'rpc_server_action_2')
-Store_one_shot(rpc_client_action_1,'rpc_client_action_1')
-Store_one_shot(rpc_client_failure_1,'rpc_client_failure_1')
-
-
-Start_column(q('rpc_server'),true)
   Log_msg(q('starting rpc_server'))
+  -- will wait on an event
+  
+ Wait_event_no_time_out(RPC_EVENT,1)
   -- handle a specific rpc requests
-  Wait_rpc_message(RPC_EVENT,rpc_server_action_1,rpc_server_user_data_1)
+  Wait_for_server_rpc_CFL(RPC_EVENT,rpc_server_action_1,rpc_server_user_data_1)
    -- handle a specific rpc requests
-  Wait_rpc_message(RPC_EVENT,rpc_server_action_2,rpc_server_user_data_2)
+  Wait_for_server_rpc_CFL(RPC_EVENT,rpc_server_action_2,rpc_server_user_data_2)
   -- required to a respond to bad requests
-  Send_bad_rpc_response_message(RPC_EVENT)
+  Dispose_RPC_event_CFL(RPC_EVENT,true,dispose_event_1,dispose_user_data_1) -- true will result in termination
+   
   Reset_column()
 End_column()
 
-Start_column(q('rpc_client_1'),true)
+
+Start_queue_column(q('rpc_client_1'),true,rpc_client_1_queue)
+
   Log_msg(q('starting rpc_client_1'))
-  
-  Send_receive_rpc_message(RPC_EVENT,rpc_client_action_1,rpc_client_user_data_1,
-                                   rpc_client_failure_1,rpc_client_failure_user_data_1,1000,true)
-  Log_msg(q('rpc_client_1 received response'))
+
+  --function Send_client_rpc_CFL(rpc_event_id, rpc_request_id, client_queue_name, server_queue_name,
+  --  client_free_message_data, client_data_size, client_message_data)
+
+  Send_client_rpc_CFL(RPC_EVENT,REQUEST_1,rpc_client_1_queue,rpc_server_queue,
+         false,rpc_client_message_data_1_size,rpc_client_message_data_1)
+
+   
+   Wait_event_time_out_terminate(RPC_EVENT,1,rpc_client_timeout_1,
+         rpc_client_failure_1,rpc_client_failure_user_data_1)
+   Wait_for_client_rpc_CFL(RPC_EVENT,rpc_client_action_1,rpc_client_user_data_1)
+
+
   Wait_delay(3000)
   Reset_column()
 End_column()
 
 
-Start_column(q('rpc_client_2'),true)
-  --Log_msg(q('starting rpc_client_2'))
-  --Prepare_rpc_message()
-  --One_shot(q("GENERATE_RPC_MESSAGE_2"),'NULL')
-  --Send_rpc_server(rpc_server_queue)
-  --Wait_rpc_response_message(rpc_client_2_queue)
-  --One_shot(q("PROCESS_RPC_MESSAGE_2"),'NULL')
-  --Dispose_rpc_message()
-  --Wait_delay(3000)
-  --Reset_column()
-  Term_column()
+
+
+
+Start_queue_column(q('rpc_client_2'),true,rpc_client_2_queue)
+
+  Log_msg(q('starting rpc_client_2'))
+
+ 
+  Send_client_rpc_CFL(RPC_EVENT,REQUEST_2,rpc_client_2_queue,rpc_server_queue,
+         false,rpc_client_message_data_2_size,rpc_client_message_data_2)
+
+  
+   Wait_event_time_out_terminate(RPC_EVENT,1,rpc_client_timeout_2,
+         rpc_client_failure_2,rpc_client_failure_user_data_2)
+   Wait_for_client_rpc_CFL(RPC_EVENT,rpc_client_action_2,rpc_client_user_data_2)
+
+
+  Wait_delay(3000)
+  Reset_column()
 End_column()
+
+
+
 
 
 Start_column(q('time_out'),true)

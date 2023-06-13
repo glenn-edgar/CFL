@@ -101,6 +101,8 @@ static void test_working_heap(Handle_config_CFL_t* config_handle) {
   for (int i = 0; i < 10; i++) {
     Printf_CFL("malloc size %d \n",size[i]);
     test_array[i] = Private_heap_malloc_CFL(input, size[i]);
+    memset(test_array[i],0xff, size[i]);
+     Printf_CFL("largest private heap size %d \n",Private_heap_largest_free_block_CFL(input));
   }
   // making sure heap allocates and reclaimes blocks
   Private_heap_free_CFL(input, test_array[9]);

@@ -10,6 +10,8 @@
 #ifndef _CS_PRIVATE_HEAP_H_
 #define _CS_PRIVATE_HEAP_H_
 
+//#define CS_MEM_PROTECTION
+//#define CS_MEM_PROTECTION
 typedef enum
 {
   CS_OK = 0,
@@ -32,8 +34,11 @@ typedef void *CS_HEAP_TYPE;
 
 typedef struct CS_MEM_BLOCK
 {
+  #ifdef CS_MEM_PROTECTION
+  unsigned validTag:32;
+  #endif
   struct CS_MEM_BLOCK *next;
-  unsigned units;
+  unsigned units:32;
 } CS_MEM_BLOCK;
 
 // control structure for Memory Handle
