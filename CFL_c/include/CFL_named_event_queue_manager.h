@@ -25,7 +25,7 @@ void Define_named_event_queue_CFL(void *input, const char *name, unsigned size )
 #define RPC_HEADER_MAGIC 0xDEADBEEF
 typedef struct RPC_message_header_CFL_t {
    bool           success;
-    unsigned       magic;
+   unsigned       magic;
    unsigned short event_id;
    unsigned short request_id;
    unsigned short client_queue_id;
@@ -51,7 +51,7 @@ void Asm_wait_for_client_rpc_CFL(void *input, unsigned short rpc_event,
 void Asm_wait_for_server_rpc_CFL(void *input,unsigned short rpc_event,
                             const char *bool_function, void *user_data);
 
-void Asm_dispose_rpc_event_CFL(void *input, unsigned short rpc_event);
+void Asm_dispose_rpc_event_CFL(void *input, unsigned short rpc_event,bool flag,const char *message_handler, void *user_data);
 
 void Asm_send_rpc_CFL(void *input, unsigned short rpc_event_id, unsigned short rpc_request_id,
                       const char *client_queue_name, const char *server_queue_name,

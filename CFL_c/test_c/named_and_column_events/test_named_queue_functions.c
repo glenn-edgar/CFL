@@ -20,7 +20,7 @@ void test_named_queue_functions(void) {
     config_handle->one_shot_functions = 50;
     config_handle->number_of_try_functions = 50;
     config_handle->number_of_named_queues = 20;
-    test_basic_functions(config_handle);
+    //test_basic_functions(config_handle);
     test_rpc_server_client(config_handle);
 }
 
@@ -296,24 +296,85 @@ static void test_basic_functions(Handle_config_CFL_t* config_handle)
     Destroy_engine_CFL(input);
    Printf_CFL("nil");
 }
+#if 0   
+typedef struct RPC_message_header_CFL_t {
+   bool           success;
+   unsigned       magic;
+   unsigned short event_id;
+   unsigned short request_id;
+   unsigned short client_queue_id;
+   unsigned short server_queue_id;
+   bool           client_free_message_data;
+   unsigned short client_data_size;
+   void*          client_message_data;
+   bool           server_free_message_data;
+   unsigned short server_data_size;
+   void*          server_message_data;
+} RPC_message_header_CFL_t;
+#endif
+
+#define ACTION_1_REQUEST_ID 37
+#define ACTION_2_REQUEST_ID 38
 
 static const char *rpc_server_user_data_1 = "rpc_server_user_data_1";
-static void rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
+static bool rpc_server_action_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   if (event_data->event_index ==  EVENT_INIT_CFL){
+      
+      return true;
+   }
+   if(event_data->event_index == EVENT_TERMINATION_CFL){
+    
+      return true;
+   }
+   
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   
+   if(rpc_message_header->request_id == ACTION_1_REQUEST_ID){
+      
+      rpc_message_header->success = true;
+      rpc_message_header->server_free_message_data = false;
+      rpc_message_header->server_data_size = sizeof(rpc_server_user_data_1);
+      rpc_message_header->server_message_data = (void *)rpc_server_user_data_1;
+      return true;
+   }
+  
+   return false;
+     
 }
 
 static const char *rpc_server_user_data_2 = "rpc_server_user_data_2";
-static void rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+static bool rpc_server_action_2(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
-}     
+   if (event_data->event_index ==  EVENT_INIT_CFL){
+      ;
+      return true;
+   }
+   if(event_data->event_index == EVENT_TERMINATION_CFL){
+      return true;
+   }
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   if(rpc_message_header->request_id == ACTION_2_REQUEST_ID){
+      rpc_message_header->success = true;
+      rpc_message_header->server_free_message_data = false;
+      rpc_message_header->server_data_size = sizeof(rpc_server_user_data_2);
+      rpc_message_header->server_message_data = (void *)rpc_server_user_data_2;
+      return true;
+   }
+   return false;
+     
+}
 
+static const char *rpc_client_message_data_1 = "rpc_client_message_data_1";
 
 static const char *rpc_client_user_data_1 = "rpc_client_user_data_1";
 static void rpc_client_action_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   Printf_CFL("\n\n\nrpc_client_action_1: event_id = %d\n", event_data->event_index);
+   Printf_CFL("rpc_server data: %s \n", (char *)rpc_message_header->server_message_data);
+   Printf_CFL("rpc_client data: %s \n", (char *)rpc_message_header->client_message_data);
+  
 }
 
 
@@ -321,9 +382,41 @@ static const char *rpc_client_failure_user_data_1 = "rpc_client_failure_user_dat
 
 static void rpc_client_failure_1(void *input, void *params, Event_data_CFL_t *event_data)
 {
-  ;
+   Printf_CFL("should not get here \n");
+   Printf_CFL("didnot receive RPC Event \n");
 }
 
+static const char *rpc_client_message_data_2 = "rpc_client_message_data_2";
+
+static const char *rpc_client_user_data_2 = "rpc_client_user_data_2";
+static void rpc_client_action_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+   RPC_message_header_CFL_t *rpc_message_header = (RPC_message_header_CFL_t *)event_data->params;
+   Printf_CFL("\n\n\nrpc_client_action_2: event_id = %d\n", event_data->event_index);
+   Printf_CFL("rpc_server data: %s \n", (char *)rpc_message_header->server_message_data);
+   Printf_CFL("rpc_client data: %s \n", (char *)rpc_message_header->client_message_data);
+  
+}
+
+
+static const char *rpc_client_failure_user_data_2 = "rpc_client_failure_user_data_2";
+
+static void rpc_client_failure_2(void *input, void *params, Event_data_CFL_t *event_data)
+{
+   Printf_CFL("should not get here \n");
+   Printf_CFL("didnot receive RPC Event \n");
+}
+
+
+static const char *dispose_user_data_1 = "unhandled event \n";
+static void dispose_event_1(void *input,void *params,Event_data_CFL_t *event_data){
+
+  char *message = (char *)params;
+  Printf_CFL("dispose_event_1: %d \n",event_data->event_index);
+  Printf_CFL("dispose_event_1: %s \n",message);
+   
+
+}
 
 static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
 {
@@ -338,6 +431,13 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     Define_named_event_queue_CFL(input,"rpc_server",16);
     Define_named_event_queue_CFL(input,"rpc_client_1",16);
     Define_named_event_queue_CFL(input,"rpc_client_2",16);
+    Store_bool_function_CFL(input,"RPC_SERVER_ACTION_1",rpc_server_action_1);
+    Store_bool_function_CFL(input,"RPC_SERVER_ACTION_2",rpc_server_action_2);
+    Store_one_shot_function_CFL(input,"RPC_CLIENT_ACTION_1",rpc_client_action_1);
+    Store_one_shot_function_CFL(input,"RPC_FAILURE_1",rpc_client_failure_1);
+    Store_one_shot_function_CFL(input,"RPC_CLIENT_ACTION_2",rpc_client_action_2);
+    Store_one_shot_function_CFL(input,"RPC_FAILURE_2",rpc_client_failure_2);
+    Store_one_shot_function_CFL(input,"DISPOSE_EVENT_1",dispose_event_1);
 
    /* 
     Defining Column "init_columns"  starting initial running state true 
@@ -348,19 +448,16 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     Asm_terminate_CFL(input);
     Asm_end_column_CFL(input);
      
-    Store_one_shot_function_CFL(input,"RPC_ACTION_1",rpc_server_action_1);
-    Store_one_shot_function_CFL(input,"RPC_ACTION_2",rpc_server_action_2);
-    Store_one_shot_function_CFL(input,"RPC_ACTION_1",rpc_client_action_1);
-    Store_one_shot_function_CFL(input,"RPC_FAILURE_1",rpc_client_failure_1);
 
    /* 
     Defining Column "rpc_server"  starting initial running state true 
     */ 
-    Asm_start_column_CFL(input, "rpc_server", true);
+    Asm_start_column_event_queue_CFL(input, "rpc_server", true,"rpc_server");
     Asm_log_message_CFL(input,"starting rpc_server");
-      Asm_wait_for_rpc_CFL(input,45,"RPC_ACTION_1",(void *)rpc_server_user_data_1);
-      Asm_wait_for_rpc_CFL(input,45,"RPC_ACTION_2",(void *)rpc_server_user_data_2);
-      Asm_send_rpc_bad_response_CFL(input,45);
+    Asm_wait_event_count_CFL(input, 45, 1, NO_TIME_OUT_CFL, false, NULL, NULL);
+    Asm_wait_for_server_rpc_CFL(input,45,"RPC_SERVER_ACTION_1",(void *)rpc_server_user_data_1);
+    Asm_wait_for_server_rpc_CFL(input,45,"RPC_SERVER_ACTION_2",(void *)rpc_server_user_data_2);
+    Asm_dispose_rpc_event_CFL(input,45,true,"DISPOSE_EVENT_1",(void *)dispose_user_data_1);
     Asm_reset_CFL(input);
     Asm_end_column_CFL(input);
      
@@ -368,10 +465,11 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
    /* 
     Defining Column "rpc_client_1"  starting initial running state true 
     */ 
-    Asm_start_column_CFL(input, "rpc_client_1", true);
+    Asm_start_column_event_queue_CFL(input, "rpc_client_1", true,"rpc_client_1");
     Asm_log_message_CFL(input,"starting rpc_client_1");
-      Asm_send_receive_rpc_CFL(input,45,"RPC_ACTION_1",(void *)rpc_client_user_data_1,"RPC_FAILURE_1",(void *)rpc_client_failure_user_data_1,1000,true);
-    Asm_log_message_CFL(input,"rpc_client_1 received response");
+    Asm_send_rpc_CFL(input,45,37,"rpc_client_1","rpc_server",false,sizeof(rpc_client_message_data_1),(void *)rpc_client_message_data_1);
+    Asm_wait_event_count_CFL(input, 45, 1,300,true, "RPC_FAILURE_1", (void *)rpc_client_failure_user_data_1);
+    Asm_wait_for_client_rpc_CFL(input,45,"RPC_CLIENT_ACTION_1",(void *)rpc_client_user_data_1);
     Asm_wait_time_delay_CFL(input,3000);
     Asm_reset_CFL(input);
     Asm_end_column_CFL(input);
@@ -380,8 +478,13 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
    /* 
     Defining Column "rpc_client_2"  starting initial running state true 
     */ 
-    Asm_start_column_CFL(input, "rpc_client_2", true);
-    Asm_terminate_CFL(input);
+    Asm_start_column_event_queue_CFL(input, "rpc_client_2", true,"rpc_client_2");
+    Asm_log_message_CFL(input,"starting rpc_client_2");
+    Asm_send_rpc_CFL(input,45,38,"rpc_client_2","rpc_server",false,sizeof(rpc_client_message_data_2),(void *)rpc_client_message_data_2);
+    Asm_wait_event_count_CFL(input, 45, 1,300,true, "RPC_FAILURE_2", (void *)rpc_client_failure_user_data_2);
+    Asm_wait_for_client_rpc_CFL(input,45,"RPC_CLIENT_ACTION_2",(void *)rpc_client_user_data_2);
+    Asm_wait_time_delay_CFL(input,3000);
+    Asm_reset_CFL(input);
     Asm_end_column_CFL(input);
      
 

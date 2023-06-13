@@ -202,8 +202,9 @@ static int wait_for_client_rpc(void *input, void *fn_aux, void *params, Event_da
   Wait_for_rpc_data_t *wait_for_rpc_data = (Wait_for_rpc_data_t *)params;
   if (event_data->event_index == wait_for_rpc_data->rpc_event)
   {
+   
     fn(input, wait_for_rpc_data->user_data, event_data);
-    free_rpc_msg(input, event_data->params);
+    free_rpc_msg(input, event_data);
     return DISABLE_CFL;
   }
   return HALT_CFL;
@@ -245,42 +246,62 @@ static int wait_for_server_rpc(void *input, void *fn_aux, void *param, Event_dat
     validate_rpc_message_header(rpc_message_header);
     if (fn(input, wait_for_rpc_data->user_data, event_data) == false)
     {
+     
       return CONTINUE_CFL;
     }
-
+ 
     rpc_message_header->success = true;
+    
     Send_named_event_CFL(input, rpc_message_header->client_queue_id, event_data);
+    
     return HALT_CFL;
   }
+  // for other events like timer events
   return CONTINUE_CFL;
 }
 
 typedef struct RPC_dispose_data_t
 {
   unsigned short rpc_event;
+  bool                    flag;
+  One_shot_function_CFL_t fn;
+  void                    *user_data;
 } RPC_dispose_data_t;
 
-void Asm_dispose_rpc_event_CFL(void *input, unsigned short rpc_event)
+void Asm_dispose_rpc_event_CFL(void *input, unsigned short rpc_event,bool flag, const char *message_handler, void *user_data)
 {
   RPC_dispose_data_t *dispose_data = (RPC_dispose_data_t *)Allocate_once_malloc_CFL(input, sizeof(RPC_dispose_data_t));
   dispose_data->rpc_event = rpc_event;
-  Asm_store_column_element_CFL(input,NULL,"DISPOSE_RPC_EVENT", dispose_data);
+  dispose_data->flag = flag;
+  dispose_data->fn = Get_one_shot_function_CFL(input, message_handler);
+  dispose_data->user_data = user_data;
+  Asm_store_column_element_CFL(input,"DISPOSE_RPC_EVENT",NULL, dispose_data);
 }
 
 static int dispose_rpc_event(void *input, void *fn_aux, void *params, Event_data_CFL_t *event_data)
 {
   (void)fn_aux; // unused parameter no aux function attached to this operation
   RPC_dispose_data_t *dispose_data = (RPC_dispose_data_t *)params;
+
   if (event_data->event_index == dispose_data->rpc_event)
   {
+    if(dispose_data->fn != NULL){
+      dispose_data->fn(input, dispose_data->user_data, event_data);
+    }
+  
+    if(dispose_data->flag == false){
+      free_rpc_msg(input, event_data);
+      return HALT_CFL;
+    }
+    // flag is true
     RPC_message_header_CFL_t *header = (RPC_message_header_CFL_t *)event_data->params;
-
-    Printf_CFL(input, "RPC event %d was not handled\n", dispose_data->rpc_event);
+    
+    Printf_CFL("RPC event %d was not handled\n", dispose_data->rpc_event);
     validate_rpc_message_header(header);
-
-    Printf_CFL(input, "RPC request id %d was not handled\n", header->request_id);
-    Printf_CFL(input, "RPC client queue id %d was not handled\n", header->client_queue_id);
-    Printf_CFL(input, "RPC server queue id %d was not handled\n", header->server_queue_id);
+    
+    Printf_CFL("RPC request id %d was not handled\n", header->request_id);
+    Printf_CFL("RPC client queue id %d was not handled\n", header->client_queue_id);
+    Printf_CFL("RPC server queue id %d was not handled\n\n", header->server_queue_id);
 
     ASSERT_PRINT("RPC event was not handled\n", "");
   }

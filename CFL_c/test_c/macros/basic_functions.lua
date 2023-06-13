@@ -31,14 +31,15 @@ function Wait_event_time_out_reset(event_name, event_count,time_out_ms,one_short
 end
 
 function Wait_event_time_out_terminate(event_name, event_count,time_out_ms,one_shot_fail_fn,fn_parameter)
-
+   --print("event_name",event_name,tostring(event_name ))
    local message = string.format("    Asm_wait_event_count_CFL(input, %s, %s,%s,true, %s, %s);\n",
-   -                                 tostring(event_name),tostring(event_count),tostring(time_out_ms),tostring(one_shot_fail_fn),tostring(fn_parameter) )
+                                    tostring(event_name),tostring(event_count),tostring(time_out_ms),tostring(one_shot_fail_fn),tostring(fn_parameter) )
     file:write(message)
 end
 
 function Wait_terminate(bool_fn,time_out_ms,one_shot_fail_fn,fn_parameter)
     local message = string.format("    Asm_wait_CFL(input,%s,%s,true,%s,%s);\n",tostring(bool_fn),tostring(time_out_ms),tostring(one_shot_fail_fn),tostring(fn_parameter))
+    
     file:write(message)
 end
 

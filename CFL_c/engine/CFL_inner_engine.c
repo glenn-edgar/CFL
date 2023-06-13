@@ -688,7 +688,8 @@ void Clear_column_watch_dog_CFL(void *input, void *params,
 {
   (void)event_data;
   (void)params;
-  Handle_CFL_t *handle;
+  
+  
   Engine_control_CFL_t *engine_control;
   Handle_CFL_t* handle = (Handle_CFL_t *)input;
 

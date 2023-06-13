@@ -56,36 +56,35 @@ end
 ---
 --- RPC functions
 ---
+function Send_client_rpc_CFL(rpc_event_id, rpc_request_id, client_queue_name, server_queue_name,
+    client_free_message_data, client_data_size, client_message_data)
+local message = string.format("    Asm_send_rpc_CFL(input,%s,%s,%s,%s,%s,%s,%s);\n",
+                  rpc_event_id, rpc_request_id, client_queue_name, server_queue_name,
+                  client_free_message_data, client_data_size, client_message_data)
+file:write(message)
+end
 
-function Wait_rpc_message(rpc_event,rpc_message_handle, -- a boolean function true message handled false message not handled
-                                        rpc_user_data) -- user data to be passed to the function name
-     
-    rpc_event = tostring(rpc_event)
-    rpc_message_handle = tostring(rpc_message_handle) 
-    rpc_user_data = tostring(rpc_user_data)
-    local message = string.format("      Asm_wait_for_rpc_CFL(input,%s,%s,%s);\n",rpc_event,rpc_message_handle,rpc_user_data)                                  
+function Wait_for_client_rpc_CFL(rpc_event,message_handler,user_data)
+    local message = string.format("    Asm_wait_for_client_rpc_CFL(input,%s,%s,%s);\n",
+                                           rpc_event,message_handler,user_data)
     file:write(message)
 end
 
-function Send_bad_rpc_response_message(rpc_event) -- send a bad response message and cleans up the sent rpc message
-     rpc_event = tostring(rpc_event)
-     local message = string.format("      Asm_send_rpc_bad_response_CFL(input,%s);\n",rpc_event)
-     file:write(message)
-end
-
---- a one shot function to handle the reply
--- a one shot function to handle the failure
--- termination flag either reset column or terminate column true is terminate false is reset
--- time out in ms
-                                           
-function Send_receive_rpc_message(rpc_event,message_handler,message_user_data, 
-                                            failure_handler,failure_user_data, 
-                                             time_out,termination_flag) 
-    local message = string.format("      Asm_send_receive_rpc_CFL(input,%s,%s,%s,%s,%s,%s,%s);\n",
-                            rpc_event,message_handler,message_user_data,failure_handler,failure_user_data,time_out,termination_flag)
+function Wait_for_server_rpc_CFL(rpc_event,bool_function,user_data)
+    local message = string.format("    Asm_wait_for_server_rpc_CFL(input,%s,%s,%s);\n",
+                                           rpc_event,bool_function,user_data)
     file:write(message)
-
 end
+
+function Dispose_RPC_event_CFL(rpc_event,flag,message_handler,user_data)
+    local message = string.format("    Asm_dispose_rpc_event_CFL(input,%s,%s,%s,%s);\n",rpc_event,flag,
+                                             message_handler,user_data)
+ 
+    file:write(message)
+end
+
+
+
 
 
 ---
