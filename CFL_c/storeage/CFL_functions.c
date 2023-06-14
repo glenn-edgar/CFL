@@ -9,6 +9,7 @@
 #include "Cfl_local_heap_functions.h"
 #include "CFL_column_state_machine.h"
 #include "CFL_named_event_queue_manager.h"
+#include "CFL_state_machine.h"
 #include "Cfl_user_functions.h"
 
 typedef struct Column_Function_t {
@@ -106,6 +107,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   number_one_shot_functions += reserve_df_one_shot_function_space_CFL();
   number_one_shot_functions += reserve_column_sm_one_shot_function_space_CFL();
   number_one_shot_functions += named_event_reserve_one_shot_functions_CFL();
+  number_one_shot_functions += sm_reserve_one_shot_functions_CFL();
   allocate_one_shot_functions(handle, control, number_one_shot_functions);
 
   
@@ -117,11 +119,12 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   load_column_functions_CFL(handle);
   load_df_column_functions_CFL(handle);
   load_name_event_column_functions_CFL(handle);
-
+   
   load_one_shot_function_state_CFL(handle);
   load_df_one_shot_function_state_CFL(input);
   named_events_load_one_shot_functions_CFL(handle);
- 
+  sm_register_one_shot_functions_CFL(handle);
+
   load_bool_functions_CFL(input);
   load_df_bool_functions_CFL(input);
   
