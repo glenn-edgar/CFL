@@ -29,6 +29,8 @@ void test_column_return_codes(void) {
   //test_second_minute_hour_day_event(config_handle);
 }
 ]])
+
+
 pass_c([[
 static void one_shot_test(void* input, void* params,
   Event_data_CFL_t* event_data) {

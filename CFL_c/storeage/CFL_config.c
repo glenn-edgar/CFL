@@ -45,7 +45,7 @@ void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_h
     handle, config->number_column_functions, config->number_bool_functions,
     config->number_if_functions, config->one_shot_functions,
     config->number_of_try_functions);
-allocate_columns_CFL(handle, config->number_of_columns);
+     allocate_columns_CFL(handle, config->number_of_columns);
 
 
   allocate_named_event_queue_space_CFL(handle,
