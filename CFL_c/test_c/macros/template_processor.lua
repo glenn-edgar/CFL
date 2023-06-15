@@ -1,127 +1,218 @@
 
+function_table = {}
+variable_table = {}
+print("loading template_processor.lua")
 
 
-function parseInputString(input)
-    local output = input -- Output string initialized with the input string
+
+
+function reset_template_tables()
+ 
+  function_table = {}
+  variable_table = {}
+  function_table['p_l'] = output
+  function_table['p'] = dump
   
-    -- Pattern to match <<enclosed_string>> markers
-    local pattern = "<<(.-)>>"
-  
-    -- Iterate over each match and replace the enclosed string with the output from the designated function
-    for match in input:gmatch(pattern) do
-      local replacement = processEnclosedString(match) -- Call the designated function
-      output = output:gsub("<<.->>", replacement, 1) -- Replace the first occurrence of the enclosed string
-    end
-  
-    return output
+end
+
+function output(...)
+ 
+  return_value = ""
+  local args = {...}
+  for i = 1, #args do
+      if i==1 then
+        token = args[i]
+      elseif i==2 then
+        return_value = return_value..args[i]
+      else
+        return_value = return_value..token..args[i]
+      end
+      
   end
-  
-  -- Example designated function
-  function processEnclosedString(str)
-    -- Process the enclosed string and return the desired output
-    return "Processed: " .. str
+ 
+  return return_value
+end
+
+function dump(x)
+    return x
+end
+
+
+
+
+
+
+
+
+local function generate_tokens(str)
+  local tokens = {}
+
+  for token in string.gmatch(str, "[^,]+") do
+      table.insert(tokens, token)
   end
-  
-  -- Usage example
-  --local input = "This is a <<test>> string with <<multiple>> markers."
-  --local output = parseInputString(input)
-  --print(output)
-  
-  --This is a Processed: test string with Processed: multiple markers.
-  --[[
-function process_s_functiona(list)
-  -- Check if the list is empty
+
+  return tokens
+end
+
+local function extractFunction(list)
   if #list == 0 then
-    return nil
+      return nil, {}
+  else
+      return list[1], {table.unpack(list, 2)}
   end
+end
 
-  -- Check if the first element is a function
-  if type(list[1]) == "function" then
-    local func = table.remove(list, 1) -- Remove and retrieve the first element (function)
+local function lookupParameter(tbl, index)
+  if tbl[index] ~= nil then
+      return tbl[index]
+  else
+      return index
+  end
+end
+
+
+
+local function expand_s_expression(str)
+    
+ 
+    -- results are expanded
+    tokens = generate_tokens(str)
+    
+    -- tokenize string
+    fn, args = extractFunction(tokens)
+    print("function is ",fn)
+    print("args are ",table.concat(args, ","))    
+    
+    if function_table[fn] == nil then
+       print("Error: function not found",fn)
+       print("original string is ",str)
+       print("tokens are ",tokens)
+       os.exit(1)
+        
+    end
+    local process_function = function_table[fn]
+    local parameters = {}
+    for i = 1, #args do
+        local arg = args[i]
+       
+        arg = lookupParameter(variable_table, arg)
+        
+        table.insert(parameters, arg)
+    end
+    
+    str = process_function(table.unpack(parameters))
+    
+    return str
+    
     
   end
-
-  -- Iterate over the list and process table entries recursively
-  for i, entry in ipairs(list) do
-    if type(entry) == "table" then
-      list[i] = executeFunctionWithParameters(entry) -- Replace table entry with the result of the recursive call
-    end
+--[[
+  function processTextWithTokens(text)
+  local generate_text = function(input)
+      -- implement or call your actual text generation function here
+      return "generated text for: " .. input
   end
 
-  return func(unpack(list)) 
-end
+  local function parse(start)
+      local first, last = text:find("<<", start)
+      if not first then return text end  -- no more << found
 
--- Example usage
-local myFunction = function(param1, param2)
-  return "Function called with parameters: " .. param1 .. " " .. param2
-end
-
-local innerFunction = function(param)
-  return "Inner function called with parameter: " .. param
-end
-
-local myList = { myFunction, "Hello", { innerFunction, "World" }, 42 }
-local result = executeFunctionWithParameters(myList)
-print(result[1]) -- Output: "Function called with parameters: Hello Inner function called with parameter: World 42"
-
-function flattenList(nestedList)
-  local flattenedList = {}
-
-  local function flattenHelper(list)
-    for _, item in ipairs(list) do
-      if type(item) == "table" then
-        flattenHelper(item) -- Recursively flatten nested lists
-      else
-        table.insert(flattenedList, item) -- Append non-list items to the flattened list
+      local firstEnd, lastEnd = text:find(">>", last + 1)
+      if not firstEnd then
+          error("Unbalanced << >> tokens")
       end
+
+      -- recursive case: if another << token is found before the >> token
+      local innerFirst, _ = text:find("<<", last + 1)
+      if innerFirst and innerFirst < firstEnd then
+          text = parse(last + 1)
+          return parse(lastEnd + 1)  -- process remaining part of the text
+      end
+
+      local content = text:sub(last + 1, firstEnd - 1)
+      local newText = generate_text(content)
+      text = text:sub(1, first - 1) .. newText .. text:sub(lastEnd + 1)
+      return parse(first - #content + #newText)  -- process remaining part of the text
+  end
+
+  return parse(1)  -- start parsing from the first character
+end
+]]--
+
+
+
+  function Expand_text_stream(text)
+    
+
+    local function parse(start)
+        local first, last = text:find("<<", start)
+        if not first then return text end  -- no more << found
+  
+        local firstEnd, lastEnd = text:find(">>", last + 1)
+        if not firstEnd then
+            error("Unbalanced << >> tokens")
+        end
+  
+        -- recursive case: if another << token is found before the >> token
+        local innerFirst, _ = text:find("<<", last + 1)
+        if innerFirst and innerFirst < firstEnd then
+            text = parse(last + 1)
+            return parse(lastEnd + 1)  -- process remaining part of the text
+        end
+  
+        local content = text:sub(last + 1, firstEnd - 1)
+        local newText = expand_s_expression(content)
+        text = text:sub(1, first - 1) .. newText .. text:sub(lastEnd + 1)
+        return parse(first - #content + #newText)  -- process remaining part of the text
     end
-  end
 
-  flattenHelper(nestedList)
-
-  return flattenedList
+    parse(1)  -- start parsing from the first character
+    return text
 end
+--[[
+  function Expand_text_stream(s)
+    if check_for_braces(s) == 0 then
+        return s
+    end
+    -- This table will store the indices of the start and end of each token
+    local token_indices = {}
+    -- Iterate over the string
+    for i=1,#s do
+        -- Look for the start of a token
+        if s:sub(i,i+1) == "<<" then
+            table.insert(token_indices, {start=i})
+        -- Look for the end of a token
+        elseif s:sub(i,i+1) == ">>" then
+            -- Find the last token that doesn't have an end
+            for j=#token_indices,1,-1 do
+                if not token_indices[j].stop then
+                    token_indices[j].stop = i+1
+                    break
+                end
+            end
+        end
+    end
 
--- Example usage
-local nestedList = {1, {2, {3, 4}, 5}, 6, {7, 8}}
-local flattenedList = flattenList(nestedList)
+    -- Ensure that all tokens are balanced
+    for _,token in pairs(token_indices) do
+        if not token.stop then
+            error("Unbalanced tokens")
+        end
+    end
 
--- Print the flattened list
-for _, item in ipairs(flattenedList) do
-  print(item)
+    -- Replace the tokens with the return value of generate_text
+    for i=#token_indices,1,-1 do
+        local token = token_indices[i]
+        -- Get the inner content of the token
+        local inner = s:sub(token.start+2, token.stop-2)
+        -- Call the generate_text function with the inner content
+        local generated =expand_s_expression(inner)
+        print("generated is ",generated)
+        -- Replace the token with the generated text
+        s = s:sub(1, token.start-1) .. generated .. s:sub(token.stop+1)
+    end
+    
+    -- Return the modified string
+    return s
 end
-
-hello = "return 'Hello World'"
-> load(hello)()
-Hello World
-> print(load(hello))
-function: 0x55e069c53580
-> print(load(hello)())
-Hello World
-
-function chunkify (s)
-  return "return " .. s
-end
-
-> load(chunkify("5+3"))()
-8
-> load(chunkify("'Hello World'"))()
-Hello World
-function compileLuaExpression(expression)
-  local compiledFunction, errorMsg = load("return " .. expression)
-  
-  if errorMsg then
-    print("Error compiling expression: " .. errorMsg)
-    return nil
-  end
-  
-  return compiledFunction()
-end
-
--- Example usage
-local expression = "2 + 3 * 4 - 1"
-local result = compileLuaExpression(expression)
-print("Result:", result)
-
-
-  ]]
+]]--

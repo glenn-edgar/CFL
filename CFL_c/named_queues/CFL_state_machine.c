@@ -17,6 +17,31 @@ static void change_state(void *input, void *params, Event_data_CFL_t *event_data
 "DUMP_STATE_MACHINES" static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data)
 #endif
 
+typedef struct Sm_control_CFL_t
+{   
+    Hash_cell_control_CFL_t *state_names;
+    bool           active;
+    bool           defined;
+    unsigned short sm_id;
+    unsigned short sm_queue_id;
+    unsigned short manager_chain_id;
+    unsigned short current_state;
+    unsigned short initial_state;
+    unsigned short number_of_states;
+    short          *chain_ids;  // each state is a chain
+    void          *user_data;
+} Sm_control_CFL_t;
+
+
+
+typedef struct Sm_dictionary_CFL_t
+{
+    Hash_cell_control_CFL_t *sm_names;
+    unsigned short current_sm_number;
+    unsigned short max_sms_number;
+    Sm_control_CFL_t *sm_control;
+} Sm_dictionary_CFL_t;
+
 static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *event_data);
 static void change_state(void *input, void *params, Event_data_CFL_t *event_data);
 static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data);
@@ -219,7 +244,7 @@ typedef struct sm_event_CFL_t
     Event_data_CFL_t sent_event;
 } sm_event_CFL_t;
 
-void Asm_sms_send_event(void *input, char *sm_name, Event_data_CFL_t *event_data)
+void Asm_sms_send_event_CFL(void *input, char *sm_name, Event_data_CFL_t *event_data)
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     sm_event_CFL_t *sm_event = (sm_event_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(sm_event_CFL_t));

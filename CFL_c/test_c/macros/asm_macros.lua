@@ -1,6 +1,9 @@
 
+
 print("Loading asm_macros.lua")
+
 table_names = {}
+state_machine_names = {}
 
 dofile("utillities.lua")
 dofile("columns.lua")
@@ -9,6 +12,8 @@ dofile("basic_functions.lua")
 dofile("events.lua")
 dofile("column_state_machine.lua")
 dofile("s_logic_functions.lua")
+dofile("state_machine.lua")
+
 
 
 function Start_function(name)
