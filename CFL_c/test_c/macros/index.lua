@@ -1,8 +1,10 @@
 PXT.cwd("macros")
 
 dofile("compile.lua")
+
 print("Compiling macros...")
 dofile("asm_macros.lua")
+
 print("Done compiling macros.")
 PXT.cwd("../")
 compile_directory()
@@ -24,7 +26,8 @@ compile_directory()
 PXT.cwd("../")
 PXT.cwd("unit_tests")
 print("Compiling unit_tests...")
+
 compile_directory()
 PXT.cwd("../")
 
-os.exit()
+os.exit(0)

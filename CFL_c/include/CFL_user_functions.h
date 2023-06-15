@@ -463,6 +463,7 @@ Event_data_CFL_t *Get_named_event_CFL(void *input, unsigned index);
 Event_data_CFL_t *Peak_named_event_CFL(void *input, unsigned index);
 Event_data_CFL_t *Pop_named_event_CFL(void *input, unsigned index);
 #include "CFL_named_event_queue_manager.h"
+#include "CFL_state_machine.h"
 
 #ifdef __cplusplus
 }

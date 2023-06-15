@@ -683,6 +683,8 @@ static int pmain(lua_State *L)
 
   lua_pushcfunction(L, errorHandler);
   int load_result = luaL_dofile(L, "macros/index.lua");
+  printf("load_result: %d\n", load_result);
+  
   if (load_result != LUA_OK)
   {
      lua_pushvalue(L, -1);  // Push the error message to the stack

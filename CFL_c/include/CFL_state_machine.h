@@ -1,32 +1,8 @@
-#ifndef __STATE_MACHINE_H__
-#define __STATE_MACHINE_H__
+#ifndef __STATE_MACHINE_CFL_H__
+#define __STATE_MACHINE_CFL_H__
 #include "CFL_user_functions.h"
-#include "Cfl_element_storeage.h"
-
-typedef struct Sm_control_CFL_t
-{   
-    Hash_cell_control_CFL_t *state_names;
-    bool           active;
-    bool           defined;
-    unsigned short sm_id;
-    unsigned short sm_queue_id;
-    unsigned short manager_chain_id;
-    unsigned short current_state;
-    unsigned short initial_state;
-    unsigned short number_of_states;
-    short          *chain_ids;  // each state is a chain
-    void          *user_data;
-} Sm_control_CFL_t;
 
 
-
-typedef struct Sm_dictionary_CFL_t
-{
-    Hash_cell_control_CFL_t *sm_names;
-    unsigned short current_sm_number;
-    unsigned short max_sms_number;
-    Sm_control_CFL_t *sm_control;
-} Sm_dictionary_CFL_t;
 
 unsigned sm_reserve_one_shot_functions_CFL(void);
 void sm_register_one_shot_functions_CFL(void *input);
