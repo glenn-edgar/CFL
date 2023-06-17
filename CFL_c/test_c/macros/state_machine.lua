@@ -139,6 +139,24 @@ function Send_state_machine_event(sm_name,event_data)
     file:write(message)
 end
 
+function Redirect_event(boolean_fn_name,user_data,queue_name,queue_ids,event_name,event_ids)
+    -- validate queue_name
+    local event_number = #event_ids
+    local message = string.format("    const char* %s[] = { %s };\n",queue_name,table.concat(queue_ids,",\n"))
+    file:write(message)
+    local queue_number = #queue_ids
+    message = string.format("    unsigned short %s[] = { %s };\n",event_name,table.concat(event_ids,",\n"))
+    file:write(message)
+    message = string.format("    Asm_redirect_event_CFL(input,%s,%s,%d,%s,%d,%s);\n",
+                                  boolean_fn_name,
+                                  user_data,
+                                  queue_number,
+                                  queue_name,
+                                  number_of_events,
+                                  event_name)
+    file:write(message)
+end
+
 
 function Change_state(sm_name,new_state_name)
     -- verify valid sm_name

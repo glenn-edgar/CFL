@@ -1,6 +1,8 @@
 PXT.cwd("macros")
 
 dofile("compile.lua")
+dofile("test_preprocessor.lua")
+os.exit(0)
 
 print("Compiling macros...")
 dofile("asm_macros.lua")

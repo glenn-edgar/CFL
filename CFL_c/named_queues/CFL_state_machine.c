@@ -18,21 +18,19 @@ static void change_state(void *input, void *params, Event_data_CFL_t *event_data
 #endif
 
 typedef struct Sm_control_CFL_t
-{   
+{
     Hash_cell_control_CFL_t *state_names;
-    bool           active;
-    bool           defined;
+    bool active;
+    bool defined;
     unsigned short sm_id;
     unsigned short sm_queue_id;
     unsigned short manager_chain_id;
     unsigned short current_state;
     unsigned short initial_state;
     unsigned short number_of_states;
-    short          *chain_ids;  // each state is a chain
-    void          *user_data;
+    short *chain_ids; // each state is a chain
+    void *user_data;
 } Sm_control_CFL_t;
-
-
 
 typedef struct Sm_dictionary_CFL_t
 {
@@ -56,6 +54,20 @@ void sm_register_one_shot_functions_CFL(void *input)
     Store_one_shot_function_CFL(input, "ENABLE_DISABLE_SM", enable_disable_sms_CFL);
     Store_one_shot_function_CFL(input, "CHANGE_STATE", change_state);
     Store_one_shot_function_CFL(input, "DUMP_STATE_MACHINES", dump_sm);
+}
+
+
+static int redirect_event(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+unsigned sm_reserve_column_functions_CFL(void)
+{
+    return 1;
+}
+
+void sms_register_column_functions_CFL(void *input)
+{
+
+    Store_column_function_CFL(input,"REDIRECT_EVENT",redirect_event);
 }
 
 void Constuct_sm_system_CFL(void *input, Handle_config_CFL_t *config)
@@ -305,9 +317,9 @@ void Asm_dump_state_machines_CFL(void *input)
 
     Asm_one_shot_CFL(input, "DUMP_STATE_MACHINES", NULL);
 }
- 
+
 static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data)
-{ 
+{
     (void)params;
     (void)event_data;
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
@@ -325,6 +337,86 @@ static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data)
             Printf_CFL("current state is %d\n", sm_control[i].current_state);
         }
     }
+}
+
+typedef struct redirect_CFL_t
+{
+    void *user_data;
+    unsigned short queue_number;
+    unsigned short *queue_ids;
+    unsigned short event_number;
+    unsigned short *event_ids;
+} redirect_CFL_t;
+
+void Asm_redirect_event_CFL(void *input, char *boolean_fn_name, void *user_data, unsigned short queue_number,
+                           const char **queue_names, unsigned short number_of_events, unsigned short *event_ids)
+{
+    Bool_function_CFL_t boolean_fn = Get_bool_function_CFL(input, boolean_fn_name);
+    redirect_CFL_t *redirect = (redirect_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(redirect_CFL_t));
+    redirect->user_data = user_data;
+    redirect->queue_number = queue_number;
+    redirect->queue_ids = (unsigned short *)Allocate_once_malloc_CFL(input, sizeof(unsigned short) * queue_number);
+    for (unsigned i = 0; i < queue_number; i++)
+    {
+        redirect->queue_ids[i] = Get_named_event_queue_index_CFL(input, queue_names[i]);  
+    } 
+    
+    redirect->event_number = number_of_events;
+    redirect->event_ids = (unsigned short *)Allocate_once_malloc_CFL(input, sizeof(unsigned short) * number_of_events);
+    for (unsigned i = 0; i < number_of_events; i++)
+    {
+        redirect->event_ids[i] = event_ids[i];
+    }
+    Asm_store_column_element_CFL(input,"REDIRECT_EVENT",boolean_fn, redirect);
+}
+
+
+static bool match_event(unsigned short number_of_events, unsigned short *event_ids, unsigned short event_index)
+{
+    for (unsigned i = 0; i < number_of_events; i++)
+    {
+        if (event_ids[i] == event_index)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+static void send_events_to_queue(void *input,unsigned short queue_numbers, 
+     unsigned short *queue_ids, Event_data_CFL_t *event_data)
+{
+    
+    for (unsigned i = 0; i < queue_numbers; i++)
+    {
+        Send_named_event_CFL(input,queue_ids[i], event_data);
+    }
+}
+
+static int redirect_event(void *input, void *fn_aux, void *params, Event_data_CFL_t *event_data)
+{
+    Bool_function_CFL_t boolean_fn = (Bool_function_CFL_t )fn_aux;
+    redirect_CFL_t *redirect = (redirect_CFL_t *)params;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+        boolean_fn(input, redirect->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        boolean_fn(input, redirect->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (match_event(redirect->event_number, redirect->event_ids, event_data->event_index) == true)
+    {
+        if (boolean_fn(input, redirect->user_data, event_data) == true)
+        {
+            send_events_to_queue(input, redirect->queue_number, redirect->queue_ids, event_data);
+        
+            return HALT_CFL;
+        }
+    }
+
+    return CONTINUE_CFL;
 }
 
 /*
