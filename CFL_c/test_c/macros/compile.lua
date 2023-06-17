@@ -1,13 +1,14 @@
 
 -- insure file is global
 file = ""
+file_extension = ".c"
 
 function compile_directory()
     PXT_files = PXT.read("./")
     
     for i, pxt_file in ipairs(PXT_files) do
         base_file = stripFileExtension(pxt_file)
-        base_file = base_file..".c"
+        base_file = base_file..file_extension
        compile_file(pxt_file, base_file)
     end
 end
