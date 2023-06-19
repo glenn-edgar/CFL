@@ -202,23 +202,73 @@ void Verify_all_sm_are_defined(void *input)
 
 typedef struct enable_state_CFL_t
 {
-    short sm_id;
     bool state;
+    unsigned short number_of_sms;
+    unsigned short *sms;
+    
 } enable_state_CFL_t;
 
-void Asm_enable_disable_sms_CFL(void *input, char *sm_name, bool state)
+void Asm_enable_disable_sms_CFL(void *input,unsigned short number, const char **sm_name)
 {
 
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
-    short sm_id = Find_Name_CFL(sm_dict->sm_names, sm_name);
-    if (sm_id < 0)
-    {
-        ASSERT_PRINT_F("sm_name %s not found\n", sm_name);
-    }
     enable_state_CFL_t *enable_state = (enable_state_CFL_t *)Allocate_once_malloc_CFL(handle, sizeof(enable_state_CFL_t));
-    enable_state->sm_id = sm_id;
-    enable_state->state = state;
+    enable_state->number_of_sms = number;
+    enable_state->sms = (unsigned short *)Allocate_once_malloc_CFL(handle, sizeof(unsigned short) * number);
+    enable_state->state = true;
+    for (int i = 0; i < number; i++)
+    {
+        short sm_id = Find_Name_CFL(sm_dict->sm_names,*sm_name++);
+        if (sm_id < 0)
+        {
+          ASSERT_PRINT_F("sm_name %s not found\n", sm_name);
+        }
+        enable_state->sms[i] = sm_id;
+    }
+    Asm_one_shot_terminate_CFL(input, "ENABLE_DISABLE_SM", enable_state);
+}
+
+void Asm_enable_sms_CFL(void *input,unsigned short number, char **sm_names)
+{
+
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    enable_state_CFL_t *enable_state = (enable_state_CFL_t *)Allocate_once_malloc_CFL(handle, sizeof(enable_state_CFL_t));
+    enable_state->number_of_sms = number;
+    enable_state->sms = (unsigned short *)Allocate_once_malloc_CFL(handle, sizeof(unsigned short) * number);
+    enable_state->state = true;
+    for (int i = 0; i < number; i++)
+    {
+        short sm_id = Find_Name_CFL(sm_dict->sm_names,*sm_names);
+        if (sm_id < 0)
+        {
+          ASSERT_PRINT_F("sm_name %s not found\n", *sm_names);
+        }
+        enable_state->sms[i] = sm_id;
+        sm_names++;
+    }
+    Asm_one_shot_CFL(input, "ENABLE_DISABLE_SM", enable_state);
+}
+void Asm_disable_sms_CFL(void *input,unsigned short number, char **sm_names)
+{
+
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    enable_state_CFL_t *enable_state = (enable_state_CFL_t *)Allocate_once_malloc_CFL(handle, sizeof(enable_state_CFL_t));
+    enable_state->number_of_sms = number;
+    enable_state->sms = (unsigned short *)Allocate_once_malloc_CFL(handle, sizeof(unsigned short) * number);
+    enable_state->state = false;
+    for (int i = 0; i < number; i++)
+    {
+        short sm_id = Find_Name_CFL(sm_dict->sm_names,*sm_names);
+        if (sm_id < 0)
+        {
+          ASSERT_PRINT_F("sm_name %s not found\n", *sm_names);
+        }
+        enable_state->sms[i] = sm_id;
+        sm_names++;
+    }
     Asm_one_shot_CFL(input, "ENABLE_DISABLE_SM", enable_state);
 }
 
@@ -229,22 +279,24 @@ static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *
     if ((event_data->event_index != EVENT_INIT_CFL) || (event_data->event_index != EVENT_TERMINATION_CFL))
     {
         Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
-        Sm_control_CFL_t *sm_control = sm_dict->sm_control + enable_state->sm_id;
-        if (enable_state->state == true)
-        {
-
-            sm_control->active = true;
-            Enable_column_CFL(input, sm_control->manager_chain_id);
-            Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
-            sm_control->current_state = sm_control->initial_state;
-        }
-        else
-        {
-            sm_control->active = false;
-            Disable_column_CFL(input, sm_control->manager_chain_id);
-            for (int i = 0; i < sm_control->number_of_states; i++)
+        for(unsigned i = 0; i < enable_state->number_of_sms; i++){
+            Sm_control_CFL_t *sm_control = sm_dict->sm_control + enable_state->sms[i];
+            if (enable_state->state == true)
             {
-                Disable_column_CFL(input, sm_control->chain_ids[i]);
+
+                sm_control->active = true;
+                Enable_column_CFL(input, sm_control->manager_chain_id);
+                Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
+                sm_control->current_state = sm_control->initial_state;
+            }
+            else
+            {
+                sm_control->active = false;
+                Disable_column_CFL(input, sm_control->manager_chain_id);
+                for (int i = 0; i < sm_control->number_of_states; i++)
+                {
+                    Disable_column_CFL(input, sm_control->chain_ids[i]);
+                }
             }
         }
     }

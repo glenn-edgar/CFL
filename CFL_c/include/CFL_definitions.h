@@ -145,7 +145,7 @@ typedef struct Engine_control_CFL_t
     Column_element_CFL_t *current_column_element;
     unsigned current_column_index;
     unsigned current_column_element_index;
-    Event_control_CFL_t local_events;
+    //Event_control_CFL_t local_events;
     Event_data_CFL_t ref_event_data;
 } Engine_control_CFL_t;
 

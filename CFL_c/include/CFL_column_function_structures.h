@@ -28,8 +28,8 @@ typedef struct Verify_control_CFL_t
 typedef struct While_event_control_CFL_t
 {
 
-   unsigned  number_of_events;
-   unsigned     event_index;
+   unsigned short  number_of_events;
+   short     event_index;
    unsigned short current_count;
    int       time_out_ms;
    bool      terminate_flag;

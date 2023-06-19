@@ -286,8 +286,7 @@ void Asm_clear_column_watch_dog_CFL(void* input);
 ** Internal Column Events
 */
 void Asm_store_current_column_event_CFL(void* input, Event_data_CFL_t* event_data);
-void Asm_store_column_event_CFL(void* input, unsigned short index, Event_data_CFL_t* event_data);
-void Asm_store_columns_event_CFL(void* input, unsigned short number, unsigned* column_indexes, Event_data_CFL_t* event_data);
+
 /*
 **  return functions
 */

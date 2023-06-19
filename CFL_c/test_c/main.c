@@ -34,7 +34,8 @@ int main (void )
  //test_tod_functions();
  //test_data_flow_functions();
   //test_column_state_machine();
-   test_named_queue_functions();
+   //test_named_queue_functions();
+   test_column_events();
 #if 0
   // test pipes
   // test statemacines

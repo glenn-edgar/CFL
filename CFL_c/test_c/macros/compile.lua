@@ -14,6 +14,7 @@ function compile_directory()
 end
 
 function pass_c(input)
+    input = Expand_text_stream(input)
     file:write(input)
 end
 
