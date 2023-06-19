@@ -1,7 +1,7 @@
-#ifndef __test_chain_event_H__
-#define __test_chain_event_H__
+#ifndef __test_column_event_H__
+#define __test_column_event_H__
 
-void test_chain_events(void);
+void test_column_events(void);
 
 
 #endif

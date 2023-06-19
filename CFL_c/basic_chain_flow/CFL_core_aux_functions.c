@@ -65,12 +65,11 @@ static void dump_nodes_handler(void *handle, void *params,
                                Event_data_CFL_t *event_data);
 static void verify_nodes_handler(void *handle, void *params,
                                  Event_data_CFL_t *event_data);
-static void set_column_event_handler(void *handle, void *params,
-                                     Event_data_CFL_t *event_data);
+
 static void set_current_column_event_handler(void *handle, void *params,
                                              Event_data_CFL_t *event_data);
 
-
+  
 
 static const one_shot_function_ref one_shot_functions[] = {
     {"NULL", null_function},
@@ -88,7 +87,7 @@ static const one_shot_function_ref one_shot_functions[] = {
 
     
     {"SET_CURRENT_COLUMN_EVENT", set_current_column_event_handler},
-    {"SET_COLUMNS_EVENT", set_column_event_handler},
+    
 
 };
 
@@ -268,15 +267,7 @@ static void set_current_column_event_handler(void *input, void *params,
   Set_local_event_current_column_CFL(input, column_event);
 }
 
-static void set_column_event_handler(void *handle, void *params, Event_data_CFL_t *event_data)
-{
-  (void)event_data;
-  Column_events_CFL_t *column_events = (Column_events_CFL_t *)params;
-  for (int i = 0; i < column_events->number; i++)
-  {
-    Set_local_event_CFL(handle, column_events->column_indexes[i], column_events->event_data);
-  }
-}
+
 
 static void send_event(void *handle, void *params,
                        Event_data_CFL_t *event_data)
@@ -352,10 +343,11 @@ static void verify_nodes_handler(void *input, void *params,
 *************************************
 
 */
-
+ 
 static bool wait_event_handler(void *handle, void *params,
                                Event_data_CFL_t *event_data)
 {
+  (void)handle;
   While_event_control_CFL_t *while_event_control;
 
   while_event_control = (While_event_control_CFL_t *)params;

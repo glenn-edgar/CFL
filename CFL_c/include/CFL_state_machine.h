@@ -30,8 +30,12 @@ void Asm_define_state_CFL(void *input,
 
 void Asm_end_state_machine_CFL(void *input);
 
-void Asm_enable_disable_sms_CFL(void *input, char *sm_name, bool state);
-                         
+void Asm_enable_disable_sms_CFL(void *input,unsigned short number, const char **sm_name);
+
+void Asm_disable_sms_CFL(void *input,unsigned short number, char **sm_names);
+
+void Asm_enable_sms_CFL(void *input,unsigned short number, char **sm_names);
+
 void Asm_sms_send_event_CFL(void *input, char *sm_name, Event_data_CFL_t *event_data);
 
 void Asm_redirect_event_CFL(void *input, char *boolean_fn_name, void *user_data, unsigned short queue_number,

@@ -5,14 +5,17 @@ variable_table['a'] = "1"
 variable_table['b'] = "2"
 
 str = "this is a test"
+print("input is ",str)
 result = Expand_text_stream(str)
 print("result is ",result)
 
 str = 'this is a test <<p_l, - ,a,"b","c" >> <<p,a>> result'
+print("input is ",str)
 result = Expand_text_stream(str)
 print("result is ",result)
 
 str = 'this is a test <<p_l, - a "b" "c" <<p b>> >> <<p,a>> result'
+print("input is ",str)
 result = Expand_text_stream(str)
 print("result is ",result)
 os.exit(0)

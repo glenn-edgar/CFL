@@ -138,3 +138,8 @@ function Verify_tod_gt(doy, month, dow, hour, minute, second, terminate_flag,ter
     file:write(message)
 end
 
+function Store_column_event(column_event_address)
+    local message = string.format("    Asm_store_current_column_event_CFL(input,%s);\n",tostring(column_event_address))
+    file:write(message)
+end
+    

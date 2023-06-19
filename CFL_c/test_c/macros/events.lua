@@ -4,7 +4,7 @@ event_queue_table = {}
 
 
 function Define_event_queue(queue_name,queue_size)
-    even
+    event_queue_table[queue_name] = queue_size
     local message = string.format("    Define_named_event_queue_CFL(input,%s,%s);\n",tostring(queue_name),tostring(queue_size))
     file:write(message)
 end
