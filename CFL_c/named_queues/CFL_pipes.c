@@ -2,6 +2,7 @@
 #include "CFL_definitions.h"
 #include "CFL_element_storeage.h"
 #include "CFL_pipes.h"
+#include "CFL_pipe_support.h"
 
 typedef struct Chain_link_t{
     unsigned short chain_id;
@@ -74,17 +75,11 @@ typedef struct Pipe_Slot_CFL_t
 
 } Pipe_Slot_CFL_t;
 
-typedef struct Column_pipe_index_CFL_t
-{
-    bool active;
-    unsigned short pipe_id;
-
-} Column_pipe_index_CFL_t;
 
 
 typedef struct Pipe_stack_element_CFL_t
 {
-    unsigned short control_index; // type of the control block
+    unsigned short control_index; // index at the start of the
     unsigned short control_type;  // type of the control element
 
 } Pipe_stack_element_CFL_t;
@@ -103,18 +98,15 @@ typedef struct Pipe_control_CFL_t
     unsigned short current_index;
     unsigned short max_number;
     Pipe_Slot_CFL_t *pipe_slots;
-    unsigned short number_of_columns;
-    Column_pipe_index_CFL_t *column_pipe_index;
 } Pipe_control_CFL_t;
 
 typedef struct Pipe_pool_CFL_t
 {
     unsigned short current_pipe_index;
     unsigned short number_of_pipes;
-    unsigned short number_of_columns;
     Pipe_control_CFL_t *pipes;
     Hash_cell_control_CFL_t *names;
-
+    
 } Pipe_pool_CFL_t;
 
 static unsigned short get_pipe_id_CFL(void *input, const char *pipe_name);
@@ -133,7 +125,7 @@ static void reset_data_pipe(void *input, void *params, Event_data_CFL_t *event_d
 
 unsigned reserve_pipe_control_column_functions_CFL()
 {
-    return 0;
+    return 1;
 }
 
 void register_pipe_control_column_functions_CFL(void *input)
@@ -141,9 +133,9 @@ void register_pipe_control_column_functions_CFL(void *input)
     Store_column_function_CFL(input,"WALK_DATA_PIPE", walk_data_pipe);
 }
 
-unsigned reserve_pipe_control_one_shot_functions_CFL(void *input)
+unsigned reserve_pipe_control_one_shot_functions_CFL(void)
 {
-    return 3;
+    return 3;  
 }
 
 void register_pipe_control_one_shot_functions_CFL(void *input)
@@ -158,24 +150,39 @@ unsigned reserve_pipe_control_boolean_functions_CFL(void)
     return 1;
 }
 
-void register_pipe_control_boolean_functions_CFL(void *input)
+void register_pipe_control_boolean_functions_CFL(void *input )
 {
     (void)input; // functions is not done
 
     ;
 }
 
-void intialize_pipe_control_CFL(void *input, unsigned short number_of_pipes, unsigned number_of_columns)
+void intialize_pipe_control_CFL(void *input, unsigned short number_of_pipes)
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Pipe_pool_CFL_t *pipe_pool = (Pipe_pool_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_pool_CFL_t));
+    bool state = true;
+    if(number_of_pipes <= 0)
+    {
+        state = false;
+    }
+    if(number_of_columns <= 0)
+    {
+        state = false;
+    }
+
     pipe_pool->number_of_pipes = number_of_pipes;
     pipe_pool->current_pipe_index = 0;
-
-    pipe_pool->pipes = (Pipe_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_control_CFL_t) * number_of_pipes);
-    pipe_pool->names = (Hash_cell_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Hash_cell_control_CFL_t) * number_of_pipes);
-
-    pipe_pool->number_of_columns = number_of_columns;
+    if(state == true){
+        pipe_pool->pipes = (Pipe_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_control_CFL_t) * number_of_pipes);
+        pipe_pool->names = (Hash_cell_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Hash_cell_control_CFL_t) * number_of_pipes);
+        
+    }else{
+        pipe_pool->pipes = NULL;
+        pipe_pool->names = NULL;
+        
+    }
+    
     handle->pipe_pool_control = pipe_pool;
 }
 
@@ -187,7 +194,7 @@ void Create_pipe_control_CFL(void *input, const char *pipe_name, unsigned number
     {
         ASSERT_PRINT_INT("Pipe Pool exceeded", pipe_pool->current_pipe_index);
     }
-    unsigned short number_of_columns = pipe_pool->number_of_columns;
+    
     unsigned short pipe_id = (unsigned short)Store_Name_CFL(pipe_pool->names, pipe_name);
     if (pipe_id != pipe_pool->current_pipe_index)
     {
@@ -205,15 +212,59 @@ void Create_pipe_control_CFL(void *input, const char *pipe_name, unsigned number
     pipe_control->pipe_slots = (Pipe_Slot_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_Slot_CFL_t) * number_of_slots);
     pipe_control->max_number = number_of_slots;
     pipe_control->current_index = 0;
-    pipe_control->number_of_columns = pipe_pool->number_of_columns;
-    pipe_control->column_pipe_index = (Column_pipe_index_CFL_t *)
-              Allocate_once_malloc_CFL(input, sizeof(Column_pipe_index_CFL_t)*number_of_columns);
-    for (unsigned short i = 0; i < number_of_columns; i++){
-        pipe_control->column_pipe_index[i].active = false;
-    }
-
     
 }
+#if 0
+void Asm_start_pipe_processing_CFL(void *input, const char *pipe_name);
+void Asm_reset_data_pipe_CFL(void *input, const char *pipe_name);
+void Asm_walk_data_pipe_CFL(void *input, const char *pipe_name, const char *reduce_function, void *user_data);
+void Asm_pipe_store_column_data_CFL(void *input, void *data);
+
+void Create_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start);
+void Verify_chain_control_end_CFL(void *input);
+void Create_if_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start);
+void Create_loop_start_CFL(void *input, unsigned short loop_start, unsigned short loop_number);
+void Create_loop_element_CFL(void *input, unsigned short loop_start, unsigned short loop_number);
+void Create_try_start_CFL(void *input, unsigned short try_start, unsigned short try_max_number);
+void Create_try_end_CFL(void *input, bool success, bool inverse_flag);
+void Create_chain_element_CFL(void *input);
+#endif
+/*
+   c runtime functions
+*/
+//void Reset_pipe_CFL(void *input, unsigned pipe_id);
+
+
+#if 0
+// number of columns is the maximun number of column elements in a pipe
+void intialize_pipe_control_CFL(void *input, unsigned short number_of_pipes, unsigned number_of_columns)
+{
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Pipe_pool_CFL_t *pipe_pool = (Pipe_pool_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_pool_CFL_t));
+    bool state = true;
+    if(number_of_pipes <= 0)
+    {
+        state = false;
+    }
+    if(number_of_columns <= 0)
+    {
+        state = false;
+    }
+
+    pipe_pool->number_of_pipes = number_of_pipes;
+    pipe_pool->current_pipe_index = 0;
+    if(state == true){
+        pipe_pool->pipes = (Pipe_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Pipe_control_CFL_t) * number_of_pipes);
+        pipe_pool->names = (Hash_cell_control_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(Hash_cell_control_CFL_t) * number_of_pipes);
+    }else{
+        pipe_pool->pipes = NULL;
+        pipe_pool->names = NULL;
+    }
+    pipe_pool->number_of_columns = number_of_columns;
+    handle->pipe_pool_control = pipe_pool;
+}
+
+
 
 
 
@@ -323,6 +374,8 @@ static void store_column_data(void *input, void *params, Event_data_CFL_t *event
    C runtime functions these commands work in the background when column control functions are called
 
 */
+
+   
 void Reset_pipe_CFL(void *input, unsigned pipe_id){
      // walk through pipe slots
      //    if column element then free data pointer
@@ -380,11 +433,7 @@ void Create_chain_element_CFL(void *input)
 
 */
 
-static unsigned short get_pipe_id_CFL(void *input, const char *pipe_name)
-{
-    return 0;
-    ; // TBD
-}
+
 
 static unsigned short get_column_pipe_index(void *input)
 {
@@ -397,3 +446,4 @@ static void set_column_pipe_index_CFL(void *input, unsigned short column_id, uns
 {
     ; // TBD
 }
+#endif
