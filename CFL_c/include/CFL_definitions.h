@@ -111,6 +111,8 @@ typedef struct Column_CFL_t
     unsigned                       start_state:8;   // whether column is in start state
     unsigned                       end_state:8; // current state of column
     unsigned                       new_state:8; // new state of column
+    unsigned                       pipe_active:1;
+    unsigned                       pipe_index:16;
     Column_element_CFL_t*          starting_column_element;
    
     Event_data_CFL_t*             local_event;

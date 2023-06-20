@@ -170,19 +170,23 @@ typedef int (*Column_function_CFL_t)(void* handle, void *aux_fun, void* params, 
 typedef struct handle_config_CFL_t
 {
 
-  unsigned number_of_columns;
-  unsigned number_of_column_elements;
-  unsigned number_column_functions;
-  unsigned number_bool_functions;
-  unsigned number_if_functions;
-  unsigned one_shot_functions;
-  unsigned number_of_try_functions;
-  unsigned number_of_named_queues;
-  unsigned number_df_buffers;
-  unsigned number_of_compiled_s_log_expressions;
-  unsigned number_of_state_machines;
+  unsigned short number_of_columns;
+  unsigned short number_of_column_elements;
+  unsigned short number_column_functions;
+  unsigned short number_bool_functions;
+  unsigned short number_if_functions;
+  unsigned short one_shot_functions;
+  unsigned short number_of_try_functions;
+  unsigned short number_of_named_queues;
+  unsigned short number_df_buffers;
+  unsigned short number_of_compiled_s_log_expressions;
+  unsigned short number_of_state_machines;
+  unsigned short number_of_pipes;
   Debug_out_CFL_t debug_out;
 } Handle_config_CFL_t;
+
+
+
 
 Handle_config_CFL_t* Create_config_handle_CFL(Debug_out_CFL_t debug_out);
 
@@ -463,6 +467,7 @@ Event_data_CFL_t *Peak_named_event_CFL(void *input, unsigned index);
 Event_data_CFL_t *Pop_named_event_CFL(void *input, unsigned index);
 #include "CFL_named_event_queue_manager.h"
 #include "CFL_state_machine.h"
+#include "CFL_pipes.h"
 
 #ifdef __cplusplus
 }

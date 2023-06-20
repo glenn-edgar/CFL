@@ -89,6 +89,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   number_column_functions += reserve_df_column_function_space_CFL();
   number_column_functions += reserve_column_sm_function_space_CFL();
   number_column_functions += named_event_reserve_column_space_CFL();
+  number_column_functions += reserve_pipe_control_column_functions_CFL();
   Function_Control_t*control = (Function_Control_t *)Allocate_once_malloc_CFL(handle,sizeof(Function_Control_t));
   allocate_column_functions(handle, control, number_column_functions);
 
@@ -96,6 +97,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
  
   number_bool_functions += reserve_bool_function_space_CFL();
   number_bool_functions += reserve_df_bool_function_space_CFL();
+  number_bool_functions += reserve_pipe_control_boolean_functions_CFL();
   allocate_bool_functions(handle, control, number_bool_functions);
   
   
@@ -108,6 +110,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   number_one_shot_functions += reserve_column_sm_one_shot_function_space_CFL();
   number_one_shot_functions += named_event_reserve_one_shot_functions_CFL();
   number_one_shot_functions += sm_reserve_one_shot_functions_CFL();
+  number_one_shot_functions += reserve_pipe_control_one_shot_functions_CFL();
   allocate_one_shot_functions(handle, control, number_one_shot_functions);
 
   
@@ -119,16 +122,18 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   load_column_functions_CFL(handle);
   load_df_column_functions_CFL(handle);
   load_name_event_column_functions_CFL(handle);
+  register_pipe_control_column_functions_CFL(handle);
    
   load_one_shot_function_state_CFL(handle);
-  load_df_one_shot_function_state_CFL(input);
+  load_df_one_shot_function_state_CFL(handle);
   named_events_load_one_shot_functions_CFL(handle);
   sm_register_one_shot_functions_CFL(handle);
+  register_pipe_control_one_shot_functions_CFL(handle);
 
   load_bool_functions_CFL(input);
   load_df_bool_functions_CFL(input);
-  
-  
+  register_pipe_control_boolean_functions_CFL(input);
+
   load_if_functions_CFL(input);
 
   load_try_functions_CFL(input);
