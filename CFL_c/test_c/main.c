@@ -6,7 +6,7 @@
 #include "test_while_verify.h"
 #include "test_column_control.h"
 #include "test_watch_dog.h"
-#include "test_column_events.h"
+#include "test_column_data.h"
 #include "test_named_queue_functions.h"
 #include "test_df_functions.h"
 #include "test_tod_functions.h"
@@ -35,7 +35,7 @@ int main (void )
  //test_data_flow_functions();
   //test_column_state_machine();
    //test_named_queue_functions();
-   test_column_events();
+   test_column_data();
 #if 0
   // test pipes
   // test statemacines

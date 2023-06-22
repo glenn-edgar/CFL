@@ -31,7 +31,7 @@ typedef struct Handle_CFL_t
     void *df_buf_control;
     void *sm_dictionary;
     
-    void *pipe_control;
+    
     void *s_logic_buffer;
     // used for building state machines
     bool sm_assembly;
@@ -111,11 +111,10 @@ typedef struct Column_CFL_t
     unsigned                       start_state:8;   // whether column is in start state
     unsigned                       end_state:8; // current state of column
     unsigned                       new_state:8; // new state of column
-    unsigned                       pipe_active:1;
-    unsigned                       pipe_index:16;
+    
     Column_element_CFL_t*          starting_column_element;
    
-    Event_data_CFL_t*             local_event;
+    void*                          local_data;
     
     Event_control_CFL_t*           named_event_queue;
     Column_watch_dog_CFL_t*         watch_dog_control;
@@ -147,7 +146,7 @@ typedef struct Engine_control_CFL_t
     Column_element_CFL_t *current_column_element;
     unsigned current_column_index;
     unsigned current_column_element_index;
-    //Event_control_CFL_t local_events;
+    
     Event_data_CFL_t ref_event_data;
 } Engine_control_CFL_t;
 

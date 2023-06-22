@@ -114,35 +114,29 @@ void Asm_clear_column_watch_dog_CFL(void* input) {
 
 
 
-void Asm_store_column_event_CFL(void* input, unsigned short index, Event_data_CFL_t* event_data) {
+void Asm_store_columns_local_data_CFL(void* input, unsigned short column_number, const char** column_indexes, void **data) {
 
-  Column_events_CFL_t* column_events;
-  column_events = (Column_events_CFL_t*)Allocate_once_malloc_CFL(input, sizeof(Column_events_CFL_t));
-  column_events->number = 1;
-  column_events->column_indexes = (unsigned short*)Allocate_once_malloc_CFL(input, sizeof(unsigned short));
-  column_events->column_indexes[0] = index;
-  Asm_one_shot_CFL(input, "SET_COLUMNS_EVENT", column_events);
-
-}
-
-void Asm_store_columns_event_CFL(void* input, unsigned short number, unsigned* column_indexes, Event_data_CFL_t* event_data) {
-
-  Column_events_CFL_t* column_events;
-  column_events = (Column_events_CFL_t*)Allocate_once_malloc_CFL(input, sizeof(Column_events_CFL_t));
-  column_events->number = number;
-  column_events->column_indexes = (unsigned short*)Allocate_once_malloc_CFL(input, sizeof(unsigned short));
-  column_events->event_data = event_data;
-  for (int i = 0; i < number; i++) {
-    column_events->column_indexes[i] = column_indexes[i];
+  Column_data_CFL_t* column_data;
+  column_data = (Column_data_CFL_t*)Allocate_once_malloc_CFL(input, sizeof(Column_data_CFL_t));
+  column_data->number = column_number;
+  column_data->column_indexes = (unsigned short*)Allocate_once_malloc_CFL(input, sizeof(unsigned short));
+  column_data->data = (void**)Allocate_once_malloc_CFL(input, sizeof(void*)*column_number);
+  for (int i = 0; i < column_number; i++) {
+    short temp = Find_column_index_CFL(input, column_indexes[i]);
+    if (temp <= 0) {
+      ASSERT_PRINT_F("Invalid column name %s",column_indexes[i] );
+    }
+    column_data->column_indexes[i] = temp;
+    column_data->data[i] = data[i];
   }
-  Asm_one_shot_CFL(input, "SET_COLUMNS_EVENT", column_events);
+  Asm_one_shot_CFL(input, "SET_COLUMNS_DATA", column_data);
 
 }
 
 
-void Asm_store_current_column_event_CFL(void* input, Event_data_CFL_t* event_data) {
+void Asm_store_current_column_local_data_CFL(void* input,void *data) {
 
-  Asm_one_shot_CFL(input, "SET_CURRENT_COLUMN_EVENT", event_data);
+  Asm_one_shot_CFL(input, "SET_CURRENT_COLUMN_DATA", data);
 }
 
 void Asm_wait_CFL(void* input, const char* bool_fn_name, int time_out_ms,

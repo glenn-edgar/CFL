@@ -138,8 +138,37 @@ function Verify_tod_gt(doy, month, dow, hour, minute, second, terminate_flag,ter
     file:write(message)
 end
 
-function Store_column_event(column_event_address)
-    local message = string.format("    Asm_store_current_column_event_CFL(input,%s);\n",tostring(column_event_address))
+function Store_local_column_data(column_event_address)
+
+    local message = string.format("    Asm_store_current_column_local_data_CFL(input,%s);\n",tostring(column_event_address))
     file:write(message)
 end
-    
+
+function Store_column_data(column_name, column_indexes, data_name, data)
+
+    if type(column_name) ~= "string" then
+        error("Store_column_events: column_name must be a string")
+    end
+    if type(data_name) ~= "string" then
+        error("Store_column_events: event name must be a string")
+    end
+    if type(column_indexes) ~= "table" then
+        error("Store_column_events: column_indexes must be a table")
+    end
+    if type(data) ~= "table" then
+        error("Store_column_events: data must be a table")
+    end
+  
+    if #column_indexes ~= #data then
+        error("Store_column_events: column_indexes and data must be the same length")
+    end
+    local message = string.format("    const char* %s[] = {%s};\n",column_name,table.concat(column_indexes,","))
+    file:write(message)
+
+    message = string.format("    void* %s[] = {%s};\n",data_name,table.concat(data,","))
+    file:write(message)
+   
+    message = string.format("    Asm_store_columns_local_data_CFL(input, %s, %s, %s);\n",#column_indexes,column_name,data_name)
+    file:write(message)
+
+end

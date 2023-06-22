@@ -181,7 +181,7 @@ typedef struct handle_config_CFL_t
   unsigned short number_df_buffers;
   unsigned short number_of_compiled_s_log_expressions;
   unsigned short number_of_state_machines;
-  unsigned short number_of_pipes;
+ 
   Debug_out_CFL_t debug_out;
 } Handle_config_CFL_t;
 
@@ -289,11 +289,9 @@ void Asm_clear_column_watch_dog_CFL(void* input);
 /*
 ** Internal Column Events
 */
-void Asm_store_current_column_event_CFL(void* input, Event_data_CFL_t* event_data);
+void Asm_store_current_column_local_data_CFL(void* input,void *data);
+void Asm_store_columns_local_data_CFL(void* input, unsigned short column_number, const char** column_indexes, void **data); 
 
-/*
-**  return functions
-*/
 void Asm_halt_CFL(void* handle);
 void Asm_reset_CFL(void* handle);
 void Asm_terminate_CFL(void* handle);
@@ -428,16 +426,16 @@ bool Get_current_column_return_code_CFL(void* input);
 
 unsigned Get_current_column_index_CFL(void* input);
 unsigned Get_current_column_element_index_CFL(void* input);
-void Set_local_event_current_column_CFL(void* input, Event_data_CFL_t* data);
-Event_data_CFL_t* Get_current_column_local_event_CFL(void* input);
+void Set_local_data_current_column_CFL(void* input, void* data);
+void* Get_current_column_local_data_CFL(void* input);
 
 
 /*
 **
 */
 
-void Set_local_event_CFL(void* input, unsigned column_index, Event_data_CFL_t* data);
-Event_data_CFL_t* Get_local_event_CFL(void* input, unsigned column_index);
+void Set_local_data_CFL(void* input, unsigned column_index, void* data);
+void* Get_local_data_CFL(void* input, unsigned column_index);
 
 
 void Clear_column_watch_dog_CFL(void* input, void* params, Event_data_CFL_t* event_data);
@@ -467,7 +465,7 @@ Event_data_CFL_t *Peak_named_event_CFL(void *input, unsigned index);
 Event_data_CFL_t *Pop_named_event_CFL(void *input, unsigned index);
 #include "CFL_named_event_queue_manager.h"
 #include "CFL_state_machine.h"
-#include "CFL_pipes.h"
+
 
 #ifdef __cplusplus
 }
