@@ -58,7 +58,7 @@ void* Configure_engine_CFL(Handle_config_CFL_t* config, unsigned allocate_once_h
   Initialize_bool_functions_CFL(handle);
   Initialize_s_logical_expression_buffers_CFL(handle,config->number_of_compiled_s_log_expressions);
   Initialize_column_state_machine_CFL(handle);
-  intialize_pipe_control_CFL(handle,config->number_of_pipes) ; 
+  
   return handle;
 }
 

@@ -111,11 +111,11 @@ typedef struct Send_named_event_t {
 
 
 
-typedef struct Column_events_CFL_t {
+typedef struct Column_data_CFL_t {
    unsigned short    number;
    unsigned short* column_indexes;
-   Event_data_CFL_t* event_data;
-} Column_events_CFL_t;
+   void** data;
+} Column_data_CFL_t;
 
 typedef struct Enable_join_CFL_t {
    bool                  time_wait_flag;

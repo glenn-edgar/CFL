@@ -73,7 +73,7 @@ static inline void disable_column_low(Handle_CFL_t *handle,
 {
   Column_CFL_t *column;
   column = (Column_CFL_t *)column_control->column + index;
-  column->local_event = NULL;
+  
   if (column->active == false)
   {
     return;
@@ -569,14 +569,14 @@ void initialize_columns_CFL(Handle_CFL_t *handle)
     }
     else
     {
-      column->local_event = NULL;
+      
       column->active = false;
     }
     column++;
   }
 }
 
-void Set_local_event_current_column_CFL(void *input, Event_data_CFL_t *data)
+void Set_local_data_current_column_CFL(void *input, void *data)
 {
 
   Handle_CFL_t *handle;
@@ -585,10 +585,10 @@ void Set_local_event_current_column_CFL(void *input, Event_data_CFL_t *data)
   handle = (Handle_CFL_t *)input;
   engine_control = (Engine_control_CFL_t *)handle->engine_control;
 
-  Set_local_event_CFL(input, engine_control->current_column_index, data);
+  Set_local_data_CFL(input, engine_control->current_column_index, data);
 }
 
-Event_data_CFL_t *Get_current_column_local_event_CFL(void *input)
+void *Get_current_column_local_data_CFL(void *input)
 {
 
   Handle_CFL_t *handle;
@@ -597,11 +597,11 @@ Event_data_CFL_t *Get_current_column_local_event_CFL(void *input)
   handle = (Handle_CFL_t *)input;
   engine_control = (Engine_control_CFL_t *)handle->engine_control;
 
-  return Get_local_event_CFL(input, engine_control->current_column_index);
+  return Get_local_data_CFL(input, engine_control->current_column_index);
 }
 
-void Set_local_event_CFL(void *input, unsigned column_index,
-                         Event_data_CFL_t *data)
+void Set_local_data_CFL(void *input, unsigned column_index,
+                         void *data)
 {
 
   Column_CFL_t *column;
@@ -611,10 +611,10 @@ void Set_local_event_CFL(void *input, unsigned column_index,
 
   column = find_column_entry_CFL(handle, column_index);
 
-  column->local_event = data;
+  column->local_data = data;
 }
 
-Event_data_CFL_t *Get_local_event_CFL(void *input, unsigned column_index)
+void *Get_local_data_CFL(void *input, unsigned column_index)
 {
 
   Column_CFL_t *column;
@@ -623,7 +623,7 @@ Event_data_CFL_t *Get_local_event_CFL(void *input, unsigned column_index)
   handle = (Handle_CFL_t *)input;
   column = find_column_entry_CFL(handle, column_index);
 
-  return column->local_event;
+  return column->local_data;
 }
 
 void Set_current_column_return_code_CFL(void *input, bool state)

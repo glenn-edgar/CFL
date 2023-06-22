@@ -84,6 +84,7 @@ void Asm_change_column_state_CFL(void *input, unsigned short state_value)
 
 static int change_column_state(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
+    (void)aux_fn;
     if (event_data->event_index == EVENT_INIT_CFL)
     {
         return CONTINUE_CFL;

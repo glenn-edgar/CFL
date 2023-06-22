@@ -69,6 +69,9 @@ static void verify_nodes_handler(void *handle, void *params,
 static void set_current_column_event_handler(void *handle, void *params,
                                              Event_data_CFL_t *event_data);
 
+static void set_column_event_handler(void *handle, void *params,
+                                             Event_data_CFL_t *event_data);                                             
+
   
 
 static const one_shot_function_ref one_shot_functions[] = {
@@ -85,8 +88,8 @@ static const one_shot_function_ref one_shot_functions[] = {
     {"DUMP_NODES", dump_nodes_handler},
     {"VERIFY_NODES", verify_nodes_handler},
 
-    
-    {"SET_CURRENT_COLUMN_EVENT", set_current_column_event_handler},
+    {"SET_COLUMNS_DATA", set_column_event_handler},
+    {"SET_CURRENT_COLUMN_DATA", set_current_column_event_handler},
     
 
 };
@@ -256,15 +259,27 @@ static void set_column_return(void *handle, void *params,
   Set_current_column_return_code_CFL(handle, *(bool *)params);
 }
 
+
 static void set_current_column_event_handler(void *input, void *params,
+                                Event_data_CFL_t *event_data)
+{
+  (void)event_data;
+  Set_local_data_current_column_CFL(input, params);
+}
+
+
+
+static void set_column_event_handler(void *input, void *params,
                                              Event_data_CFL_t *event_data)
 {
  (void)event_data;
+ Column_data_CFL_t *column_data = (Column_data_CFL_t *)params;
+ for(unsigned i= 0;i<column_data->number;i++)
+ {
+   Set_local_data_CFL(input,column_data->column_indexes[i], column_data->data[i] );
+   
+ }
 
-  Event_data_CFL_t *column_event;
-  column_event = (Event_data_CFL_t *)params;
-
-  Set_local_event_current_column_CFL(input, column_event);
 }
 
 

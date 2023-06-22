@@ -100,7 +100,7 @@ uint32_t MurmurHash3(const void *key, size_t len, uint32_t seed) {
   return h1;
 }
 
-uint32_t JenkinsHash_CFL(const void *key, size_t len) {
+int JenkinsHash_CFL(const void *key, size_t len) {
   const uint8_t *data = (const uint8_t *)key;
   uint32_t hash = 0;
 
@@ -114,5 +114,6 @@ uint32_t JenkinsHash_CFL(const void *key, size_t len) {
   hash ^= (hash >> 11);
   hash += (hash << 15);
 
-  return hash;
+  return (int)hash;
 }
+ 
