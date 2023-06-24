@@ -122,7 +122,7 @@ void allocate_function_space_CFL(void *input, int number_column_functions,
   load_column_functions_CFL(handle);
   load_df_column_functions_CFL(handle);
   load_name_event_column_functions_CFL(handle);
-  
+  sms_register_column_functions_CFL(handle);
    
   load_one_shot_function_state_CFL(handle);
   load_df_one_shot_function_state_CFL(handle);

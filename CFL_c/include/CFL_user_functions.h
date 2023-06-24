@@ -349,9 +349,6 @@ void Asm_for_columns_CFL(void* input, int number_of_times, int number_of_columns
 
 
 
-void Asm_attach_event_handler_CFL(void* input, short event_index, const char* fn_name, void* user_data);
-
-void Asm_attach_multi_event_handler_CFL(void* input, unsigned number, const short* event_index, const char* fn_name, void* user_data);
 
 void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, const short* event_indexes, unsigned number_of_columns, const char** column_names);
 
@@ -465,6 +462,7 @@ Event_data_CFL_t *Peak_named_event_CFL(void *input, unsigned index);
 Event_data_CFL_t *Pop_named_event_CFL(void *input, unsigned index);
 #include "CFL_named_event_queue_manager.h"
 #include "CFL_state_machine.h"
+#include "CFL_asm_events.h"
 
 
 #ifdef __cplusplus

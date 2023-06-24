@@ -13,6 +13,7 @@ dofile("events.lua")
 dofile("column_state_machine.lua")
 dofile("s_logic_functions.lua")
 dofile("state_machine.lua")
+dofile("column_control.lua")
 
 
 
@@ -62,7 +63,7 @@ function Destroy_engine(message)
     message = tostring(message)
     file:write("    Destroy_engine_CFL(input);\n")
     if message ~= nil then
-        file:write('   Printf_CFL("'..message..'");\n')
+        file:write('   Printf_CFL("'..message..'\\n");\n')
     end
     file:write("}\n")
 end

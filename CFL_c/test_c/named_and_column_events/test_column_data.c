@@ -71,7 +71,7 @@ static void column_data_test_a(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("nil");
+   Printf_CFL("nil\n");
 }
   static const char *column_data_test_1 = "this is the column data test 1";
   static const char *column_data_test_2 = "this is the column data test 2";
@@ -130,5 +130,5 @@ static void column_data_test_b(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("nil");
+   Printf_CFL("nil\n");
 }
