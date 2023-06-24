@@ -22,9 +22,7 @@ void Asm_process_event_CFL(void *input,const char *event_handler,
                             unsigned event_number, short *event_values,
                              bool block_flag, short return_value, void *user_data);
 
-void Asm_filter_events_CFL(void *input, const char *event_handler_name,
-                           unsigned event_number, short *event_values,
-                           bool block_flag,  void *user_data);
+
 
 
 void Asm_change_column_state_CFL(void *input, unsigned short new_state);

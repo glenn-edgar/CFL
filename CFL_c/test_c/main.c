@@ -35,12 +35,13 @@ int main (void )
  //test_data_flow_functions();
   //test_column_state_machine();
    //test_named_queue_functions();
-   test_column_data();
+   //test_column_data();
+   test_column_control();
 #if 0
   // test pipes
   // test statemacines
   // test s expressions ?
-  test_column_control();
+  
   test_chain_events();
   //test_named_queue_functions();
  // test_df_functions();

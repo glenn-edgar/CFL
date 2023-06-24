@@ -94,7 +94,7 @@ static void test_basic_return_codes(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("Engine Done\n");
+   Printf_CFL("Engine Done\n\n");
 }
 static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle)
 {
@@ -126,7 +126,7 @@ static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle
      
     Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("Engine Done\n");
+   Printf_CFL("Engine Done\n\n");
 }
 static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle)
 {
@@ -190,5 +190,5 @@ static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle
      
     Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("Engine Done\n");
+   Printf_CFL("Engine Done\n\n");
 }

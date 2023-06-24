@@ -294,7 +294,7 @@ static void test_basic_functions(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("nil");
+   Printf_CFL("nil\n");
 }
 #if 0   
 typedef struct RPC_message_header_CFL_t {
@@ -499,5 +499,5 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("nil");
+   Printf_CFL("nil\n");
 }

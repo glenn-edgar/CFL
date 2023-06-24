@@ -63,7 +63,7 @@ static void test_set_clear_print_functions(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("nil");
+   Printf_CFL("nil\n");
 }
 static void test_set_lua_symbol_table(Handle_config_CFL_t* config_handle)
 {
@@ -97,7 +97,7 @@ static void test_set_lua_symbol_table(Handle_config_CFL_t* config_handle)
      
     Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("Engine Done\n");
+   Printf_CFL("Engine Done\n\n");
 }
 
 typedef struct end_message_t{
@@ -211,5 +211,5 @@ Printf_CFL("once heap size %d \n", Allocate_once_remaining_heap_size_CFL(input))
 Printf_CFL("largest private heap free block %d \n", Private_heap_largest_free_block_CFL(input));
     Start_engine_CFL(input, 10, 30, default_idle_function, default_calendar_function);
     Destroy_engine_CFL(input);
-   Printf_CFL("Engine Done\n");
+   Printf_CFL("Engine Done\n\n");
 }
