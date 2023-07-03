@@ -20,7 +20,7 @@ void test_named_queue_functions(void) {
     config_handle->one_shot_functions = 50;
     config_handle->number_of_try_functions = 50;
     config_handle->number_of_named_queues = 20;
-    //test_basic_functions(config_handle);
+    test_basic_functions(config_handle);
     test_rpc_server_client(config_handle);
 }
 

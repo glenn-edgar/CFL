@@ -1,7 +1,21 @@
 
--- insure file is global
-file = ""
-file_extension = ".c"
+file = "" -- insure file is global
+local file_extension = ".c"
+local file_extension_mac = ".inc"
+
+
+
+
+function compile_directory_mac()
+    PXT_files = PXT.read_mac("./")
+    
+    for i, pxt_file in ipairs(PXT_files) do
+        base_file = stripFileExtension(pxt_file)
+        base_file = base_file..file_extension_mac
+       compile_file(pxt_file, base_file)
+    end
+end
+
 
 function compile_directory()
     PXT_files = PXT.read("./")
@@ -12,6 +26,8 @@ function compile_directory()
        compile_file(pxt_file, base_file)
     end
 end
+
+
 
 function pass_c(input)
     input = Expand_text_stream(input)

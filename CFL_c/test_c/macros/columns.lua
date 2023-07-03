@@ -7,7 +7,7 @@ function verify_defined_columns()
         end
     end
     if column_state == false then
-        os.exit()
+        os.exit(1)
     end
 end
 
@@ -15,7 +15,7 @@ end
 function validate_column_name(name)
     if table_names[name] == true then
         print("Column Name already defined: -" .. name .. "-")
-        os.exit()
+        os.exit(1)
     end
     if table_names[name] == nil then
         for k,v in pairs(table_names) do
@@ -26,7 +26,7 @@ function validate_column_name(name)
         end
         print("Non Existant Column Name: -" .. name .. "-")
        
-        os.exit()
+        os.exit(1)
     end
     table_names[name] = true
 end
@@ -38,6 +38,7 @@ function Def_columns(column_names,column_list)
     file:write(message)
     file:write("        ")
     for i, column in ipairs(column_list) do
+        column = quote_string(column)
         message = string.format("%s",column)
         table_names[message] = false
         
@@ -56,6 +57,7 @@ function Def_columns(column_names,column_list)
 end
 
 function Start_column(name,initial_state)
+    name = quote_string(name)
     validate_column_name(name)
     local message = string.format("\n   /* \n")
     file:write(message)
@@ -68,6 +70,8 @@ function Start_column(name,initial_state)
 end
 
 function Start_queue_column(name,initial_state,named_queue)
+    name = quote_string(name)
+    named_queue = quote_string(named_queue)
     validate_column_name(name)
     local message = string.format("\n   /* \n")
     file:write(message)

@@ -42,18 +42,7 @@ end
 
 
 
---[[
 
-local function generate_tokens(str)
-  local tokens = {}
-
-  for token in string.gmatch(str, "[^,]+") do
-      table.insert(tokens, token)
-  end
-
-  return tokens
-end
-]]--
 local function generate_tokens(str)
     local tokens = {}
     local currentToken = ""
@@ -99,38 +88,7 @@ end
 
 
 
---[[
-  function processTextWithTokens(text)
-  local generate_text = function(input)
-      -- implement or call your actual text generation function here
-      return "generated text for: " .. input
-  end
 
-  local function parse(start)
-      local first, last = text:find("<<", start)
-      if not first then return text end  -- no more << found
-
-      local firstEnd, lastEnd = text:find(">>", last + 1)
-      if not firstEnd then
-          error("Unbalanced << >> tokens")
-      end
-
-      -- recursive case: if another << token is found before the >> token
-      local innerFirst, _ = text:find("<<", last + 1)
-      if innerFirst and innerFirst < firstEnd then
-          text = parse(last + 1)
-          return parse(lastEnd + 1)  -- process remaining part of the text
-      end
-
-      local content = text:sub(last + 1, firstEnd - 1)
-      local newText = generate_text(content)
-      text = text:sub(1, first - 1) .. newText .. text:sub(lastEnd + 1)
-      return parse(first - #content + #newText)  -- process remaining part of the text
-  end
-
-  return parse(1)  -- start parsing from the first character
-end
-]]--
 
 local function find_markers(text,marker,type,index,pat_array)
     
@@ -318,5 +276,5 @@ end
 
 
               
-
+print("template processor loaded  ")
   

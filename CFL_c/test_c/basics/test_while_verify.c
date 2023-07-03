@@ -122,7 +122,7 @@ static void run_while_event_normal_test_b(Handle_config_CFL_t* config_handle) {
     */ 
     Asm_start_column_CFL(input, "wait_event", true);
     Asm_log_message_CFL(input,"waiting for event");
-    Asm_wait_event_count_CFL(input, 23, 10,50000, false, NULL, NULL);
+    Asm_wait_event_count_CFL(input, 23, 10,50000, false, "NULL", NULL);
     Asm_log_message_CFL(input,"Wait Event is Done");
     Asm_engine_terminate_CFL(input);
     Asm_end_column_CFL(input);

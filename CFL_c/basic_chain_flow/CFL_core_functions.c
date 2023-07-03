@@ -311,12 +311,11 @@ static int if_column_handler(void *input, void *aux_fn, void *params,
   if (event_data->event_index == EVENT_TERMINATION_CFL)
   {
 
-    if (if_control->termination_flag == true)
-    {
+    
 
       disable_indexes(input, if_control->column_number,
                       if_control->column_indexes);
-    }
+   
   }
 
   if (if_control->init_flag == true)
@@ -355,11 +354,10 @@ static int try_column_handler(void *input, void *aux_fn, void *params,
   if (event_data->event_index == EVENT_TERMINATION_CFL)
   {
 
-    if (data->terminate_flag == true)
-    {
+    
 
       disable_indexes(input, data->column_number, data->column_indexes);
-    }
+   
   }
   if (event_data->event_index != TIMER_TICK_CFL)
   {

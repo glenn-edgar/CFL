@@ -17,7 +17,7 @@
 
 #include "unit_test_s_logical_operations.h"
 #include "test_column_state_machine.h"
-
+#include "test_state_machine.h"
 
 
 // #include "test_data_flow.h"
@@ -36,7 +36,8 @@ int main (void )
   //test_column_state_machine();
    //test_named_queue_functions();
    //test_column_data();
-   test_column_control();
+   //test_column_control();
+   test_state_machine();
 #if 0
   // test pipes
   // test statemacines

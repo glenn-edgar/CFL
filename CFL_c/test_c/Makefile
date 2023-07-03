@@ -17,7 +17,8 @@ all: run_lua $(TARGET)
 
 # Run ./lua before compilation
 run_lua:
-	./lua
+	./preprocessor m
+	./preprocessor p
 
 
 # Linking the target executable
