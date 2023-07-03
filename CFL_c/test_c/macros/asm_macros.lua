@@ -70,18 +70,28 @@ end
 
 
 function Store_one_shot(fn_string, fn_name)
+    fn_string = quote_string(fn_string)
     local message = string.format("    Store_one_shot_function_CFL(input,%s,%s);\n",fn_string,fn_name)
     file:write(message) 
 end
 
 function  Store_boolean_fn(fn_string, fn_parameter)
+    fn_string = quote_string(fn_string)
     local message = string.format("    Store_bool_function_CFL(input,%s,%s);\n",fn_string,fn_parameter)
     file:write(message) 
 end
 
+function Store_if_function(fn_string,fn_address)
+    fn_string = quote_string(fn_string)
+    local message = string.format("    Store_if_function_CFL(input,%s,%s);\n",fn_string,fn_address)
+    file:write(message) 
+end
 
-  
-
+function Store_try_function(fn_string,fn_address)
+     fn_string = quote_string(fn_string)
+     message = string.format("    Store_try_function_CFL(input,%s,%s);\n",fn_string,fn_address)  
+     file:write(message)
+end
 
 function Dump_nodes()
    local message  = string.format("    Asm_dump_nodes_CFL(input);\n")

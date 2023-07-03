@@ -5,27 +5,21 @@ pass_c([[
 #include "test_interface_functions.h"
 
 static void test_enable_disable_columns(Handle_config_CFL_t* config_handle);
-
 static void test_join_columns_no_terminate(Handle_config_CFL_t* config_handle);
 static void test_join_columns_terminate(Handle_config_CFL_t* config_handle);
+
 static void test_if_columns_normal_case(Handle_config_CFL_t* config_handle);
 static void test_if_columns_terminate_case(Handle_config_CFL_t* config_handle);
-static void
-test_if_columns_non_terminate_case(Handle_config_CFL_t* config_handle);
+
 static void test_try_no_invert_pass(Handle_config_CFL_t* config_handle);
 static void test_try_no_invert_fail(Handle_config_CFL_t* config_handle);
 static void test_try_invert(Handle_config_CFL_t* config_handle);
 static void test_try_termination(Handle_config_CFL_t* config_handle);
-static void test_try_no_termination(Handle_config_CFL_t* config_handle);
-static void test_for_no_termination(Handle_config_CFL_t* config_handle);
-static void test_for_termination(Handle_config_CFL_t* config_handle);
-static void
-test_while_column_no_termination(Handle_config_CFL_t* config_handle);
+
+
+static void test_while_column_no_termination(Handle_config_CFL_t* config_handle);
 static void test_while_column_termination(Handle_config_CFL_t* config_handle);
-static void
-test_do_while_column_no_termination(Handle_config_CFL_t* config_handle);
-static void
-test_do_while_column_termination(Handle_config_CFL_t* config_handle);
+
 
 void test_column_control() {
 
@@ -35,7 +29,7 @@ void test_column_control() {
 
   Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
 
-  Printf_CFL("column control test");
+  Printf_CFL("column control test\n");
   
 
   config_handle->number_of_columns = 30;
@@ -56,20 +50,16 @@ void test_column_control() {
   test_enable_disable_columns(config_handle);
   test_join_columns_no_terminate(config_handle);
   test_join_columns_terminate(config_handle);
-  //test_if_columns_normal_case(config_handle);
-  //test_if_columns_terminate_case(config_handle);
-  //test_if_columns_non_terminate_case(config_handle);
-  //test_try_no_invert_pass(config_handle);
-  //test_try_no_invert_fail(config_handle);
-  //test_try_invert(config_handle);
-  //test_try_termination(config_handle);
-  //test_try_no_termination(config_handle);
-  //test_for_no_termination(config_handle);
-  //test_for_termination(config_handle);
-  //test_while_column_no_termination(config_handle);
-  //test_while_column_termination(config_handle);
-  //test_do_while_column_no_termination(config_handle);
-  //test_do_while_column_termination(config_handle);
+  test_if_columns_normal_case(config_handle);
+  test_if_columns_terminate_case(config_handle);
+  
+  test_try_no_invert_pass(config_handle);
+  test_try_no_invert_fail(config_handle);
+  test_try_invert(config_handle);
+  test_try_termination(config_handle);
+  test_while_column_no_termination(config_handle);
+  test_while_column_termination(config_handle);
+ 
   free(config_handle);
 }
 ]])
@@ -93,37 +83,37 @@ void test_column_control() {
 
   Def_columns('column_names',column_names)
   
-  Start_column(q('enable_no_terminate'),true)
+  Start_column('enable_no_terminate',true)
   Enable_columns('enable_terminate',enable_terminate,false)
-  Log_msg(q('terminate column'))
+  Log_msg('terminate column')
   Term_column()  --- All columns will terminate
   End_column() -- No active columns engine will terminate
 
 
-  Start_column(q('enable_terminate'),false)
-  Log_msg(q('will enable threads and wait 15 seconds and terminate'))
+  Start_column('enable_terminate',false)
+  Log_msg('will enable threads and wait 15 seconds and terminate')
   Enable_columns('enable_columns',enable_columns,true)
   Wait_delay(15000)
-  Log_msg(q('timer is done'))
+  Log_msg('timer is done')
   
   Term_column()
   End_column()
 
   
 
-  Start_column(q('disable_column'),false)
-  Log_msg(q("will disable reset column after 7 seconds"))
+  Start_column('disable_column',false)
+  Log_msg("will disable reset column after 7 seconds")
   Wait_delay(7000)
   Disable_columns('disable_columns',disable_columns)  
-  Log_msg(q('Now will wait till enable_terminate column terminates this column'))
-  Wait_no_time_out_terminate(q('FALSE'),'NULL')
-  Log_msg(q("-------------- message should not happen ----------------------"))
+  Log_msg('Now will wait till enable_terminate column terminates this column')
+  Wait_no_time_out_terminate('FALSE','NULL')
+  Log_msg("-------------- message should not happen ----------------------")
   Term_column()
   End_column()
 
   
-  Start_column(q('reset_column'),false)
-  Log_msg(q('Repeating Message Every 3 Seconds'))
+  Start_column('reset_column',false)
+  Log_msg('Repeating Message Every 3 Seconds')
   
   Reset_columns('column_to_reset',columns_to_reset)
   Wait_delay(3000)
@@ -131,12 +121,12 @@ void test_column_control() {
   End_column()
  
 
-  Start_column(q('column_to_reset'), false)
-  --Log_msg(q("column to reset will print message and terminate"))
+  Start_column('column_to_reset', false)
+  Log_msg("column to reset will print message and terminate")
   Term_column()
   End_column()
 
- Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function');
+ Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
 
   Destroy_engine('done with test_enable_disable_columns')
 
@@ -152,22 +142,22 @@ void test_column_control() {
   Conf_engine('config_handle','50000','2500')
   Def_columns('column_names',column_names)
   
-  Start_column(q('test_join'),true)
+  Start_column('test_join',true)
   Enable_columns('delay_terminate_enable',delay_terminate,false)
-  Log_msg(q("waiting for join"))
+  Log_msg("waiting for join")
   Join_columns('delay_terminate_join',delay_terminate,true)
-  Log_msg(q("Column has been joined"))
+  Log_msg("Column has been joined")
   Term_column()
   End_column()
   
-  Start_column(q('delay_terminate'),false)
-  Log_msg(q("will wait 5 seconds and terminate"))
+  Start_column('delay_terminate',false)
+  Log_msg("will wait 5 seconds and terminate")
   Wait_delay(5000)
-  Log_msg(q("timer is done"))
+  Log_msg("timer is done")
   Term_column()
   End_column()
   
-  Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function');
+  Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
   Destroy_engine('done with test_join_columns_terminate')
   
 Start_function('test_join_columns_no_terminate')
@@ -176,35 +166,572 @@ Start_function('test_join_columns_no_terminate')
   column_names = quote_list( {"launch_column","test_join", "delay_terminate" })
   delay_terminate = quote_list( {"delay_terminate" })
   test_join       = quote_list( {"test_join"})
-
+  
   Conf_engine('config_handle','50000','2500')
   Def_columns('column_names',column_names)
   
-  Start_column(q('launch_column'),true)
+  Start_column('launch_column',true)
   Enable_columns('test_join',test_join,true)
-  Log_msg(q("Waiting for 15 seconds"))
+  Log_msg("Waiting for 15 seconds")
   Wait_delay(15000)
-  Log_msg(q("15 seconds is up"))
-  Log_msg(q("Disabling Column"))
+  Log_msg("15 seconds is up")
+  Log_msg("Disabling Column")
   Term_column()
   End_column()
   
 
-  Start_column(q('test_join'),false)
+  Start_column('test_join',false)
   Enable_columns('delay_terminate_enable',delay_terminate,false)
-  Log_msg(q("waiting for join"))
+  Log_msg("waiting for join")
   Join_columns('delay_terminate_join',delay_terminate,true)
-  Log_msg(q("Column has been joined"))
+  Log_msg("Column has been joined")
   Term_column()
   End_column()
   
-  Start_column(q('delay_terminate'),false)
-  Log_msg(q("will wait 5 seconds and terminate"))
+  Start_column('delay_terminate',false)
+  Log_msg("will wait 5 seconds and terminate")
   Wait_delay(5000)
-  Log_msg(q("timer is done"))
+  Log_msg("timer is done")
   Term_column()
   End_column()
   
-  Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function');
+  Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
   Destroy_engine('done with test_join_columns_no_terminate')
+
+
   
+
+pass_c([[
+/*
+** If opcode tests
+*/
+
+static void test_if_function(void* input, If_control_CFL_t* if_control) {
+  // enable only even columns
+  bool* enable_ptr = if_control->return_indexes;
+
+  for (unsigned i = 0; i < if_control->column_number; i++) {
+    if (i % 2 == 0) {
+      *enable_ptr = true;
+    }
+    else {
+      *enable_ptr = false;
+    }
+    enable_ptr++;
+  }
+}
+#if 0
+typedef struct If_control_CFL_t
+{
+  bool termination_flag;
+  bool init_flag;
+  unsigned short column_number;
+  unsigned short* column_indexes;
+  bool* return_indexes;
+  One_shot_function_CFL_t termination_fn;
+  void* user_data;
+} If_control_CFL_t;
+#endif
+
+const char* try_user_data = "try_user_data";
+
+static void final_try_function(void *input, void *params, Event_data_CFL_t *event_data) {
+   If_control_CFL_t* if_control = (If_control_CFL_t*)params;
+
+   printf("final_try_function called\n");
+   for(unsigned i = 0; i < if_control->column_number; i++) {
+     printf("if_control->return_indexes[%d] = %d\n", i, if_control->return_indexes[i]) ;
+   }
+   printf("user data is %s\n", (char*)if_control->user_data);
+
+}
+
+]])
+
+
+Start_function('test_if_columns_normal_case')
+
+Conf_engine('config_handle','50000','2500')
+
+column_names = quote_list({ "if_column", "test_if_0", "test_if_1",
+                                "test_if_2", "test_if_3", "test_if_4",
+                                "test_if_5" })
+
+if_columns = quote_list({ "test_if_0", "test_if_1", "test_if_2",
+                              "test_if_3", "test_if_4", "test_if_5" })
+
+
+Store_if_function("local_if_function", 'test_if_function')
+Store_one_shot("final_try_function", 'final_try_function')
+Def_columns('column_names',column_names)
+
+Start_column("if_column", true)
+  Log_msg( "if normal case")
+  Log_msg( "if column is active")
+  If_columns('local_if_function','col_name',if_columns,"final_try_function",'(void*)try_user_data')
+  Log_msg( "if column is done")
+  Term_column()
+End_column()
+
+Start_column("test_if_0", false)
+  Log_msg( "test_if_0 should be active")
+  Log_msg( "will wait 2 seconds and terminate")
+  Wait_delay(  2000)
+  Log_msg( "test_if_0 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_1", false)
+  Log_msg( "test_if_1 should not be active")
+  Log_msg( "will wait 3 seconds and terminate")
+  Wait_delay(  3000)
+  Log_msg( "test_if_1 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_2", false)
+  Log_msg( "test_if_2 should be active")
+  Log_msg( "will wait 4 seconds and terminate")
+  Wait_delay(  4000)
+  Log_msg( "test_if_2 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_3", false)
+  Log_msg( "test_if_0 should not be active")
+  Log_msg( "will wait 5 seconds to ")
+  Wait_delay(  5000)
+  Log_msg( "test_if_3 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_4", false)
+  Log_msg( "test_if_4 should be active")
+  Log_msg( "will wait 6 seconds and terminate")
+  Wait_delay(  6000)
+  Log_msg( "test_if_4 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_5", false)
+  Log_msg( "test_if_5 should not be active")
+  Log_msg( "will wait 7 seconds and reset")
+  Wait_delay(  7000)
+  Log_msg( "test_if_5 is terminating")
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+Start_function('test_if_columns_terminate_case')
+ 
+  Conf_engine('config_handle','50000','2500')
+  
+  column_names = quote_list({ "early_termination", "if_column", "test_if_0",
+                                "test_if_1",         "test_if_2", "test_if_3",
+                                "test_if_4",         "test_if_5" } )
+
+
+  if_columns = quote_list({ "test_if_0", "test_if_1", "test_if_2",
+                              "test_if_3", "test_if_4", "test_if_5" })
+
+  early_termination_column_names = quote_list({ "if_column" })
+
+
+Def_columns('column_names',column_names)
+Store_if_function("local_if_function", 'test_if_function')
+
+Start_column("early_termination", true)
+  Log_msg( "test to set that if_column cleans up sub chains on termination")
+  Log_msg( "early_termination is active")
+  Enable_columns('early_termination_column_names',early_termination_column_names,true)  
+  Wait_delay(  1000)
+  Log_msg( "early_termination is terminating")
+  Term_column()
+End_column()
+
+Start_column("if_column", false)
+  Log_msg( "if column is active")
+  If_columns('local_if_function','if_column_name',if_columns,'NULL','NULL')
+  Log_msg( "if column is done")
+  Term_column()
+End_column()
+
+Start_column("test_if_0", false)
+  Log_msg( "test_if_0 should be active")
+  Log_msg( "will wait 2 seconds and terminate")
+  Wait_delay(  2000)
+  Log_msg( "test_if_0 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_1", false)
+  Log_msg( "test_if_1 should not be active")
+  Log_msg( "will wait 3 seconds and terminate")
+  Wait_delay(  3000)
+  Log_msg( "test_if_1 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_2", false)
+  Log_msg( "test_if_2 should be active")
+  Log_msg( "will wait 4 seconds and terminate")
+  Wait_delay(  4000)
+  Log_msg( "test_if_2 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_3", false)
+  Log_msg( "test_if_0 should not be active")
+  Log_msg( "will wait 5 seconds to ")
+  Wait_delay(  5000)
+  Log_msg( "test_if_3 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_4", false)
+  Log_msg( "test_if_4 should be active")
+  Log_msg( "will wait 6 seconds and terminate")
+  Wait_delay(  6000)
+  Log_msg( "test_if_4 is terminating")
+  Term_column()
+End_column()
+
+Start_column("test_if_5", false)
+  Log_msg( "test_if_5 should not be active")
+  Log_msg( "will wait 7 seconds and reset")
+  Wait_delay(  7000)
+  Log_msg( "test_if_5 is terminating")
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+
+
+
+
+
+
+
+pass_c([[
+static void test_try_function(void* input, Try_column_CFL_t* try_control) {
+
+  Printf_CFL("%s final state %d column index %d \n", __func__,
+    try_control->final_state, try_control->current_column_index);
+}
+]])
+
+Start_function('test_try_no_invert_pass')
+Conf_engine('config_handle','50000','2500')
+ 
+  column_names = quote_list({ "try_column", "try_0", "try_1", "try_2" })
+  try_columns = quote_list({ "try_0", "try_1", "try_2" })
+  Store_try_function( 'test_try_function', 'test_try_function')
+
+  
+ Def_columns('column_names',column_names)
+
+Start_column( "try_column", true)
+  Log_msg( "test where there is success in one of the try columns")
+  Log_msg( "try column is active")
+  Try_columns('test_try_function','try_name',try_columns,false,'NULL')
+  Log_msg( "try column is done")
+  Term_column()
+End_column()
+
+Start_column( "try_0", false)
+  Log_msg( "try_0 should be active")
+  Wait_delay( 2000)
+  Log_msg( "try_0 is terminating with failure")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_1", false);
+  Log_msg( "try_1 should be active")
+  Wait_delay( 2000)
+  Log_msg( "try_1 is terminating with success")
+  Set_return_code(true)
+  Term_column()
+End_column()
+
+Start_column( "try_2", false);
+  Log_msg( "try_2 should not be active")
+  Wait_delay( 2000)
+  Log_msg( "try_2 is terminating")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+Start_function('test_try_no_invert_fail')
+Conf_engine('config_handle','50000','2500')
+
+  
+  column_names = quote_list({ "try_column", "try_0", "try_1", "try_2" })
+  try_columns = quote_list({ "try_0", "try_1", "try_2" })
+
+  Store_try_function( 'test_try_function', 'test_try_function')
+  
+ Def_columns('column_names',column_names)
+
+Start_column( "try_column", true)
+  Log_msg("test when all try columns fail")
+  Log_msg( "try column is active")
+
+  Try_columns('test_try_function','try_name',try_columns,false,'NULL')
+  Log_msg( "try column is done");
+  Term_column()
+End_column()
+
+Start_column( "try_0", false);
+  Log_msg( "try_0 should be active")
+  Wait_delay( 2000)
+  Log_msg( "test_0 is terminating failure")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_1", false)
+  Log_msg( "try_1 should be active")
+  Wait_delay( 2000)
+  Log_msg( "try_1 is terminating failure")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_2", false);
+  Log_msg( "try_2 should be active")
+  Wait_delay( 2000);
+  Log_msg( "try_2 is terminating failure")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+Start_function('test_try_invert')
+Conf_engine('config_handle','50000','2500')
+  
+column_names  = quote_list({ "try_column", "try_0", "try_1", "try_2" })
+try_columns  = quote_list({ "try_0", "try_1", "try_2" })
+Store_try_function( 'test_try_function', 'test_try_function')
+
+Def_columns('column_names',column_names)
+
+Start_column( "try_column", true)
+  Log_msg( "test of invert logic")
+  Log_msg( "try column is active ")
+  Try_columns('test_try_function','try_name',try_columns,true,'NULL')
+ 
+  Log_msg( "try column is done")
+  Term_column()
+End_column()
+
+Start_column( "try_0", false);
+  Log_msg( "try_0 should be active")
+  Wait_delay( 2000);
+  Log_msg( "test_0 is terminating success is failure")
+  Set_return_code(true)
+  Term_column()
+End_column()
+
+Start_column( "try_1", false)
+  Log_msg( "try_1 should be active")
+  Wait_delay( 2000)
+  Log_msg( "try_1 is terminating failure which is success")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_2", false)
+  Log_msg( "try_2 should be not be active")
+  Wait_delay( 2000)
+  Log_msg( "try_2 is terminating")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+Start_function('test_try_termination')
+Conf_engine('config_handle','50000','2500')
+ 
+  column_names = quote_list({ "launch_column", "try_column", "try_0", "try_1","try_2" })
+  try_columns = quote_list({ "try_0", "try_1", "try_2" })
+  test_try = quote_list({ "try_column" })
+
+
+Store_try_function('test_try_function', 'test_try_function')
+Def_columns('column_names',column_names)
+
+Start_column( "launch_column", true)
+  Enable_columns("launch_column_name",test_try,true)
+  Log_msg( "test to see if try column terminates columns which are active when column terminates")
+  Log_msg( "waiting for 2 seconds")
+  Wait_delay( 2000)
+  Log_msg( "timer is done")
+  Log_msg( "Disabling Column")
+  Term_column()
+End_column()
+
+Start_column( "try_column", true)
+  Log_msg( "try column is active")
+  Try_columns('test_try_function','try_name',try_columns,false,'NULL')
+  Log_msg( "try column is done")
+  Term_column()
+End_column()
+
+Start_column( "try_0", false)
+  Log_msg( "try_0 should be active")
+  Wait_delay( 5000)
+  Log_msg( "test_0 is terminating")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_1", false)
+  Log_msg( "try_1 should be active")
+  Wait_delay( 6000)
+  Log_msg( "try_1 is terminating")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_column( "try_2", false)
+  Log_msg( "try_2 should be active")
+  Wait_delay( 7000)
+  Log_msg( "try_2 is terminating")
+  Set_return_code(false)
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+
+
+pass_c([[
+static const char* while_message = "This is a test message for while \n";
+
+static bool while_column_test(void* input, void* params,
+  Event_data_CFL_t* event_data) {
+  While_column_control_CFL_t* while_control;
+  const char* message;
+
+  while_control = (While_column_control_CFL_t*)params;
+  message = (const char*)while_control->user_data;
+  Printf_CFL(message); // testing user data
+ 
+  Printf_CFL("number of iterations %d max_iterations 4 \n",while_control->current_iterations);
+  if (while_control->current_iterations >= 4) {
+    Printf_CFL("while column is terminating \n");
+    return false;
+  }
+  return true;
+}
+]])
+
+Start_function('test_while_column_no_termination')
+
+column_names = { "test_while", "while_0", "while_1", "while_2" }
+while_columns = { "while_0", "while_1", "while_2" }
+
+Conf_engine('config_handle','50000','2500')
+Def_columns('column_names',column_names)
+Store_boolean_fn('while_column_test','while_column_test')
+
+
+Start_column( "test_while", true)
+  Log_msg( "starting while command")
+  While_columns('while_column_test','while_columns',while_columns,'(void*)while_message')
+  Log_msg( "done with while statement")
+  Term_column()
+End_column()
+
+Start_column( "while_0", false)
+  Log_msg( "while_0 should be active")
+  Wait_delay( 1000)
+  Log_msg( "while_0 is terminating")
+  Term_column()
+End_column()
+
+Start_column( "while_1", false)
+  Log_msg( "while_1 should be active")
+  Wait_delay( 2000)
+  Log_msg( "while_1 is terminating")
+  Term_column()
+End_column()
+
+Start_column( "while_2", false)
+  Log_msg( "while_2 should be active")
+  Wait_delay( 3000)
+  Log_msg( "while_2 is terminating")
+  Term_column()
+End_column()
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+Start_function('test_while_column_termination')
+
+column_names = { "early_terminate", "test_while", "while_0","while_1", "while_2" }
+while_columns = { "while_0", "while_1", "while_2" }
+early_terminate_columns = { "test_while" }
+
+Conf_engine('config_handle','50000','2500')
+
+Def_columns('column_names',column_names)
+
+Store_boolean_fn('while_column_test','while_column_test')
+
+
+Start_column( "early_terminate", true)
+  Log_msg( "early terminate")
+  Wait_delay( 500)
+  Disable_columns("early_terminate_columns",early_terminate_columns)
+  Log_msg( "early_terminate is done")
+  Term_column()
+End_column()
+ 
+Start_column( "test_while", true)
+  Log_msg( "starting while command")
+  While_columns('while_column_test','while_columns',while_columns,'(void*)while_message')
+  Log_msg( "done with while statement")
+  Term_column()
+End_column()
+
+Start_column( "while_0", false)
+  Log_msg( "while_0 should be active")
+  Wait_delay( 1000)
+  Log_msg( "while_0 is terminating")
+  Term_column()
+End_column()
+
+Start_column( "while_1", false)
+  Log_msg( "while_1 should be active")
+  Wait_delay( 2000)
+  Log_msg( "while_1 is terminating")
+  Term_column()
+End_column()
+
+Start_column( "while_2", false)
+  Log_msg( "while_2 should be active")
+  Wait_delay( 3000)
+  Log_msg( "while_2 is terminating")
+  Term_column()
+End_column()
+
+
+
+Start_engine( 100, 30, 'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+

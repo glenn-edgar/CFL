@@ -335,16 +335,16 @@ void Asm_enable_columns_CFL(void* input, int number_of_columns, const char** col
 void Asm_reset_columns_CFL(void* input, int number_of_columns, const char** column_names);
 void Asm_join_columns_CFL(void* input, int number_of_columns, const char** column_names, bool terminate_flag);
 void Asm_if_columns_CFL(void* input, const char* if_function,
-  int number_of_columns, const char** column_names, bool terminate_flag, const char* termination_fn, void* user_data);
+  int number_of_columns, const char** column_names,  const char* termination_fn, void* user_data);
 void Asm_try_columns_CFL(void* input, const char* try_function_name, int number_of_columns,
-  const char** column_names, bool terminate_flag, bool invert_flag, void* user_data);
+  const char** column_names,  bool invert_flag, void* user_data);
 
 // column loop control
 
 void Asm_while_columns_CFL(void* input, const char* bool_fn_name, int number_of_columns, const char** column_names, void* user_data);
-void Asm_do_while_columns_CFL(void* input, const char* bool_fn_name, int number_of_columns, const char** column_names, void* user_data);
-void Asm_for_columns_CFL(void* input, int number_of_times, int number_of_columns, const char** column_names,
-  char* one_shot_function_name, void* user_data);
+//void Asm_do_while_columns_CFL(void* input, const char* bool_fn_name, int number_of_columns, const char** column_names, void* user_data);
+//void Asm_for_columns_CFL(void* input, int number_of_times, unsigned number_of_columns, const char** column_names,
+//  char* one_shot_function_name, void* user_data);
 
 
 

@@ -129,8 +129,7 @@ variable_table['data_name_2'] = column_name_2
 variable_table['data_2'] = column_data_2
 
 pass_c([[
-  static const char *<<p data_name_1>> = <<p data_1>>;
-  static const char *<<p data_name_2>> = <<p data_2>>;
+  
   static void <<p fn>>(void *input,void *param,Event_data_CFL_t *event_data){
     (void) param;
     (void) event_data;

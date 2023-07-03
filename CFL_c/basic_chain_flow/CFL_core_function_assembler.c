@@ -237,7 +237,7 @@ void Asm_process_columns_action_CFL(void* input, char* one_shot_fn,
       col_number);
   valid_column_links->user_data = user_data;
 
-  for (int i = 0; i < col_number; i++) {
+  for (unsigned i = 0; i < col_number; i++) {
     unsigned short index = Find_column_index_CFL(input, *column_names++);
 
     valid_column_links->column_indexes[i] = index;
@@ -330,9 +330,7 @@ void Asm_join_columns_CFL(void* input, int number_of_columns,
 }
 
 void Asm_if_columns_CFL(void* input, const char* if_function,
-  int number_of_columns, const char** column_names,
-  bool terminate_flag, const char* termination_fn,
-  void* user_data) {
+  int number_of_columns, const char** column_names,const char* termination_fn,void* user_data) {
 
   If_function_CFL_t fn_if;
   If_control_CFL_t* if_control;
@@ -350,7 +348,7 @@ void Asm_if_columns_CFL(void* input, const char* if_function,
   if_control->return_indexes =
     (bool*)Allocate_once_malloc_CFL(input, sizeof(bool) * number_of_columns);
 
-  if_control->termination_flag = terminate_flag;
+  
   if_control->termination_fn = fn_one_shot;
   if_control->user_data = user_data;
 
@@ -368,9 +366,7 @@ void Asm_if_columns_CFL(void* input, const char* if_function,
 }
 
 void Asm_try_columns_CFL(void* input, const char* try_function_name,
-  int number_of_columns, const char** column_names,
-  bool terminate_flag, bool invert_flag,
-  void* user_data) {
+  int number_of_columns, const char** column_names,bool invert_flag, void* user_data) {
 
   Try_function_CFL_t fn_try;
   Try_column_CFL_t* try_control;
@@ -379,7 +375,7 @@ void Asm_try_columns_CFL(void* input, const char* try_function_name,
 
   try_control = (Try_column_CFL_t*)Allocate_once_malloc_CFL(
     input, sizeof(Try_column_CFL_t));
-  try_control->terminate_flag = terminate_flag;
+ 
   try_control->invert_flag = invert_flag;
   try_control->column_number = number_of_columns;
   try_control->column_indexes = (unsigned short*)Allocate_once_malloc_CFL(
@@ -449,7 +445,7 @@ void Asm_do_while_columns_CFL(void* input, const char* bool_fn_name,
 }
 
 void Asm_for_columns_CFL(void* input, int number_of_times,
-  int number_of_columns, const char** column_names,
+  unsigned number_of_columns, const char** column_names,
   char* one_shot_function_name, void* user_data) {
 
   For_control_CFL_t* for_control;
