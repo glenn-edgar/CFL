@@ -9,13 +9,7 @@
 #include "Cfl_element_storeage.h"
 #include "CFL_state_machine.h"
 
-#if 0
-"ENABLE_DISABLE_SM"
-static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *event_data)
-"CHANGE_STATE"
-static void change_state(void *input, void *params, Event_data_CFL_t *event_data)
-"DUMP_STATE_MACHINES" static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data)
-#endif
+
 
 typedef struct Sm_control_CFL_t
 {
@@ -43,10 +37,13 @@ typedef struct Sm_dictionary_CFL_t
 static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *event_data);
 static void change_state(void *input, void *params, Event_data_CFL_t *event_data);
 static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data);
+static void process_set_sms_user_data(void *input, void *params, Event_data_CFL_t *event_data);
+static void send_event_to_sm(void *input, void *params, Event_data_CFL_t *event_data);
+
 
 unsigned sm_reserve_one_shot_functions_CFL(void)
 {
-    return 3;
+    return 5;
 }
 
 void sm_register_one_shot_functions_CFL(void *input)
@@ -54,6 +51,8 @@ void sm_register_one_shot_functions_CFL(void *input)
     Store_one_shot_function_CFL(input, "ENABLE_DISABLE_SM", enable_disable_sms_CFL);
     Store_one_shot_function_CFL(input, "CHANGE_STATE", change_state);
     Store_one_shot_function_CFL(input, "DUMP_STATE_MACHINES", dump_sm);
+    Store_one_shot_function_CFL(input, "SMS_CHANGE_USER_DATA", process_set_sms_user_data);
+    Store_one_shot_function_CFL(input, "SEND_EVENT_TO_SM", send_event_to_sm);
 }
 
 
@@ -89,7 +88,7 @@ void Constuct_sm_system_CFL(void *input, Handle_config_CFL_t *config)
     sm_dictionary->sm_control = (Sm_control_CFL_t *)Allocate_once_malloc_CFL(handle, sizeof(Sm_control_CFL_t) * sms_number);
 }
 
-void Define_state_machine_CFL(void *input, unsigned short number_of_states, const char **state_names)
+void  Define_state_machines_CFL(void *input, unsigned short number_of_states, const char **state_names)
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
@@ -107,7 +106,7 @@ void Define_state_machine_CFL(void *input, unsigned short number_of_states, cons
     sm_dict->current_sm_number += number_of_states;
 }
 
-void Asm_define_sm(void *input,
+void  Asm_define_state_machine_CFL(void *input,
                    const char *sm_name,
                    unsigned char number_of_states,
                    const char **state_names,
@@ -229,7 +228,7 @@ void Asm_enable_disable_sms_CFL(void *input,unsigned short number, const char **
     Asm_one_shot_terminate_CFL(input, "ENABLE_DISABLE_SM", enable_state);
 }
 
-void Asm_enable_sms_CFL(void *input,unsigned short number, char **sm_names)
+void Asm_enable_sms_CFL(void *input,unsigned short number, const char **sm_names)
 {
 
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
@@ -250,7 +249,7 @@ void Asm_enable_sms_CFL(void *input,unsigned short number, char **sm_names)
     }
     Asm_one_shot_CFL(input, "ENABLE_DISABLE_SM", enable_state);
 }
-void Asm_disable_sms_CFL(void *input,unsigned short number, char **sm_names)
+void Asm_disable_sms_CFL(void *input,unsigned short number,const char **sm_names)
 {
 
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
@@ -276,30 +275,32 @@ static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *
 {
     enable_state_CFL_t *enable_state = (enable_state_CFL_t *)params;
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
-    if ((event_data->event_index != EVENT_INIT_CFL) || (event_data->event_index != EVENT_TERMINATION_CFL))
-    {
-        Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
-        for(unsigned i = 0; i < enable_state->number_of_sms; i++){
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    if(event_data->event_index == EVENT_INIT_CFL){
+         for(unsigned i = 0; i < enable_state->number_of_sms; i++){
             Sm_control_CFL_t *sm_control = sm_dict->sm_control + enable_state->sms[i];
-            if (enable_state->state == true)
-            {
-
-                sm_control->active = true;
-                Enable_column_CFL(input, sm_control->manager_chain_id);
-                Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
-                sm_control->current_state = sm_control->initial_state;
-            }
-            else
-            {
-                sm_control->active = false;
-                Disable_column_CFL(input, sm_control->manager_chain_id);
-                for (int i = 0; i < sm_control->number_of_states; i++)
-                {
-                    Disable_column_CFL(input, sm_control->chain_ids[i]);
-                }
-            }
+            sm_control->active = true;
+            Enable_column_CFL(input, sm_control->manager_chain_id);
+            Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
+            sm_control->current_state = sm_control->initial_state;
+            
         }
     }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        for(unsigned i = 0; i < enable_state->number_of_sms; i++){
+            Sm_control_CFL_t *sm_control = sm_dict->sm_control + enable_state->sms[i];
+            sm_control->active = false;
+            Disable_column_CFL(input, sm_control->manager_chain_id);
+            for (int i = 0; i < sm_control->number_of_states; i++)
+            {
+                    Disable_column_CFL(input, sm_control->chain_ids[i]);
+            }
+            
+        }
+    }
+    
+    
 }
 
 typedef struct sm_event_CFL_t
@@ -308,7 +309,7 @@ typedef struct sm_event_CFL_t
     Event_data_CFL_t sent_event;
 } sm_event_CFL_t;
 
-void Asm_sms_send_event_CFL(void *input, char *sm_name, Event_data_CFL_t *event_data)
+void Asm_sms_send_event_CFL(void *input,const  char *sm_name, Event_data_CFL_t *event_data)
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     sm_event_CFL_t *sm_event = (sm_event_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(sm_event_CFL_t));
@@ -320,16 +321,24 @@ void Asm_sms_send_event_CFL(void *input, char *sm_name, Event_data_CFL_t *event_
     }
     Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
     sm_event->queue_id = sm_control->sm_queue_id;
-    Send_named_event_CFL(input, sm_control->sm_queue_id, event_data);
+    sm_event->sent_event = *event_data;
+    Asm_one_shot_CFL(input, "SEND_EVENT_TO_SM", sm_event);
+   
 }
 
+static void send_event_to_sm(void *input, void *params, Event_data_CFL_t *event_data)
+{
+    (void)event_data;
+    sm_event_CFL_t *sm_event = (sm_event_CFL_t *)params;
+    Send_named_event_CFL(input, sm_event->queue_id, &sm_event->sent_event);
+}
 typedef struct change_state_CFL_t
 {
     short sm_id;
     short new_state_id;
 } change_state_CFL_t;
 
-void Asm_change_state_CFL(void *input, char *sm_name, char *new_state_name)
+void Asm_change_state_CFL(void *input, const char *sm_name, const char *new_state_name)
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
@@ -353,15 +362,24 @@ void Asm_change_state_CFL(void *input, char *sm_name, char *new_state_name)
 static void change_state(void *input, void *params, Event_data_CFL_t *event_data)
 {
     (void)event_data;
-    change_state_CFL_t *sm_state = (change_state_CFL_t *)params;
+    change_state_CFL_t *change_state = (change_state_CFL_t *)params;
+    Change_state_CFL(input, change_state->sm_id, change_state->new_state_id);
+}
+
+void Change_state_CFL(void *input, short sm_id, short new_state_id)
+{
+    
+    
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
-    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_state->sm_id;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
 
-    sm_control->current_state = sm_state->new_state_id;
-    Disable_column_CFL(input, sm_control->chain_ids[sm_state->new_state_id]);
-    Enable_column_CFL(input, sm_control->chain_ids[sm_state->new_state_id]);
-    sm_control->current_state = sm_state->new_state_id;
+   
+    
+    Disable_column_CFL(input, sm_control->chain_ids[sm_control->current_state]);
+    sm_control->current_state = new_state_id;
+    Enable_column_CFL(input, sm_control->chain_ids[new_state_id]);
+    sm_control->current_state = new_state_id;
 }
 
 void Asm_dump_state_machines_CFL(void *input)
@@ -377,16 +395,19 @@ static void dump_sm(void *input, void *params, Event_data_CFL_t *event_data)
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
     Sm_control_CFL_t *sm_control = sm_dict->sm_control;
-    Printf_CFL(input, "STATE Machine Dump\n");
+   
+    Printf_CFL(input, "STATE Machine Dump %s\n"," ");
     Printf_CFL("number of state machines %d\n", sm_dict->current_sm_number);
     for (unsigned i = 0; i < sm_dict->current_sm_number; i++)
     {
         Printf_CFL("state machine %d\n", i);
         Printf_CFL("number of states %d\n", sm_control[i].number_of_states);
-        Printf_CFL("active state %d\n", sm_control[i].current_state);
+        
         if (sm_control[i].active == true)
         {
             Printf_CFL("current state is %d\n", sm_control[i].current_state);
+        }else{
+            Printf_CFL("state machine is not active %s\n"," ");
         }
     }
 }
@@ -400,7 +421,7 @@ typedef struct redirect_CFL_t
     unsigned short *event_ids;
 } redirect_CFL_t;
 
-void Asm_redirect_event_CFL(void *input, char *boolean_fn_name, void *user_data, unsigned short queue_number,
+void Asm_redirect_event_CFL(void *input, const char *boolean_fn_name, void *user_data, unsigned short queue_number,
                            const char **queue_names, unsigned short number_of_events, unsigned short *event_ids)
 {
     Bool_function_CFL_t boolean_fn = Get_bool_function_CFL(input, boolean_fn_name);
@@ -471,6 +492,52 @@ static int redirect_event(void *input, void *fn_aux, void *params, Event_data_CF
     return CONTINUE_CFL;
 }
 
+typedef struct sms_change_user_data_CFL_t
+{
+    void *user_data;
+    unsigned short sms_number;
+} sms_change_user_data_CFL_t;
+
+void Asm_sms_set_user_data_CFL(void *input, const char *sm_name, void *user_data){
+
+   Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    short sm_id = Find_Name_CFL(sm_dict->sm_names, sm_name);
+    if (sm_id < 0)
+    {
+        ASSERT_PRINT_F("sm_name %s not found\n", sm_name);
+    }
+    sms_change_user_data_CFL_t *sms_change_user_data = (sms_change_user_data_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(sms_change_user_data_CFL_t));
+    sms_change_user_data->user_data = user_data;
+    sms_change_user_data->sms_number = sm_id;
+    Asm_one_shot_CFL(input, "SMS_CHANGE_USER_DATA",sms_change_user_data);
+
+}
+
+static void process_set_sms_user_data(void *input , void *params, Event_data_CFL_t *event_data){
+    
+    (void)event_data;
+    sms_change_user_data_CFL_t *sms_change_user_data = (sms_change_user_data_CFL_t *)params;
+    
+    Sms_set_user_data_CFL(input, sms_change_user_data->sms_number, sms_change_user_data->user_data);
+}
+
+
+void Sms_set_user_data_CFL(void *input, unsigned short sm_id, void *user_data)
+{
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
+    sm_control->user_data = user_data;
+}
+
+void *Sms_get_user_data_CFL(void *input, unsigned short sm_id)
+{
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
+    return sm_control->user_data;
+}
 /*
 
   Local functions

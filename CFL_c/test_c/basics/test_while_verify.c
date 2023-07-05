@@ -63,8 +63,7 @@ static void run_while_event_normal_test_a(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "wait_event","generate_event"};
+    const char * column_names[] = {"wait_event","generate_event"};
     Asm_columns_CFL(input,2,column_names);
     Event_data_CFL_t my_event_data = { 23, 45, NULL};
 
@@ -100,8 +99,7 @@ static void run_while_event_normal_test_b(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "wait_event","generate_event"};
+    const char * column_names[] = {"wait_event","generate_event"};
     Asm_columns_CFL(input,2,column_names);
     Event_data_CFL_t my_event_data = { 23, 45, NULL};
 
@@ -155,8 +153,7 @@ run_while_event_time_out_reset_test(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_engine","wait_event","generate_event"};
+    const char * column_names[] = {"terminate_engine","wait_event","generate_event"};
     Asm_columns_CFL(input,3,column_names);
     Event_data_CFL_t my_event_data = { 23, 45, NULL};
     Store_one_shot_function_CFL(input,"test_while_time_out",test_while_time_out);
@@ -207,8 +204,7 @@ run_while_event_time_out_terminate_test(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_engine","wait_event","generate_event"};
+    const char * column_names[] = {"terminate_engine","wait_event","generate_event"};
     Asm_columns_CFL(input,3,column_names);
     Event_data_CFL_t my_event_data = { 23, 45, NULL};
     Store_one_shot_function_CFL(input,"test_while_time_out",test_while_time_out);
@@ -307,8 +303,7 @@ static void test_verify_opcode(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_engine","event_generator","verify_reset","verify_terminate"};
+    const char * column_names[] = {"terminate_engine","event_generator","verify_reset","verify_terminate"};
     Asm_columns_CFL(input,4,column_names);
     Event_data_CFL_t my_event_data = { 23, 45, NULL};
     Store_bool_function_CFL(input,"VERIFY_COUNT_EVENT",verify_test);
@@ -490,8 +485,7 @@ static void test_while_time_out(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "reset_loop","terminate_engine"};
+    const char * column_names[] = {"reset_loop","terminate_engine"};
     Asm_columns_CFL(input,2,column_names);
 
    /* 

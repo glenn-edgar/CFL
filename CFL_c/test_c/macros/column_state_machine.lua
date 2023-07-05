@@ -29,18 +29,7 @@ function Store_sm_handler( event_name, event_handler_name, event_list, user_data
     file:write(message)
 end
 
-function Store_event_filter(event_handler_name,event_name, event_list, user_data,block_flag)
-    event_name         = tostring(event_name)
-    block_flag         = tostring(block_flag)
-    return_value       = tostring(return_value)
-    user_data          = tostring(user_data)
-    event_handler_name = tostring(event_handler_name)
-    
-    generate_event_list(event_name,event_list)
-    local message = string.format("    Asm_filter_events_CFL(input,%s,%d,%s,%s,%s);\n",
-                                    event_handler_name,#event_list,event_name,block_flag,user_data)
-    file:write(message)
-end
+
 
 
 

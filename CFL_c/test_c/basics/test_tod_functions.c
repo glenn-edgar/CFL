@@ -40,8 +40,7 @@ void test_tod_functions(Handle_config_CFL_t* config_handle){
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "test_wait_tod_second","test_verify_tod_second"};
+    const char * column_names[] = {"test_wait_tod_second","test_verify_tod_second"};
     Asm_columns_CFL(input,2,column_names);
     Store_one_shot_function_CFL(input,"my_failure_fn",failure_function);
 

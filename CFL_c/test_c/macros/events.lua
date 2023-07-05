@@ -4,6 +4,7 @@ event_queue_table = {}
 
 
 function Define_event_queue(queue_name,queue_size)
+    queue_name = quote_string(queue_name)
     event_queue_table[queue_name] = queue_size
     local message = string.format("    Define_named_event_queue_CFL(input,%s,%s);\n",tostring(queue_name),tostring(queue_size))
     file:write(message)
@@ -85,7 +86,18 @@ function Dispose_RPC_event_CFL(rpc_event,flag,message_handler,user_data)
     file:write(message)
 end
 
-
+function Store_event_filter(event_handler_name,event_name, event_list, user_data,block_flag)
+    event_name         = tostring(event_name)
+    block_flag         = tostring(block_flag)
+    return_value       = tostring(return_value)
+    user_data          = tostring(user_data)
+    event_handler_name = tostring(event_handler_name)
+    
+    generate_event_list(event_name,event_list)
+    local message = string.format("    Asm_filter_events_CFL(input,%s,%d,%s,%s,%s);\n",
+                                    event_handler_name,#event_list,event_name,block_flag,user_data)
+    file:write(message)
+end
 
 
 

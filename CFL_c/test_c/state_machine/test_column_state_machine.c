@@ -179,8 +179,7 @@ static void test_column_state_machine_a(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "test_column_state_machine","event_generator","time_out"};
+    const char * column_names[] = {"test_column_state_machine","event_generator","time_out"};
     Asm_columns_CFL(input,3,column_names);
     Event_data_CFL_t event_data_1 = { 12, 45.2, NULL};
     Event_data_CFL_t event_data_2 = { 13, 46.3, NULL};

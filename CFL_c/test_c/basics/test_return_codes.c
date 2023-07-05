@@ -43,8 +43,7 @@ static void test_basic_return_codes(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_column","reset_column","terminate_engine_column","halt_test"};
+    const char * column_names[] = {"terminate_column","reset_column","terminate_engine_column","halt_test"};
     Asm_columns_CFL(input,4,column_names);
     Store_one_shot_function_CFL(input,"ONE_SHOT_TEST",one_shot_test);
 
@@ -102,8 +101,7 @@ static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_column","terminate_engine_column"};
+    const char * column_names[] = {"terminate_column","terminate_engine_column"};
     Asm_columns_CFL(input,2,column_names);
 
    /* 
@@ -134,8 +132,7 @@ static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "second_event","minute_event","hour_event","day_event"};
+    const char * column_names[] = {"second_event","minute_event","hour_event","day_event"};
     Asm_columns_CFL(input,4,column_names);
 
    /* 

@@ -11,10 +11,10 @@ unsigned sm_reserve_column_functions_CFL(void);
 void sms_register_column_functions_CFL(void *input);
 void Constuct_sm_system_CFL(void *input, Handle_config_CFL_t* config);
 
-void Define_state_machine_CFL(void *input, unsigned short number_of_states, const char **state_names);
+void Define_state_machines_CFL(void *input, unsigned short number_of_states, const char **state_names);
 
 
-void Asm_define_sm(void *input,
+void Asm_define_state_machine_CFL(void *input,
                    const char *sm_name,
                    unsigned char number_of_states,
                    const char **state_names,
@@ -32,20 +32,30 @@ void Asm_end_state_machine_CFL(void *input);
 
 void Asm_enable_disable_sms_CFL(void *input,unsigned short number, const char **sm_name);
 
-void Asm_disable_sms_CFL(void *input,unsigned short number, char **sm_names);
+void Asm_disable_sms_CFL(void *input,unsigned short number, const char **sm_names);
 
-void Asm_enable_sms_CFL(void *input,unsigned short number, char **sm_names);
+void Asm_enable_sms_CFL(void *input,unsigned short number, const char **sm_names);
 
-void Asm_sms_send_event_CFL(void *input, char *sm_name, Event_data_CFL_t *event_data);
+void Asm_sms_send_event_CFL(void *input, const char *sm_name, Event_data_CFL_t *event_data);
+
+void Asm_sms_set_user_data_CFL(void *input, const char *sm_name, void *user_data);
 
 
-
-void Asm_change_state_CFL(void *input, char *sm_name, char *new_state_name);
+void Asm_change_state_CFL(void *input, const char *sm_name,const char *new_state_name);
 
 void Asm_dump_state_machines_CFL(void *input);
 
-void Verify_all_sm_are_defined(void *input);
+void Asm_sms_set_user_data_CFL(void *input, const char *sm_name, void *user_data);
 
+/**
+* c runtime functions
+*/
+void Sms_set_user_data_CFL(void *input, unsigned short sm_id, void *user_data);
+void *Sms_get_user_data_CFL(void *input, unsigned short sm_id);
+
+
+void Verify_all_sm_are_defined(void *input);
+void Change_state_CFL(void *input, short sm_id, short new_state_id);
 
 
 

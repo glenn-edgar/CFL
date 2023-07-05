@@ -66,8 +66,7 @@ static void test_enable_disable_columns(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "enable_no_terminate","enable_terminate","disable_column","reset_column","column_to_reset"};
+    const char * column_names[] = {"enable_no_terminate","enable_terminate","disable_column","reset_column","column_to_reset"};
     Asm_columns_CFL(input,5,column_names);
 
    /* 
@@ -139,8 +138,7 @@ static void test_join_columns_terminate(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "test_join","delay_terminate"};
+    const char * column_names[] = {"test_join","delay_terminate"};
     Asm_columns_CFL(input,2,column_names);
 
    /* 
@@ -177,8 +175,7 @@ static void test_join_columns_no_terminate(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "launch_column","test_join","delay_terminate"};
+    const char * column_names[] = {"launch_column","test_join","delay_terminate"};
     Asm_columns_CFL(input,3,column_names);
 
    /* 
@@ -275,8 +272,7 @@ static void test_if_columns_normal_case(Handle_config_CFL_t* config_handle)
     Store_if_function_CFL(input,"local_if_function",test_if_function);
     Store_one_shot_function_CFL(input,"final_try_function",final_try_function);
     // define the column list
-    const char * column_names[] = {
-        "if_column","test_if_0","test_if_1","test_if_2","test_if_3","test_if_4","test_if_5"};
+    const char * column_names[] = {"if_column","test_if_0","test_if_1","test_if_2","test_if_3","test_if_4","test_if_5"};
     Asm_columns_CFL(input,7,column_names);
 
    /* 
@@ -373,8 +369,7 @@ static void test_if_columns_terminate_case(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "early_termination","if_column","test_if_0","test_if_1","test_if_2","test_if_3","test_if_4","test_if_5"};
+    const char * column_names[] = {"early_termination","if_column","test_if_0","test_if_1","test_if_2","test_if_3","test_if_4","test_if_5"};
     Asm_columns_CFL(input,8,column_names);
     Store_if_function_CFL(input,"local_if_function",test_if_function);
 
@@ -491,8 +486,7 @@ static void test_try_no_invert_pass(Handle_config_CFL_t* config_handle)
 
     Store_try_function_CFL(input,"test_try_function",test_try_function);
     // define the column list
-    const char * column_names[] = {
-        "try_column","try_0","try_1","try_2"};
+    const char * column_names[] = {"try_column","try_0","try_1","try_2"};
     Asm_columns_CFL(input,4,column_names);
 
    /* 
@@ -554,8 +548,7 @@ static void test_try_no_invert_fail(Handle_config_CFL_t* config_handle)
 
     Store_try_function_CFL(input,"test_try_function",test_try_function);
     // define the column list
-    const char * column_names[] = {
-        "try_column","try_0","try_1","try_2"};
+    const char * column_names[] = {"try_column","try_0","try_1","try_2"};
     Asm_columns_CFL(input,4,column_names);
 
    /* 
@@ -617,8 +610,7 @@ static void test_try_invert(Handle_config_CFL_t* config_handle)
 
     Store_try_function_CFL(input,"test_try_function",test_try_function);
     // define the column list
-    const char * column_names[] = {
-        "try_column","try_0","try_1","try_2"};
+    const char * column_names[] = {"try_column","try_0","try_1","try_2"};
     Asm_columns_CFL(input,4,column_names);
 
    /* 
@@ -680,8 +672,7 @@ static void test_try_termination(Handle_config_CFL_t* config_handle)
 
     Store_try_function_CFL(input,"test_try_function",test_try_function);
     // define the column list
-    const char * column_names[] = {
-        "launch_column","try_column","try_0","try_1","try_2"};
+    const char * column_names[] = {"launch_column","try_column","try_0","try_1","try_2"};
     Asm_columns_CFL(input,5,column_names);
 
    /* 
@@ -774,8 +765,7 @@ static void test_while_column_no_termination(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "test_while","while_0","while_1","while_2"};
+    const char * column_names[] = {"test_while","while_0","while_1","while_2"};
     Asm_columns_CFL(input,4,column_names);
     Store_bool_function_CFL(input,"while_column_test",while_column_test);
 
@@ -833,8 +823,7 @@ static void test_while_column_termination(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "early_terminate","test_while","while_0","while_1","while_2"};
+    const char * column_names[] = {"early_terminate","test_while","while_0","while_1","while_2"};
     Asm_columns_CFL(input,5,column_names);
     Store_bool_function_CFL(input,"while_column_test",while_column_test);
 

@@ -53,8 +53,7 @@ static void column_data_test_a(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "column_data_test"};
+    const char * column_names[] = {"column_data_test"};
     Asm_columns_CFL(input,1,column_names);
     Store_one_shot_function_CFL(input,"column_data_handler",column_data_fn);
 
@@ -88,8 +87,7 @@ static void column_data_test_b(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "column_send","column_receive_1","column_receive_2"};
+    const char * column_names[] = {"column_send","column_receive_1","column_receive_2"};
     Asm_columns_CFL(input,3,column_names);
     Store_one_shot_function_CFL(input,"column_data_handler_b",column_data_fn_b);
 
