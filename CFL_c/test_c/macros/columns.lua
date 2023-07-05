@@ -34,9 +34,9 @@ end
 function Def_columns(column_names,column_list) 
    
     file:write("    // define the column list\n")
-    local message = string.format("    const char * %s[] = {\n",column_names)
+    local message = string.format("    const char * %s[] = {",column_names)
     file:write(message)
-    file:write("        ")
+
     for i, column in ipairs(column_list) do
         column = quote_string(column)
         message = string.format("%s",column)

@@ -10,6 +10,8 @@ function compile_directory_mac()
     PXT_files = PXT.read_mac("./")
     
     for i, pxt_file in ipairs(PXT_files) do
+        
+        
         base_file = stripFileExtension(pxt_file)
         base_file = base_file..file_extension_mac
        compile_file(pxt_file, base_file)
@@ -64,6 +66,6 @@ function compile_file(input_file, output_file)
     dofile(input_file)
     file:flush()
     file:close()
-    print("Compiled "..input_file.." to "..output_file)
+    
 end
 

@@ -148,7 +148,7 @@ static void send_named_events(void *handle, void *params, Event_data_CFL_t *even
 
   for (unsigned i = 0; i < send_event->queue_number; i++)
   {
-
+   
     Send_named_event_CFL(handle, send_event->event_queue_indexes[i],
                          &send_event->event_data);
   }
@@ -389,7 +389,7 @@ void Send_named_event_CFL(void *handle, unsigned index,
 {
   Event_control_CFL_t *event_control;
   event_control = Get_named_event_queue_CFL(handle, index);
-
+ 
   if (enqueue_event_CFL(event_control, event_data) == false)
   {
     ASSERT_PRINT(__func__, "Queue full");

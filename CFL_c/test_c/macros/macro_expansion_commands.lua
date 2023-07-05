@@ -8,6 +8,12 @@ function pass_lua(input)
     file:write(input)
 end
 
+function generate_code(input)
+    output = "pass_c([["
+    output  = output .."\n".. Expand_text_stream(input).."\n".."]])\n"
+    file:write(output)
+end
+
 function write_comment(input)
     local message = string.format("--[[\n%s\n]]-- \n",input)
     file:write(message)
@@ -81,7 +87,7 @@ function dump_table(input)
     
 end
 
---Define_sm(sm_name, state_names, sm_manager_chain_name, sm_queue_name, initial_state,user_data)
+
 function Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
     dump_table(state_code)
     local column_table = {}
@@ -106,7 +112,7 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
    
     table.insert(column_list,sm_manager_chain_name)
     table.insert(queue_list,sm_queue_name)
- 
+
     message = string.format("     Def_columns(%s,{%s})\n\n",quote_string(sm_name.."_column_array"),table.concat(column_list,","))
     file:write(message)
 
@@ -130,9 +136,9 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
     for i, state_name in ipairs(state_names) do
         format_string = "       Define_state(%s,%s)\n\n"
        
-        temp_state = generate_state_name(sm_name,state_name)
+        --temp_state = generate_state_name(sm_name,state_name)
         temp_chain = generate_column_name(sm_name,state_name)
-        message = string.format(format_string,temp_state,temp_chain)
+        message = string.format(format_string,quote_string(state_name),quote_string(temp_chain))
         file:write(message)
     end
     
@@ -145,9 +151,9 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
     for i, state_name in ipairs(state_names) do
        
        local state_table = state_code[state_name]
-       local temp_state = generate_state_name(sm_name,state_name)
+       local column_name =  generate_column_name(sm_name,state_name)
        local temp_queue = generate_queue_name(sm_name,state_name)
-       generate_column(temp_state,false,temp_queue,state_table)
+       generate_column(column_name,false,temp_queue,state_table)
     end
     
 end

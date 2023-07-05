@@ -185,8 +185,7 @@ static void test_basic_functions(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "test_column_state_machine","event_generator","time_out"};
+    const char * column_names[] = {"test_column_state_machine","event_generator","time_out"};
     Asm_columns_CFL(input,3,column_names);
     Event_data_CFL_t event_data_1 = { 12, 45.2, NULL};
     Event_data_CFL_t event_data_2 = { 13, 46.3, NULL};
@@ -425,8 +424,7 @@ static void test_rpc_server_client(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "init_columns","rpc_server","rpc_client_1","rpc_client_2","time_out"};
+    const char * column_names[] = {"init_columns","rpc_server","rpc_client_1","rpc_client_2","time_out"};
     Asm_columns_CFL(input,5,column_names);
     Define_named_event_queue_CFL(input,"rpc_server",16);
     Define_named_event_queue_CFL(input,"rpc_client_1",16);

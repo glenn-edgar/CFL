@@ -37,8 +37,7 @@ static void test_set_clear_print_functions(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "test_buffer_functions"};
+    const char * column_names[] = {"test_buffer_functions"};
     Asm_columns_CFL(input,1,column_names);
 
    /* 
@@ -71,8 +70,7 @@ static void test_set_lua_symbol_table(Handle_config_CFL_t* config_handle)
     void* input = Configure_engine_CFL(config_handle,50000,4000);
 
     // define the column list
-    const char * column_names[] = {
-        "test_buffer_functions"};
+    const char * column_names[] = {"test_buffer_functions"};
     Asm_columns_CFL(input,1,column_names);
     Define_df_buf_CFL(input, "test_1", 64,0,NULL);
     Define_df_buf_CFL(input, "test_2", 32,0,NULL);
@@ -129,8 +127,7 @@ static void test_wait_and_verify_df_functions(Handle_config_CFL_t* config_handle
     Store_s_logical_expression_CFL(input, "test_1","true_s_expr", "( || ( &@ 1 3 5 7 9 ) ( &@ 1 3 5 7 9 ) )");
     Store_s_logical_expression_CFL(input, "test_1","false_s_expr", "( && ( &@ 1 3 5 7 9 ) ( &@ 2 3 5 7 9 ) )");
     // define the column list
-    const char * column_names[] = {
-        "setup_buffer","shut_down_engine","wait_and_fail_reset","wait_and_fail_terminate","wait_verify_fail_terminate","test_store_bit"};
+    const char * column_names[] = {"setup_buffer","shut_down_engine","wait_and_fail_reset","wait_and_fail_terminate","wait_verify_fail_terminate","test_store_bit"};
     Asm_columns_CFL(input,6,column_names);
 
    /* 

@@ -4,7 +4,7 @@
 // These are functions that allow for manipulation of events
 
 // primary use is for statae machine use
-void Asm_redirect_event_CFL(void *input, char *boolean_fn_name, void *user_data, unsigned short queue_number,
+void Asm_redirect_event_CFL(void *input,const char *boolean_fn_name, void *user_data, unsigned short queue_number,
                            const char **queue_names, unsigned short number_of_events, unsigned short *event_ids);
 
 

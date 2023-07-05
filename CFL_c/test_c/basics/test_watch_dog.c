@@ -48,8 +48,7 @@ static void test_watch_dog(Handle_config_CFL_t* config_handle) {
     void* input = Configure_engine_CFL(config_handle,50000,2500);
 
     // define the column list
-    const char * column_names[] = {
-        "terminate_engine","wd_test_normal","wd_test_terminate","wd_test_reset"};
+    const char * column_names[] = {"terminate_engine","wd_test_normal","wd_test_terminate","wd_test_reset"};
     Asm_columns_CFL(input,4,column_names);
     Store_one_shot_function_CFL(input,"watch_dog_timeout",watch_dog_timeout);
 

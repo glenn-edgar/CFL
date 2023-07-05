@@ -1,0 +1,49 @@
+local comment ="   Definition of state machine test.inc\n"
+write_comment(comment)
+
+
+
+local sm_name = "test_sm"
+local state_names = {"test_state1","test_state2","test_state3"}
+local initial_state = "test_state1"
+local user_data = "(void *)test_data"
+local queue_size = 10
+
+local state_code = {}
+
+local temp = {}
+table.insert(temp,"Log_msg('test_state1 starting')")
+
+table.insert(temp,"Wait_delay(1000)")
+table.insert(temp,"Log_msg('changing state to test_state2')")
+table.insert(temp,"Change_state('test_sm','test_state2')")
+table.insert(temp,"Halt_column()")
+state_code["test_state1"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('test_state2 starting')")
+
+table.insert(temp,"Wait_delay(1000)")
+table.insert(temp,"Log_msg('changing state to test_state3')")
+table.insert(temp,"Change_state('test_sm','test_state3')")
+table.insert(temp,"Halt_column()")
+state_code["test_state2"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('test_state3 starting')")
+
+table.insert(temp,"Wait_delay(1000)")
+table.insert(temp,"Log_msg('changing state to test_state1')")
+table.insert(temp,"Change_state('test_sm','test_state1')")
+table.insert(temp,"Halt_column()")
+state_code["test_state3"] = temp
+
+
+temp = {}
+table.insert(temp,"Log_msg('state machine manager starting')")
+table.insert(temp,"Store_event_filter(quote_string('display_event'),'sm_manager_array',{47},'NULL',true)")
+table.insert(temp,"Halt_column()")
+state_code["manager"] = temp
+
+Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
+
