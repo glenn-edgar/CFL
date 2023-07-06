@@ -504,7 +504,7 @@ void Asm_attach_multi_event_handler_CFL(void* input, unsigned number, const shor
   Asm_store_column_element_CFL(input, "EVENT_HANDLER_FN", (void*)fn, (void*)event_handler_fn);
 }
 
-void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, const short* event_indexes, unsigned number_of_columns, const char** column_names) {
+void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_columns, const char** column_names) {
 
   Enable_join_CFL_t* enable_join = (Enable_join_CFL_t*)Allocate_once_malloc_CFL(input, sizeof(Enable_join_CFL_t));
   enable_join->number_of_columns = number_of_columns;
@@ -513,7 +513,8 @@ void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, 
     enable_join->column_indexes[i] = Find_column_index_CFL(input, column_names[i]);
 
   }
-  Asm_attach_multi_event_handler_CFL(input, number_of_events, event_indexes, "ENABLE_JOIN", (void*)enable_join);
+  Asm_store_column_element_CFL(input, "EVENT_HANDLER_FN",NULL, (void*)enable_join);
+  
 
 }
 

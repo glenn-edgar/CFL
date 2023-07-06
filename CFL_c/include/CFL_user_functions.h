@@ -350,7 +350,7 @@ void Asm_while_columns_CFL(void* input, const char* bool_fn_name, int number_of_
 
 
 
-void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_events, const short* event_indexes, unsigned number_of_columns, const char** column_names);
+void Asm_handle_enable_join_actions_CFL(void* input, unsigned number_of_columns, const char** column_names);
 
 
 

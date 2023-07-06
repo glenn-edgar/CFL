@@ -1,11 +1,5 @@
 
-local function generate_name_list(name, name_list)
-    for i,v in ipairs(name_list) do
-        name_list[i] = quote_string(v)
-    end
-    local message = string.format("    const char* %s[] = {%s};\n",name,table.concat(name_list,","))
-    file:write(message)
-end
+
 
 
 function Enable_columns(col_name,column_list,disable_flag)

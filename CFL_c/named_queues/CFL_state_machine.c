@@ -9,7 +9,7 @@
 #include "Cfl_element_storeage.h"
 #include "CFL_state_machine.h"
 
-
+static bool match_event(unsigned short number_of_events, unsigned short *event_ids, unsigned short event_index);
 
 typedef struct Sm_control_CFL_t
 {
@@ -23,6 +23,7 @@ typedef struct Sm_control_CFL_t
     unsigned short initial_state;
     unsigned short number_of_states;
     short *chain_ids; // each state is a chain
+    short *queue_ids;
     void *user_data;
 } Sm_control_CFL_t;
 
@@ -57,16 +58,25 @@ void sm_register_one_shot_functions_CFL(void *input)
 
 
 static int redirect_event(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+static int transfer_events_to_state(void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data);
+static int transfer_events_to_sm(void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data);
+static int conditional_state_change(void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data);
+static int conditional_sm_status(void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 unsigned sm_reserve_column_functions_CFL(void)
 {
-    return 1;
+    return 5;
 }
 
 void sms_register_column_functions_CFL(void *input)
 {
 
     Store_column_function_CFL(input,"REDIRECT_EVENT",redirect_event);
+    Store_column_function_CFL(input,"TRANSFER_EVENTS_TO_STATE", transfer_events_to_state);
+    Store_column_function_CFL(input,"TRANSFER_EVENTS_TO_SM", transfer_events_to_sm);
+    Store_column_function_CFL(input,"CONDITIONAL_STATE_CHANGE", conditional_state_change);
+    Store_column_function_CFL(input,"CONDITIONAL_SM_STATUS", conditional_sm_status);
+
 }
 
 void Constuct_sm_system_CFL(void *input, Handle_config_CFL_t *config)
@@ -136,8 +146,10 @@ void  Asm_define_state_machine_CFL(void *input,
     sm_control->manager_chain_id = Find_column_index_CFL(handle, sm_manager_chain_name);
     sm_control->number_of_states = number_of_states;
     sm_control->chain_ids = (short *)Allocate_once_malloc_CFL(handle, sizeof(unsigned short) * number_of_states);
+    sm_control->queue_ids = (short *)Allocate_once_malloc_CFL(handle, sizeof(unsigned short) * number_of_states);
     for (int i = 0; i < number_of_states; i++)
     {
+        sm_control->queue_ids[i] = -1;
         sm_control->chain_ids[i] = -1;
     }
     sm_control->user_data = user_data;
@@ -147,10 +159,11 @@ void  Asm_define_state_machine_CFL(void *input,
     handle->sm_assembly = true;
     handle->sm_index = sm_id;
 }
-
+  
 void Asm_define_state_CFL(void *input,
                           const char *state_name,
-                          const char *chain_name)
+                          const char *chain_name,
+                          const char *queue_name)   
 {
     Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
@@ -165,6 +178,7 @@ void Asm_define_state_CFL(void *input,
         ASSERT_PRINT_F("state_name %s not found\n", state_name);
     }
     sm_control->chain_ids[state_id] = Find_column_index_CFL(handle, chain_name);
+    sm_control->queue_ids[state_id] = Get_named_event_queue_index_CFL(handle, queue_name);
 }
 
 void Asm_end_state_machine_CFL(void *input)
@@ -365,6 +379,250 @@ static void change_state(void *input, void *params, Event_data_CFL_t *event_data
     change_state_CFL_t *change_state = (change_state_CFL_t *)params;
     Change_state_CFL(input, change_state->sm_id, change_state->new_state_id);
 }
+
+typedef struct transfer_to_state_t{
+    short sm_id;
+    unsigned short number_of_events;
+    unsigned short *event_indexes;
+    
+}transfer_to_state_t;
+
+
+
+void Asm_transfer_events_to_state_CFL(void *input,const char *state_machine_name,unsigned short number_of_events,short *event_indexes){
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    short sm_id = Find_Name_CFL(sm_dict->sm_names, state_machine_name);
+    if (sm_id < 0)
+    {
+        ASSERT_PRINT_F("sm_name %s not found\n", state_machine_name);
+    }
+    transfer_to_state_t *transfer_to_state = (transfer_to_state_t *)Allocate_once_malloc_CFL(input, sizeof(transfer_to_state_t));
+    transfer_to_state->sm_id = sm_id;
+    transfer_to_state->number_of_events = number_of_events;
+    if(number_of_events == 0){
+        transfer_to_state->event_indexes = NULL;
+    }else{
+        transfer_to_state->event_indexes = (unsigned short *)Allocate_once_malloc_CFL(input, sizeof(unsigned short) * number_of_events);
+        for(unsigned i = 0; i < number_of_events; i++){
+            transfer_to_state->event_indexes[i] = event_indexes[i];
+        }
+    }
+    
+    Asm_store_column_element_CFL(input, "TRANSFER_EVENTS_TO_STATE",NULL, transfer_to_state);
+      
+}
+
+
+
+static int transfer_events_to_state(void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    (void)aux_fn;
+    transfer_to_state_t *transfer_to_state = (transfer_to_state_t *)params;
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + transfer_to_state->sm_id;
+    
+    if(event_data->event_index == EVENT_INIT_CFL){
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return CONTINUE_CFL;
+    }
+    // state machine is not active
+    if(sm_control->active == false){
+        return CONTINUE_CFL;
+    }
+    // find active state queue
+    unsigned short sm_queue_id = sm_control->queue_ids[sm_control->current_state];
+    if((transfer_to_state->number_of_events == 0)&&(event_data->event_index >= 0)){
+        Send_named_event_CFL(input,sm_queue_id,event_data);
+        return HALT_CFL;
+    }
+    if(match_event(transfer_to_state->number_of_events,transfer_to_state->event_indexes,event_data->event_index) == true){
+        Send_named_event_CFL(input,sm_queue_id,event_data);
+        return HALT_CFL;            
+    }
+    // unmatched  event
+    return CONTINUE_CFL;
+
+
+}
+
+typedef struct transfer_to_sm_t{
+    short sm_id_transfer;
+    unsigned short number_of_events;
+    unsigned short *event_indexes;
+    
+}transfer_to_sm_t;
+
+
+void Asm_transfer_events_to_sm_CFL(void *input,const const char *transfer_sm, 
+                   unsigned short number_of_events, short *event_indexes){
+  
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    
+    short sm_id_transfer = Find_Name_CFL(sm_dict->sm_names, transfer_sm);
+    if (sm_id_transfer < 0)
+    {
+        ASSERT_PRINT_F("sm_name %s not found\n", transfer_sm);
+    }
+
+
+    transfer_to_sm_t *transfer_to_sm = (transfer_to_sm_t *)Allocate_once_malloc_CFL(input, sizeof(transfer_to_sm_t));
+    transfer_to_sm->sm_id_transfer = sm_id_transfer;
+    transfer_to_sm->number_of_events = number_of_events;
+    if(number_of_events == 0){
+        transfer_to_sm->event_indexes = NULL;
+    }else{
+        transfer_to_sm->event_indexes = (unsigned short *)Allocate_once_malloc_CFL(input, sizeof(unsigned short) * number_of_events);
+        for(unsigned i = 0; i < number_of_events; i++){
+            transfer_to_sm->event_indexes[i] = event_indexes[i];
+        }
+    }
+    
+    Asm_store_column_element_CFL(input, "TRANSFER_TO_SM",NULL, transfer_to_sm);
+      
+}
+
+
+
+static int transfer_events_to_sm(void *input,void *aux_fn,void *params,Event_data_CFL_t *event_data){
+    (void)aux_fn;
+    transfer_to_sm_t *transfer_to_state = (transfer_to_sm_t *)params;
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + transfer_to_state->sm_id_transfer;
+    
+    if(event_data->event_index == EVENT_INIT_CFL){
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return CONTINUE_CFL;
+    }
+    // state machine is not active
+    if(sm_control->active == false){
+        return CONTINUE_CFL;
+    }
+    // find active state queue
+    
+    if((transfer_to_state->number_of_events == 0)&&(event_data->event_index >= 0)){
+        Send_named_event_CFL(input,sm_control->sm_queue_id,event_data);
+        return HALT_CFL;
+    }
+    if(match_event(transfer_to_state->number_of_events,transfer_to_state->event_indexes,event_data->event_index) == true){
+        Send_named_event_CFL(input,sm_control->sm_queue_id,event_data);
+        return HALT_CFL;            
+    }
+    // unmatched  event
+    return CONTINUE_CFL;
+
+
+}
+
+typedef struct conditional_state_change_CFL_t{
+    short sm_id;
+    short new_state_id;
+   
+    void *user_data;
+}conditional_state_change_CFL_t;
+
+void Asm_conditional_state_change_CFL(void *input,const char *state_machine_name,const char *new_state,const char *bool_fn_name, void *user_data){
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    short sm_id = Find_Name_CFL(sm_dict->sm_names, state_machine_name);
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
+     Bool_function_CFL_t bool_fn = Get_bool_function_CFL(input, bool_fn_name);
+    if (sm_id < 0)
+    {
+        ASSERT_PRINT_F("sm_name %s not found\n", state_machine_name);
+    }  
+    short new_state_id = Find_Name_CFL(sm_control->state_names, new_state);
+    if (new_state_id < 0)
+    {
+        ASSERT_PRINT_F("new_state_name %s not found\n", new_state);
+    }
+    conditional_state_change_CFL_t *conditional_state_change = (conditional_state_change_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(conditional_state_change_CFL_t));
+    conditional_state_change->sm_id = sm_id;
+    conditional_state_change->new_state_id = new_state_id;
+    conditional_state_change->user_data = user_data;
+    Asm_store_column_element_CFL(input,"CONDITIONAL_STATE_CHANGE",bool_fn, conditional_state_change);
+}
+
+
+static int conditional_state_change(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
+    conditional_state_change_CFL_t *conditional_state_change = (conditional_state_change_CFL_t *)params;
+    
+    
+    if(event_data->event_index == EVENT_INIT_CFL){
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return CONTINUE_CFL;
+    }
+    if(bool_fn(input,conditional_state_change->user_data,event_data) == true){
+        Change_state_CFL(input, conditional_state_change->sm_id, conditional_state_change->new_state_id);
+        return DISABLE_CFL;
+    }
+    
+    return CONTINUE_CFL;
+}
+
+typedef struct conditional_sm_status_CFL_t{
+    short sm_id_transfer;   
+    bool  action;
+    void *user_data;
+}conditional_sm_status_CFL_t;
+
+void Asm_conditional_sm_status_CFL(void *input,const char *transfer_sm,bool action,const char *bool_fn_name, void *user_data){
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    short sm_id_transfer = Find_Name_CFL(sm_dict->sm_names, transfer_sm);
+    if( sm_id_transfer){
+        ASSERT_PRINT_F("sm_name %s not found\n", transfer_sm);
+    }
+    
+    Bool_function_CFL_t bool_fn = Get_bool_function_CFL(input, bool_fn_name);
+    conditional_sm_status_CFL_t *conditional_sm_status = (conditional_sm_status_CFL_t *)Allocate_once_malloc_CFL(input, sizeof(conditional_sm_status_CFL_t));
+    conditional_sm_status->sm_id_transfer = sm_id_transfer;
+    conditional_sm_status->user_data = user_data;
+    conditional_sm_status->action = action;
+    Asm_store_column_element_CFL(input,"CONDITIONAL_SM_STATUS",bool_fn, conditional_sm_status);
+    
+}
+
+
+static int conditional_sm_status(void *input,  void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
+    conditional_sm_status_CFL_t *conditional_sm_status = (conditional_sm_status_CFL_t *)params;
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + conditional_sm_status->sm_id_transfer;
+    if(event_data->event_index == EVENT_INIT_CFL){
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return CONTINUE_CFL;
+    }   
+    if(bool_fn(input,conditional_sm_status->user_data,event_data) == true){
+        sm_control->active = conditional_sm_status->action;
+        if(conditional_sm_status->action == true){
+            Enable_column_CFL(input, sm_control->manager_chain_id);
+            Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
+            sm_control->current_state = sm_control->initial_state;
+        }else{
+            Disable_column_CFL(input, sm_control->manager_chain_id);
+            for (int i = 0; i < sm_control->number_of_states; i++)
+            {
+                    Disable_column_CFL(input, sm_control->chain_ids[i]);
+            }
+        }
+        return HALT_CFL;
+    }
+    return CONTINUE_CFL;
+}
+
 
 void Change_state_CFL(void *input, short sm_id, short new_state_id)
 {
