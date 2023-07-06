@@ -49,7 +49,7 @@ void Asm_dump_state_machines_CFL(void *input);
 void Asm_sms_set_user_data_CFL(void *input, const char *sm_name, void *user_data);
 
 void Asm_transfer_events_to_state_CFL(void *input,const char *state_machine_name,unsigned short number_of_events,short* event_indexes);
-void Asm_transfer_events_to_sm_CFL(void *input,const const char *transfer_sm, 
+void Asm_transfer_events_to_sm_CFL(void *input,const char *transfer_sm, 
                    unsigned short number_of_events, short* event_indexes);
 void Asm_conditional_state_change_CFL(void *input,const char *state_machine_name,const char *new_state,const char *bool_fn_name, void *user_data);
 void Asm_conditional_sm_status_CFL(void *input,const char *transfer_sm,bool action,const char *bool_fn, void *user_data);

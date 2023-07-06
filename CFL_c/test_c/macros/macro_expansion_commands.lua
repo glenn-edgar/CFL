@@ -134,11 +134,11 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
     file:write(message)
    
     for i, state_name in ipairs(state_names) do
-        format_string = "       Define_state(%s,%s)\n\n"
+        format_string = "       Define_state(%s,%s,%s)\n\n"
        
         --temp_state = generate_state_name(sm_name,state_name)
         temp_chain = generate_column_name(sm_name,state_name)
-        message = string.format(format_string,quote_string(state_name),quote_string(temp_chain))
+        message = string.format(format_string,quote_string(state_name),quote_string(temp_chain),quote_string(queue_list[i]))
         file:write(message)
     end
     

@@ -17,16 +17,17 @@ function verify_state_machine_defined(sms)
     end
 end
 
-function Define_state_machines(sm_array, sm_list)
-
+function Define_state_machines(sm_array,sm_list)
+  
     local temp_sm_quote = {}
+
     for i, sm in ipairs(sm_list) do
 
         if state_machines[sm] ~= nil then
             print("Error: state machine already defined: ", sm)
             assert(false)
         end
-
+        
         temp_sm_quote[i] = quote_string(sm)
         state_machines[sm] = {}
         state_machines[sm]["states"] = {}
@@ -274,7 +275,7 @@ function Define_sm(sm_name, state_names, sm_manager_chain_name, sm_queue_name,
     -- TBD ------------  verify valid sm_queue_name                     
     local number_of_states = #state_names
     local states_array = sm_name .. "_state_array"
-    local temp_names = {}
+    local temp_names = {} 
     for i, state in ipairs(state_names) do
         temp_names[i] = quote_string(state)
     end
@@ -297,7 +298,7 @@ function Define_sm(sm_name, state_names, sm_manager_chain_name, sm_queue_name,
 
 end
 
-function Define_state(state_name, chain_name)
+function Define_state(state_name, chain_name,queue_name)
 
     if (sm_active_sm == false) then
         print("State machine generation is not active")
@@ -305,9 +306,10 @@ function Define_state(state_name, chain_name)
     end
     verify_new_state(state_name)
     -- verify_column(chain_name) 
-    local message = string.format("    Asm_define_state_CFL(input,%s,%s);\n",
+    local message = string.format("    Asm_define_state_CFL(input,%s,%s,%s);\n",
                                   quote_string(state_name),
-                                  quote_string(chain_name))
+                                  quote_string(chain_name),
+                                  quote_string(queue_name))
 
     file:write(message)
 end

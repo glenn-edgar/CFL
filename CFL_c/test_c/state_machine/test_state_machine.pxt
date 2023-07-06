@@ -36,8 +36,8 @@ void test_state_machine(void) {
 
 
 
-  //test_state_machine_a(config_handle);
-  //test_state_machine_b(config_handle);
+  test_state_machine_a(config_handle);
+  test_state_machine_b(config_handle);
   test_state_machine_c(config_handle);
   free(config_handle);
 }
