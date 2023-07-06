@@ -294,6 +294,10 @@ static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *
          for(unsigned i = 0; i < enable_state->number_of_sms; i++){
             Sm_control_CFL_t *sm_control = sm_dict->sm_control + enable_state->sms[i];
             sm_control->active = true;
+            Reset_named_event_queue_CFL(handle, sm_control->sm_queue_id);
+            for(unsigned i= 0; i < sm_control->number_of_states; i++){
+               Reset_named_event_queue_CFL(handle, sm_control->queue_ids[i]);
+            }
             Enable_column_CFL(input, sm_control->manager_chain_id);
             Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
             sm_control->current_state = sm_control->initial_state;
@@ -607,11 +611,21 @@ static int conditional_sm_status(void *input,  void *aux_fn, void *params, Event
     }   
     if(bool_fn(input,conditional_sm_status->user_data,event_data) == true){
         sm_control->active = conditional_sm_status->action;
+        Reset_named_event_queue_CFL(handle, sm_control->sm_queue_id);
+        for(unsigned i= 0; i < sm_control->number_of_states; i++){
+            Reset_named_event_queue_CFL(handle, sm_control->queue_ids[i]);
+        }
         if(conditional_sm_status->action == true){
+            Reset_named_event_queue_CFL(handle, sm_control->sm_queue_id);
+            for(unsigned i= 0; i < sm_control->number_of_states; i++){
+              Reset_named_event_queue_CFL(handle, sm_control->queue_ids[i]);
+            }
             Enable_column_CFL(input, sm_control->manager_chain_id);
             Enable_column_CFL(input, sm_control->chain_ids[sm_control->initial_state]);
             sm_control->current_state = sm_control->initial_state;
+            sm_control->active = true;
         }else{
+            sm_control->active = false;
             Disable_column_CFL(input, sm_control->manager_chain_id);
             for (int i = 0; i < sm_control->number_of_states; i++)
             {
