@@ -62,3 +62,7 @@ function generate_name_list(name, name_list)
     local message = string.format("    const char* %s[] = {%s};\n",name,table.concat(name_list,","))
     file:write(message)
 end
+
+function concat_table(input)
+    return table.concat( input,"," )
+end

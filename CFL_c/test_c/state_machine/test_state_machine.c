@@ -35,8 +35,8 @@ void test_state_machine(void) {
 
 
 
-  //test_state_machine_a(config_handle);
-  //test_state_machine_b(config_handle);
+  test_state_machine_a(config_handle);
+  test_state_machine_b(config_handle);
   test_state_machine_c(config_handle);
   free(config_handle);
 }
@@ -71,9 +71,9 @@ static void test_state_machine_a(Handle_config_CFL_t* config_handle)
     Define_state_machines_CFL(input, 1, test_sm_array);
     static const char *test_sm_state_array[] = {"test_state1","test_state2","test_state3"};
     Asm_define_state_machine_CFL(input,"test_sm",3,test_sm_state_array,"test_sm_manager_chain","test_sm_queue","test_state1",(void *)test_data);
-    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain");
-    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain");
-    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain");
+    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain","test_sm_test_state1_queue");
+    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain","test_sm_test_state2_queue");
+    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain","test_sm_test_state3_queue");
     Asm_end_state_machine_CFL(input);
 
    /* 
@@ -172,9 +172,9 @@ static void test_state_machine_b(Handle_config_CFL_t* config_handle)
     Define_state_machines_CFL(input, 1, test_sm_array);
     static const char *test_sm_state_array[] = {"test_state1","test_state2","test_state3"};
     Asm_define_state_machine_CFL(input,"test_sm",3,test_sm_state_array,"test_sm_manager_chain","test_sm_queue","test_state1",(void *)test_data);
-    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain");
-    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain");
-    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain");
+    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain","test_sm_test_state1_queue");
+    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain","test_sm_test_state2_queue");
+    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain","test_sm_test_state3_queue");
     Asm_end_state_machine_CFL(input);
 
    /* 
@@ -281,9 +281,9 @@ static void test_state_machine_c(Handle_config_CFL_t* config_handle)
     Define_state_machines_CFL(input, 1, test_sm_array);
     static const char *test_sm_state_array[] = {"test_state1","test_state2","test_state3"};
     Asm_define_state_machine_CFL(input,"test_sm",3,test_sm_state_array,"test_sm_manager_chain","test_sm_queue","test_state1",(void *)test_data);
-    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain");
-    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain");
-    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain");
+    Asm_define_state_CFL(input,"test_state1","test_sm_test_state1_chain","test_sm_test_state1_queue");
+    Asm_define_state_CFL(input,"test_state2","test_sm_test_state2_chain","test_sm_test_state2_queue");
+    Asm_define_state_CFL(input,"test_state3","test_sm_test_state3_chain","test_sm_test_state3_queue");
     Asm_end_state_machine_CFL(input);
 
    /* 

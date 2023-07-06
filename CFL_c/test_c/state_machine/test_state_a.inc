@@ -16,11 +16,11 @@
 
      Define_sm("test_sm",{"test_state1","test_state2","test_state3"},"test_sm_manager_chain","test_sm_queue","test_state1","(void *)test_data")
 
-       Define_state("test_state1","test_sm_test_state1_chain")
+       Define_state("test_state1","test_sm_test_state1_chain","test_sm_test_state1_queue")
 
-       Define_state("test_state2","test_sm_test_state2_chain")
+       Define_state("test_state2","test_sm_test_state2_chain","test_sm_test_state2_queue")
 
-       Define_state("test_state3","test_sm_test_state3_chain")
+       Define_state("test_state3","test_sm_test_state3_chain","test_sm_test_state3_queue")
 
      End_state_machine()
 
