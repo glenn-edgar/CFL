@@ -157,7 +157,7 @@ static int filter_events(void *input, void *aux_fn, void *params, Event_data_CFL
             return CONTINUE_CFL;
             
         }
-        printf("---------------------------------- matching event %d\n", event_data->event_index);
+        
         // match at this point
         event_handler(input, process_event, event_data);
         if (process_event->block_flag == true)

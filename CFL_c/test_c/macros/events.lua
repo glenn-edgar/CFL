@@ -85,6 +85,24 @@ function Dispose_RPC_event_CFL(rpc_event,flag,message_handler,user_data)
  
     file:write(message)
 end
+---
+--- this is originally for column state machine
+--- the event handler is a one shot function
+--- the Asm_process_event_CFL generates the following data structure
+--- typedef struct process_event_t_CFL
+---{
+---    unsigned short event_number;
+---    short *event_indexes;  -- used by outer function to determine which events to act on
+---    bool block_flag;       -- for matched events deterime where they are blocked
+---                           -- true means return HALT_CFL
+---                           -- false means return CONTINUE_CFL
+---                           -- for unmatched events the result is always CONTINUE_CFL
+---    short return_value;    -- return value for matched events
+---                           -- initialy set but can be changed by the one shot function
+---    void *user_data;       -- user data passed to the one shot function
+---} process_event_t_CFL;
+--- The one shot function is passed this structure
+--- setting the return_value field will determine the result
 
 function Store_event_filter(event_handler_name,event_name, event_list, user_data,block_flag)
     event_name         = tostring(event_name)
@@ -99,8 +117,115 @@ function Store_event_filter(event_handler_name,event_name, event_list, user_data
     file:write(message)
 end
 
+--- this handler generates the following data structure
+--- typedef struct Event_handler_fn_CFL_t {
+---    bool                    event_flag;  -- used for sending the init to the column handler function
+---    bool                    activate_flag;  -- set false not used
+---    void* user_data;     -- data that is passed to the column handler function
+--    unsigned short          event_number;  -- outer function sets this
+--   short* event_indexes;    --- events that are passed to the column handler function
+-- }Event_handler_fn_CFL_t;
+--- A HALT_CFL is returned for unmatched events
+--- The column function is used to return the return code for matched events
+
+function Store_event_handler(event_array_name,event_indexes,column_handler,user_data)
+    generate_event_list(event_array_name,event_indexes)
+    column_handler = tostring(column_handler)
+    user_data = tostring(user_data)
+    local message = string.format("    Asm_attach_event_handler_CFL(input,%s,%s,%s,%s);\n",
+                                    event_array_name,#event_indexes,column_handler,user_data)
+    file:write(message)
+end
+
+---
+--- this is originally for column state machine
+--- the event handler is a one shot function
+--- the Asm_process_event_CFL generates the following data structure
+--- typedef struct process_event_t_CFL
+---{
+---    unsigned short event_number;
+---    short *event_indexes;  -- used by outer function to determine which events to act on
+---    bool block_flag;       -- for unmatchted events deterime where they are blocked
+---                           -- true means return HALT_CFL
+---                           -- false means return CONTINUE_CFL
+---    short return_value;    -- return value for matched events
+---                           -- initialy set but can be changed by the one shot function
+---    void *user_data;       -- user data passed to the one shot function
+---} process_event_t_CFL;
+--- The one shot function is passed this structure
+--- setting the return_value field will determine the result
 
 
+function Store_sm_handler( event_name, event_handler_name, event_list, user_data)
+    event_handler_name = tostring(event_handler_name)
+    event_name         = tostring(event_name)
+
+    return_value       = tostring(return_value)
+    user_data          = tostring(user_data)
+    
+    generate_event_list(event_name,event_list)
+    local message = string.format("    Asm_process_event_CFL(input,%s,%d,%s,COLUMN_STATE_CHANGE_CFL,true,%s);\n",
+                                    event_handler_name,#event_list,event_name,user_data)
+    file:write(message)
+end
+
+--typedef struct transfer_sm_events_t{
+--    unsigned short sm_id;
+--    unsigned short event_number; -- if 0 then all events > 0 are transferred
+--    short *event_indexes;
+--}transfer_sm_events_t;
+
+function Transfer_events_to_state(state_machine_name,event_list_name, event_list)
+    generate_event_list(state_machine_name,event_list)
+    -- verify state machine name
+    if #event_list == 0 then
+        local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
+        state_machine_name,#event_list,'NULL')
+    else
+        local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
+        state_machine_name,#event_list,event_list_name)
+    end
+    
+    file:write(message)
+end
+
+function Transfer_events_to_sm(state_machine_name,transfer_sm,event_list_name, event_list)
+    generate_event_list(state_machine_name,event_list)
+    -- verify state machine name
+    -- verify transfer_sm
+    if #event_list == 0 then
+        local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%s,%d,%s);\n",
+        state_machine_name,transfer_sm,#event_list,'NULL')
+    else
+        local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%s,%d,%s);\n",
+        state_machine_name,transfer_sm,#event_list,event_list_name)
+    end
+    
+    file:write(message)
+end
+--
+-- This is a column function as the monitoring is done continuously
+--
+function Conditional_state_change(state_machine_name,new_state,bool_fn,user_data)
+    -- verify state_machine_name
+    -- verify new_state
+    local message = string.format("    Asm_conditional_state_change_CFL(input,%s,%s,%s,%s);\n",
+    state_machine_name,new_state,bool_fn,user_data)
+    file:write(message)
+end
+--
+-- This is a column function as the monitoring is done continuously
+--
+function Conditional_sm_status(state_machine_name,enable_flag,bool_fn,user_data)
+    -- verify state_machine_name
+    -- verify enable_flag to be boolean
+    local message = string.format("    Asm_conditional_sm_status_CFL(input,%s,%s,%s,%s);\n",
+    state_machine_name,enable_flag,bool_fn,user_data)
+    file:write(message)
+end
+
+
+ 
 ---
 --- utility functions
 ---

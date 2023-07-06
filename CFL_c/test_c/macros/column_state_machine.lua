@@ -16,39 +16,13 @@ function Change_column_state(column_state)
     file:write(message)
 end
 
-function Store_sm_handler( event_name, event_handler_name, event_list, user_data)
-    event_handler_name = tostring(event_handler_name)
-    event_name         = tostring(event_name)
-
-    return_value       = tostring(return_value)
-    user_data          = tostring(user_data)
-    
-    generate_event_list(event_name,event_list)
-    local message = string.format("    Asm_process_event_CFL(input,%s,%d,%s,COLUMN_STATE_CHANGE_CFL,true,%s);\n",
-                                    event_handler_name,#event_list,event_name,user_data)
-    file:write(message)
-end
 
 
 
 
 
-function generate_event_list(event_name,event_list)
-    file:write("    // define the event list\n")
-    local message = string.format("    short  %s[] = {\n",event_name)
-    file:write(message)
-    file:write("        ")
-    for i, event in ipairs(event_list) do
-        event = tostring(event)
-        message = string.format("%s",event)        
-        file:write(message)
-        if i < #event_list then
-            file:write(",")
-        end
-       
-    end
-    file:write("};\n")
-end 
+
+
 
 
 
