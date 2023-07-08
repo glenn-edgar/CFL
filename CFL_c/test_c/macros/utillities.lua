@@ -32,6 +32,16 @@ function Comment(input)
 
 end 
 
+function generate_random_variable_name()
+    local chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local name = ""
+    for i = 1, 10 do
+      local index = math.random(#chars)
+      name = name .. string.sub(chars, index, index)
+    end
+    return name
+  end
+
 function generate_event_list(event_name,event_list)
     if #event_list == 0 then
         return
@@ -66,3 +76,4 @@ end
 function concat_table(input)
     return table.concat( input,"," )
 end
+
