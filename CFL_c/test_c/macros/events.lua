@@ -109,7 +109,7 @@ function Store_event_filter(event_handler_name,event_name, event_list, user_data
     block_flag         = tostring(block_flag)
     return_value       = tostring(return_value)
     user_data          = tostring(user_data)
-    event_handler_name = tostring(event_handler_name)
+    event_handler_name = quote_string(event_handler_name)
     
     generate_event_list(event_name,event_list)
     local message = string.format("    Asm_filter_events_CFL(input,%s,%d,%s,%s,%s);\n",
@@ -175,32 +175,49 @@ end
 --    short *event_indexes;
 --}transfer_sm_events_t;
 
-function Transfer_events_to_state(state_machine_name,event_list_name, event_list)
-    generate_event_list(state_machine_name,event_list)
+function Transfer_all_events_to_state(state_machine_name)
+    
     -- verify state machine name
-    if #event_list == 0 then
-        local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
-        state_machine_name,#event_list,'NULL')
-    else
-        local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
-        state_machine_name,#event_list,event_list_name)
-    end
+    state_machine_name = quote_string(state_machine_name)
+    local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
+        state_machine_name,0,'NULL')
+    
     
     file:write(message)
 end
 
-function Transfer_events_to_sm(state_machine_name,transfer_sm,event_list_name, event_list)
-    generate_event_list(state_machine_name,event_list)
+function Transfer_events_to_state(state_machine_name,event_list_name, event_list)
+    state_machine_name = quote_string(state_machine_name)
+    if #event_list == 0 then
+        print("error number of events cannot be zero")
+        os.exit()
+    end
+    generate_event_list(event_list_name,event_list)
+    -- verify state machine name
+
+    local message = string.format("    Asm_transfer_events_to_state_CFL(input,%s,%d,%s);\n",
+       state_machine_name,#event_list,event_list_name)
+    
+    file:write(message)
+end
+
+function Transfer_all_events_to_sm(state_machine_name)
+    state_machine_name = quote_string(state_machine_name)
+    local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%d,%s);\n",
+      state_machine_name,0,'NULL')
+    
+    file:write(message)
+end
+
+
+function Transfer_events_to_sm(state_machine_name,event_name_list, event_list)
+    state_machine_name = quote_string(state_machine_name)
+    generate_event_list(event_name_list,event_list)
     -- verify state machine name
     -- verify transfer_sm
-    if #event_list == 0 then
-        local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%s,%d,%s);\n",
-        state_machine_name,transfer_sm,#event_list,'NULL')
-    else
-        local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%s,%d,%s);\n",
-        state_machine_name,transfer_sm,#event_list,event_list_name)
-    end
     
+    local message = string.format("    Asm_transfer_events_to_sm_CFL(input,%s,%d,%s);\n",
+        state_machine_name,#event_list,event_name_list)
     file:write(message)
 end
 --

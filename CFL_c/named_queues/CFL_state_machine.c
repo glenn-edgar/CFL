@@ -153,8 +153,10 @@ void  Asm_define_state_machine_CFL(void *input,
         sm_control->chain_ids[i] = -1;
     }
     sm_control->user_data = user_data;
-    sm_control->sm_queue_id = Get_named_event_queue_index_CFL(handle, sm_queue_name);
-
+    int temp;
+    temp = Get_named_event_queue_index_CFL(handle, sm_queue_name);
+    
+    sm_control->sm_queue_id = temp;
     sm_control->initial_state = Find_Name_CFL(sm_control->state_names, initial_state);
     handle->sm_assembly = true;
     handle->sm_index = sm_id;
@@ -323,7 +325,7 @@ static void enable_disable_sms_CFL(void *input, void *params, Event_data_CFL_t *
 
 typedef struct sm_event_CFL_t
 {
-    short queue_id;
+    short sm_id;
     Event_data_CFL_t sent_event;
 } sm_event_CFL_t;
 
@@ -337,8 +339,8 @@ void Asm_sms_send_event_CFL(void *input,const  char *sm_name, Event_data_CFL_t *
     {
         ASSERT_PRINT_F("sm_name %s not found\n", sm_name);
     }
-    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_id;
-    sm_event->queue_id = sm_control->sm_queue_id;
+    
+    sm_event->sm_id = sm_id;
     sm_event->sent_event = *event_data;
     Asm_one_shot_CFL(input, "SEND_EVENT_TO_SM", sm_event);
    
@@ -348,7 +350,11 @@ static void send_event_to_sm(void *input, void *params, Event_data_CFL_t *event_
 {
     (void)event_data;
     sm_event_CFL_t *sm_event = (sm_event_CFL_t *)params;
-    Send_named_event_CFL(input, sm_event->queue_id, &sm_event->sent_event);
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Sm_dictionary_CFL_t *sm_dict = (Sm_dictionary_CFL_t *)handle->sm_dictionary;
+    Sm_control_CFL_t *sm_control = sm_dict->sm_control + sm_event->sm_id;
+    
+    Send_named_event_CFL(input,sm_control->sm_queue_id, &sm_event->sent_event);
 }
 typedef struct change_state_CFL_t
 {
@@ -434,10 +440,21 @@ static int transfer_events_to_state(void *input,void *aux_fn, void *params, Even
     }
     // state machine is not active
     if(sm_control->active == false){
+        //printf("sm %d be active\n",transfer_to_state->sm_id);
         return CONTINUE_CFL;
     }
-    // find active state queue
+    if(event_data->event_index <0)
+    {
+        return CONTINUE_CFL;
+    }
+    if(sm_control->active == false){
+        ASSERT_PRINT_F("sm %d be active\n",transfer_to_state->sm_id);
+    }
     unsigned short sm_queue_id = sm_control->queue_ids[sm_control->current_state];
+    
+    
+    // find active state queue
+    
     if((transfer_to_state->number_of_events == 0)&&(event_data->event_index >= 0)){
         Send_named_event_CFL(input,sm_queue_id,event_data);
         return HALT_CFL;
@@ -485,7 +502,7 @@ void Asm_transfer_events_to_sm_CFL(void *input,const const char *transfer_sm,
         }
     }
     
-    Asm_store_column_element_CFL(input, "TRANSFER_TO_SM",NULL, transfer_to_sm);
+    Asm_store_column_element_CFL(input, "TRANSFER_EVENTS_TO_SM",NULL, transfer_to_sm);
       
 }
 
@@ -504,7 +521,11 @@ static int transfer_events_to_sm(void *input,void *aux_fn,void *params,Event_dat
     if(event_data->event_index == EVENT_TERMINATION_CFL){
         return CONTINUE_CFL;
     }
-    // state machine is not active
+    if(event_data->event_index <0)
+    {
+        return CONTINUE_CFL;
+    }
+    
     if(sm_control->active == false){
         return CONTINUE_CFL;
     }

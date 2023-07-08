@@ -5,7 +5,7 @@
 local comment ="   Definition of state machine test.inc\n"
 write_comment(comment)
 
-
+Def_state_machines("sm_array_name",{'test_sm'})
 
 local sm_name = "test_sm"
 local state_names = {"test_state1","test_state2","test_state3"}
@@ -51,5 +51,8 @@ table.insert(temp,"Log_msg('state machine manager starting')")
 table.insert(temp,"Halt_column()")
 state_code["manager"] = temp
 
-Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
 
+
+ local return_value = Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
+
+Expand_table(return_value)

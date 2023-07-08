@@ -87,9 +87,28 @@ function dump_table(input)
     
 end
 
+function Def_state_machines(sm_array_name ,sm_list)
+    local temp_sm_quote = {}
+    for i, sm in ipairs(sm_list) do
+        temp_sm_quote[i] = quote_string(sm)
+    end
+    local message = string.format("     Define_state_machines(%s,{%s})\n\n",quote_string(sm_array_name),table.concat(temp_sm_quote,","))
+    file:write(message)
+end
+
+function Def_columns(column_names,column_list) 
+    local temp_column_quote = {}
+    for i, column in ipairs(column_list) do
+        temp_column_quote[i] = quote_string(column)
+    end
+    local message = string.format("     Def_columns(%s,{%s})\n\n",quote_string(column_names),table.concat(temp_column_quote,","))
+    file:write(message)
+end
+
+
 
 function Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
-    dump_table(state_code)
+ 
     local column_table = {}
     local format_string = ""
     local message = ""
@@ -101,6 +120,8 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
     
     local column_list = {}
     local queue_list = {}
+    table.insert(column_list,sm_manager_chain_name)
+    table.insert(queue_list,sm_queue_name)
     for i, state in ipairs(state_names) do
         
         column_name = generate_column_name(sm_name,state)
@@ -110,8 +131,7 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
         table.insert(queue_list,queue_name)
     end
    
-    table.insert(column_list,sm_manager_chain_name)
-    table.insert(queue_list,sm_queue_name)
+    
 
     message = string.format("     Def_columns(%s,{%s})\n\n",quote_string(sm_name.."_column_array"),table.concat(column_list,","))
     file:write(message)
@@ -121,8 +141,8 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
         message = string.format(format_string,quote_string(queue_name),queue_size)
         file:write(message)
     end
-    local sm_string = string.format('    Define_state_machines("%s",{"%s"})\n\n',sm_name.."_array",sm_name)
-    file:write(sm_string)
+    --local sm_string = string.format('    Define_state_machines("%s",{"%s"})\n\n',sm_name.."_array",sm_name)
+    --file:write(sm_string)
     local temp_table = {}
     for i,temp1 in ipairs(state_names) do
         table.insert(temp_table,quote_string(temp1))
@@ -136,28 +156,55 @@ function Composite_state_machine(sm_name,state_names,initial_state,user_data,que
     for i, state_name in ipairs(state_names) do
         format_string = "       Define_state(%s,%s,%s)\n\n"
        
-        --temp_state = generate_state_name(sm_name,state_name)
+        temp_queue_name = generate_queue_name(sm_name,state_name)
         temp_chain = generate_column_name(sm_name,state_name)
-        message = string.format(format_string,quote_string(state_name),quote_string(temp_chain),quote_string(queue_list[i]))
+        message = string.format(format_string,quote_string(state_name),quote_string(temp_chain),quote_string(temp_queue_name))
         file:write(message)
     end
     
     format_string = "     End_state_machine()\n\n\n\n\n"
     file:write(format_string)
    
-    generate_column(sm_manager_chain_name,false,sm_queue_name,state_code["manager"])
+    local return_value = {}
+    return_value["state_machine_name"] = sm_name
+    return_value["manager"] = {sm_manager_chain_name,sm_queue_name}
 
+    --generate_column(sm_manager_chain_name,false,sm_queue_name,state_code["manager"])
+    return_value["state"] = {}
     -- define manage column
     for i, state_name in ipairs(state_names) do
-       
-       local state_table = state_code[state_name]
-       local column_name =  generate_column_name(sm_name,state_name)
-       local temp_queue = generate_queue_name(sm_name,state_name)
-       generate_column(column_name,false,temp_queue,state_table)
+       table.insert(return_value["state"],state_name)
+       --local state_table = state_code[state_name]
+       --local column_name =  generate_column_name(sm_name,state_name)
+       --local temp_queue = generate_queue_name(sm_name,state_name)
+       --generate_column(column_name,false,temp_queue,state_table)
     end
+
+    return_value["code"] = state_code
+    return return_value
     
 end
 
+function Expand_table(column_queue_tbl)
+   
+    local state_code = column_queue_tbl["code"]
+    local control_column_name = column_queue_tbl["manager"][1]
+    local control_queue_name = column_queue_tbl["manager"][2]
+   
+    generate_column(control_column_name,false,control_queue_name,state_code["manager"])
+   
+    local state_data = column_queue_tbl["state"]
+    sm_name = column_queue_tbl["state_machine_name"]
+    for i, state_name in ipairs(state_data) do
+       
+       
+        local code = state_code[state_name]
+        local column_name =  generate_column_name(sm_name,state_name)
+        local temp_queue = generate_queue_name(sm_name,state_name)
+        generate_column(column_name,false,temp_queue,code)
+     end
+
+end
 
 
-
+print("made it to the end of macro_expansion_commands.lua")
