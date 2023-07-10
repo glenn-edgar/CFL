@@ -1,0 +1,152 @@
+pass_c([[
+
+
+#include "Cfl_user_functions.h"
+#include "test_interface_functions.h"
+
+static void test_basic_return_codes(Handle_config_CFL_t* config_handle);
+static void test_dead_columns_and_dead_engine(Handle_config_CFL_t* config_handle);
+static void test_second_minute_hour_day_event(Handle_config_CFL_t* config_handle);
+
+void test_column_return_codes(void) {
+  Handle_config_CFL_t* config_handle = Create_config_handle_CFL(debug_write);
+
+  
+  
+
+
+  config_handle->number_of_columns = 30;
+  config_handle->number_of_column_elements = 300;
+  config_handle->number_column_functions = 100;
+  config_handle->number_bool_functions = 50;
+  config_handle->number_if_functions = 50;
+  config_handle->one_shot_functions = 50;
+  config_handle->number_of_try_functions = 50;
+  
+   
+  test_basic_return_codes(config_handle);
+  test_dead_columns_and_dead_engine(config_handle);
+  //test_second_minute_hour_day_event(config_handle);
+}
+]])
+
+
+pass_c([[
+static void one_shot_test(void* input, void* params,
+  Event_data_CFL_t* event_data) {
+  if (event_data->event_index == EVENT_INIT_CFL) {
+
+    Printf_CFL("one shot test initialization \n");
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL) {
+    Printf_CFL("one shot test termination \n");
+  }
+}
+]])
+
+Start_function('test_basic_return_codes')
+
+Conf_engine('config_handle',50000,4000)
+Def_columns('column_names',{ q('terminate_column'), q('reset_column'), q('terminate_engine_column'), q('halt_test') })  
+Store_one_shot(q('ONE_SHOT_TEST'),'one_shot_test')
+
+Start_column(q('terminate_column'),true)
+  Log_msg(q('this column will terminate'))
+  Term_column()
+End_column()
+
+Start_column(q('reset_column'),true)
+  Log_msg(q('this column will repeat every 3 seconds'))
+  Comment(' waiting 3 seconds')
+  Wait_delay('3000')
+  Comment('reseting the column')
+  Reset_column()
+End_column()
+
+Start_column(q('terminate_engine_column'),true)
+  Log_msg(q('This column will terminate the engine in 10 seconds'))
+  Comment(' waiting 10 seconds')
+  Wait_delay('10000')
+  Comment('shuting down CFL engine')
+  Stop_engine()
+End_column()
+  
+Start_column(q('halt_test'),true)
+  Log_msg(q('This column call two version of one shot and halt'))
+  One_shot(q('ONE_SHOT_TEST'),'NULL')
+  One_shot_terminate(q('ONE_SHOT_TEST'),'NULL')
+  Comment('column will halt now')
+  Halt_column()
+End_column()
+ 
+  
+Start_engine(10,30,'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+
+Start_function('test_dead_columns_and_dead_engine')
+Conf_engine('config_handle',50000,4000)
+Def_columns('column_names',{ q('terminate_column'), q('terminate_engine_column')})  
+
+
+Start_column(q('terminate_column'),true)
+   Log_msg(q('column will terminate a now active column elements'))
+   Comment(q('column will end because of no active column elements'))
+End_column()
+
+
+Start_column(q('terminate_engine_column'),true)
+   Log_msg(q('column will terminate a now active column elements'))
+   Wait_delay('2000')
+   Log_msg(q('column will terminate and engine will because no active columns'));
+End_column() 
+
+Start_engine(10,30,'default_idle_function', 'default_calendar_function')
+Destroy_engine('Engine Done\\n')
+
+
+
+Start_function('test_second_minute_hour_day_event')
+Conf_engine('config_handle',50000,4000)
+Def_columns('column_names',{ q('second_event'), q('minute_event'), q('hour_event'), q('day_event')})  
+
+Start_column(q('second_event'),true)
+   Log_msg(q('-------------------------> second_event is starting'))
+   Wait_event_no_time_out('SECOND_TICK_CFL ','2 ')
+   Comment(' The TIMER_TICK_CFL blocks starting the count on the next time')
+   Wait_event_no_time_out('TIMER_TICK_CFL ','1 ')
+   Wait_event_no_time_out('SECOND_TICK_CFL ','2 ')
+   Wait_event_no_time_out('TIMER_TICK_CFL ','1 ')
+   Wait_event_no_time_out('SECOND_TICK_CFL ','2 ')
+   Wait_event_no_time_out('TIMER_TICK_CFL ','1 ')
+   Wait_event_no_time_out('SECOND_TICK_CFL ','2 ')
+   Log_msg(q('second event is done'))
+   Term_column()
+End_column()
+  
+Start_column(q('minute_event'),true)
+  Log_msg(q('-------------------------> minute_event is starting'))
+  Wait_event_no_time_out('MINUTE_TICK_CFL ','1 ')
+  Log_msg(q('minute event is done'))
+  Term_column()
+End_column()
+  
+Start_column(q('hour_event'),true)
+  Log_msg(q('-------------------------> hour_event is starting'))
+  Wait_event_no_time_out('HOUR_TICK_CFL ','1 ')
+  Log_msg(q('hour event is done'))
+  Term_column()
+End_column()
+
+ Start_column(q('day_event'),true)
+  Log_msg(q('-------------------------> day_event is starting'))
+  Wait_event_no_time_out('DAY_TICK_CFL ','1 ')
+  Log_msg(q('day event is done'))
+  Term_column()
+End_column()
+   
+
+Start_engine(10,30,'default_idle_function', 'default_calendar_function')
+
+Destroy_engine('Engine Done\\n') 
+

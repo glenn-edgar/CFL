@@ -1,0 +1,117 @@
+local comment ="   Definition of state machine test.inc\n"
+write_comment(comment)
+
+local sm_name 
+local state_names 
+local initial_state
+local user_data 
+local queue_size 
+local state_code
+local temp 
+
+Def_state_machines("sm_array_name",{'test_sm','test_sub_state'})
+sm_name = "test_sm"
+state_names = {"test_state1","test_state2","test_state3"}
+initial_state = "test_state1"
+user_data = "(void *)test_data_1"
+queue_size = 10
+
+state_code = {}
+
+temp = {}
+table.insert(temp,"Log_msg('test_state1 starting')")
+table.insert(temp,"Enable_disable_sms('test_state_1_sm_names', {'test_sub_state'})")
+table.insert(temp,'Transfer_all_events_to_sm("test_sub_state")')
+table.insert(temp,"Log_msg('waiting 15 seconds')")
+table.insert(temp,"Wait_delay(15000)")
+table.insert(temp,"Log_msg('sub state machine test_sub_state is now disabled')")
+table.insert(temp,"Log_msg('changing state to test_state2')")
+table.insert(temp,"Change_state('test_sm','test_state2')")
+table.insert(temp,"Halt_column()")
+state_code["test_state1"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('test_state2 starting')")
+
+table.insert(temp,"Wait_delay(1000)")
+table.insert(temp,"Log_msg('changing state to test_state3')")
+table.insert(temp,"Change_state('test_sm','test_state3')")
+table.insert(temp,"Halt_column()")
+state_code["test_state2"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('test_state3 starting')")
+
+table.insert(temp,"Wait_delay(1000)")
+table.insert(temp,"Log_msg('changing state to test_state1')")
+table.insert(temp,"Change_state('test_sm','test_state1')")
+table.insert(temp,"Halt_column()")
+state_code["test_state3"] = temp
+
+
+temp = {}
+table.insert(temp,"Log_msg('------------top level state machine manager starting')")
+
+table.insert(temp,'Store_event_filter("display_event","filtered_events",{47,48,49},"(void *)test_data_a",false)')
+table.insert(temp,'Transfer_all_events_to_state("test_sm")')
+table.insert(temp,"Halt_column()")
+state_code["manager"] = temp
+
+test_sm_code = Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
+
+
+
+
+
+sm_name = "test_sub_state"
+state_names = {"test_state1","test_state2","test_state3"}
+initial_state = "test_state1"
+user_data = "(void *)test_data_2"
+queue_size = 10
+
+state_code = {}
+
+temp = {}
+
+table.insert(temp,"Log_msg('--- sub state --- test_state1 starting')")
+table.insert(temp,"Store_event_filter(quote_string('display_event'),'sm_manager_array_1',{47,48,49},'(void *)test_data_b',true)")
+table.insert(temp,"Wait_delay(2000)")
+table.insert(temp,"Log_msg('--- sub state ---- changing state to test_state2')")
+table.insert(temp,"Change_state('test_sub_state','test_state2')")
+table.insert(temp,"Halt_column()")
+state_code["test_state1"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('--- sub state ---test_state2 starting')")
+table.insert(temp,"Store_event_filter(quote_string('display_event'),'sm_manager_array_2',{47,48,49},'(void *)test_data_c',true)")
+table.insert(temp,"Wait_delay(2000)")
+table.insert(temp,"Log_msg('--- sub state -----------------changing state to test_state3')")
+table.insert(temp,"Change_state('test_sub_state','test_state3')")
+table.insert(temp,"Halt_column()")
+state_code["test_state2"] = temp
+
+temp = {}
+table.insert(temp,"Log_msg('---- sub state ----test_state3 starting')")
+table.insert(temp,"Store_event_filter(quote_string('display_event'),'sm_manager_array_3',{47,48,49},'(void *)test_data_d',true)")
+table.insert(temp,"Wait_delay(2000)")
+table.insert(temp,"Log_msg('---- sub state ------------------ changing state to test_state1')")
+table.insert(temp,"Change_state('test_sub_state','test_state1')")
+table.insert(temp,"Halt_column()")
+state_code["test_state3"] = temp
+
+
+temp = {}
+table.insert(temp,"Log_msg('------------- sub state machine manager starting')")
+table.insert(temp,"Store_event_filter(quote_string('display_event'),'sm_manager_array_1a',{47,48,49},'(void *)test_data_ba',false)")
+table.insert(temp,'Transfer_all_events_to_state("test_sub_state")')
+table.insert(temp,"Halt_column()")
+state_code["manager"] = temp
+
+test_sub_state_code = Composite_state_machine(sm_name,state_names,initial_state,user_data,queue_size,state_code)
+
+----
+---- Expanding columns
+----
+
+Expand_table(test_sm_code)
+Expand_table(test_sub_state_code)
