@@ -1,3 +1,0 @@
-cppcheck *.cpp
-cppcheck *.h
-
