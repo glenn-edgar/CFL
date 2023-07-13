@@ -70,6 +70,17 @@ function Activate_column_function(op_code)
 
 end
 
+function Get_column_function(op_code) 
+    if (column_functions[op_code] == nil) then
+        print("Error: column function " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    Activate_column_function(op_code)
+    return column_functions[op_code]["c_function_name"]
+end
+
+
+
 function Store_one_shot_function(op_code,c_function_name,function_code)
     if one_shot_functions[op_code] ~= nil then
         print("Error: function code for " .. op_code .. " already defined")
@@ -82,7 +93,7 @@ function Store_one_shot_function(op_code,c_function_name,function_code)
 end
 
 function Activate_one_shot_function(op_code)
-
+  
     if (one_shot_functions[op_code] == nil) then
         print("Error: one shot function " .. op_code .. " not defined")
         os.exit(1)
@@ -90,3 +101,51 @@ function Activate_one_shot_function(op_code)
     active_one_shot_functions[op_code] = true
 
 end 
+
+function Get_one_shot_function(op_code)
+    if op_code == nil then
+        return 'NULL'
+    end
+
+    if opcode == 'NULL' then
+        return 'NULL'
+    end
+    
+    if (one_shot_functions[op_code] == nil) then
+        print("Error: one shot function " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    Activate_one_shot_function(op_code)
+    return one_shot_functions[op_code]["c_function_name"]
+end
+
+function Store_boolean_function(op_code, c_function_name, function_code)
+
+    if boolean_functions[op_code] ~= nil then
+        print("Error: function code for " .. op_code .. " already defined")
+        os.exit(1)
+    end
+    boolean_functions[op_code] = {}
+    boolean_functions[op_code]["c_function_name"] = c_function_name
+    boolean_functions[op_code]["function_code"] = function_code
+    --print("functions.lua: " .. op_code .. " function code inserted")
+end
+
+function Activate_boolean_function(op_code)
+
+    if (boolean_functions[op_code] == nil) then
+        print("Error: column function " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    active_boolean_functions[op_code] = true
+
+end
+
+function Get_boolean_function(op_code) 
+    if (boolean_functions[op_code] == nil) then
+        print("Error: column function " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    Activate_boolean_function(op_code)
+    return boolean_functions[op_code]["c_function_name"]
+end

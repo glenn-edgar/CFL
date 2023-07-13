@@ -69,33 +69,41 @@ Store_one_shot_function("Log_msg",'log_message',log_msg_handler)
 function Log_msg(message)
   Activate_column_function("ONE_SHOT")
   Activate_one_shot_function("Log_msg")
+  local one_shot_fn_name = Get_one_shot_function("Log_msg")
+  local column_fn_name = Get_column_function("ONE_SHOT")
   local unique_name = generate_unique_function_name()
   Store_user_code('const char *'..unique_name..' = '..quote_string(message)..';\n')
-  store_column_element('one_shot_handler','log_msg_handler','(void *)'..unique_name)
-end
-
---[[
-function Log_msg(message)
-    message = quote_string(message)
-    local message  = string.format("    Asm_log_message_CFL(input,%s);\n",message)
-    file:write(message)
-end
-
-function Wait_delay(delay)
-    local message = string.format("    Asm_wait_time_delay_CFL(input,%s);\n",delay)
-    file:write(message)
+  store_column_element(column_fn_name,one_shot_fn_name,'(void *)'..unique_name)
 end
 
 
-function One_shot(fn_string, fn_parameter)
-    fn_string = quote_string(fn_string)
-    local message = string.format("    Asm_one_shot_CFL(input,%s,%s);\n",fn_string,fn_parameter)
-    file:write(message) 
+function One_shot(fn_string, user_data)
+ 
+  Activate_column_function("ONE_SHOT")
+  Activate_one_shot_function(fn_string)
+  local one_shot_fn_name = Get_one_shot_function(fn_string)
+  local column_fn_name = Get_column_function("ONE_SHOT")
+  store_column_element(column_fn_name,one_shot_fn_name,'(void *)'..user_data)
 end  
 
-function One_shot_terminate(fn_string, fn_parameter)
-    fn_string = quote_string(fn_string)
-    local message = string.format("    Asm_one_shot_terminate_CFL(input,%s,%s);\n",fn_string,fn_parameter)
-    file:write(message) 
+function One_shot_terminate(fn_string, user_data)
+  Activate_column_function("BID_ONE_SHOT")
+  Activate_one_shot_function(fn_string)
+  local one_shot_fn_name = Get_one_shot_function(fn_string)
+  local column_fn_name = Get_column_function("BID_ONE_SHOT")
+  store_column_element(column_fn_name,one_shot_fn_name,'(void *)'..user_data)
+end  
+
+---
+---
+--- Code for dump nodes
+---
+---
+
+
+function Dump_nodes()
+
 end
-]]
+
+
+

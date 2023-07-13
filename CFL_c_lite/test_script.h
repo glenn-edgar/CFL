@@ -12,6 +12,23 @@ extern "C" {
 //----------Column functions ----
 
 
+static int bidirectional_one_shot_handler(void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
+}
+
 
 static int one_shot_handler(void *handle, void *aux_fn, void *params,
                             Event_data_CFL_t *event_data)
@@ -49,6 +66,23 @@ int return_condition_code(void *handle, void *aux_fn,
 //----------One shot functions ----
 
 
+static void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+
+ 
+  char *message;
+  
+  unsigned column_index;
+  int column_element_number;
+  message = (char *)params;
+  Printf_CFL("Init event  %s\n",message);  
+ 
+  
+}
+
+
 static void log_message(void *input, void *params,
                         Event_data_CFL_t *event_data)
 {
@@ -69,10 +103,39 @@ static void log_message(void *input, void *params,
 }
 
 
+static void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
+{
+
+   (void)event_data;
+ 
+  
+   char *message;
+   
+   unsigned column_index;
+   int column_element_number;
+   message = (char *)params;
+   if(event_data->event_index == EVENT_INIT_CFL)
+   {
+     Printf_CFL("Init event  %s\n",message);  
+     
+   }
+    if(event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+       Printf_CFL("Termination event %s\n",message);
+    }
+ 
+   
+ }
+
+
 
 //----------User code ----
 
-const char *ciwmfojhps = "this is a test message";
+
+static char *test_one_shot_message = "test_one_shot";
+static char *test_bid_one_shot_message = "test_one_bid_shot";
+
+const char *virpqtizji = "this is a test message";
 
 
 //----------RAM data structures for event queues ----
@@ -84,14 +147,14 @@ Event_control_RAM_t event_control_ram[4];
 //------  ROM data structures for event queues ----
 
 const Event_control_ROM_t event_control_rom_queue1 = { 0, 10 };
-const Event_control_ROM_t event_control_rom_queue3 = { 10, 10 };
-const Event_control_ROM_t event_control_rom_queue2 = { 20, 10 };
-const Event_control_ROM_t event_control_rom_default = { 30, 10 };
+const Event_control_ROM_t event_control_rom_queue2 = { 10, 10 };
+const Event_control_ROM_t event_control_rom_default = { 20, 10 };
+const Event_control_ROM_t event_control_rom_queue3 = { 30, 10 };
 const Named_event_queue_control_CFL_t queue_control = { 40, {
      &event_control_rom_queue1,
-     &event_control_rom_queue3,
      &event_control_rom_queue2,
      &event_control_rom_default,
+     &event_control_rom_queue3,
      }
 };
 
@@ -107,17 +170,19 @@ Column_watch_dog_t column_RAM_watch_dog_control[4];
 //----------ROM data structures for columns ----
 
 const Column_ROM_t column_ROM_data[] = {
-  { 0,1 true, 2, 0, -1, -1 },
-  { 1,2 true, 1, 2, -1, -1 },
-  { 2,3 true, 1, 3, -1, -1 },
-  { 3,-1 true, 1, 4, -1, -1 },
+  { 0,1 true, 4, 0, -1, -1 },
+  { 1,2 true, 1, 4, -1, -1 },
+  { 2,3 true, 1, 5, -1, -1 },
+  { 3,-1 true, 1, 6, -1, -1 },
 };
 
 
 //----------Column elements ----
 
 const Column_element_CFL_t column_elements[] = {
-    {one_shot_handler,log_msg_handler,(void *)ciwmfojhps},
+    {one_shot_handler,log_message,(void *)virpqtizji},
+    {one_shot_handler,test_one_shot,(void *)test_one_shot_message},
+    {bidirectional_one_shot_handler,test_bid_one_shot,(void *)test_bid_one_shot_message},
     {return_condition_code,NULL,(void *)reset_buffer},
     {return_condition_code,NULL,(void *)halt_buffer},
     {return_condition_code,NULL,(void *)terminate_buffer},

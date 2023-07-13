@@ -1,4 +1,4 @@
-
+PXT.cwd("core_assembler_functions")
 dofile("io.lua")
 dofile("names.lua")
 dofile("user_code.lua")
@@ -6,7 +6,7 @@ dofile("event_queues.lua")
 dofile("functions.lua")
 dofile("column_element.lua")
 dofile("columns.lua")
-
+PXT.cwd("../")
 ---
 --- load helper functions
 ----
