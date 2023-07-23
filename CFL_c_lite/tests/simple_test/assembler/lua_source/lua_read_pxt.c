@@ -101,24 +101,11 @@ static int readMacFiles(lua_State* L) {
 
     return 1;  // Return the Lua table with file names
 }
-const int buffer_length = 4096;
-static int getWorkingDirectory(lua_State* L) {
-    char *cwd; // Assuming a maximum path length of 4096 characters
-    cwd = (char *)malloc(sizeof(char) * buffer_length);
-    if (getcwd(cwd, buffer_length) != NULL) {
-        lua_pushstring(L, cwd); // Push the current working directory as a Lua string
-        free(cwd);
-        return 1; // Return the number of values pushed to the Lua stack
-    } else {
-        free(cwd);
-        return luaL_error(L, "Unable to get current working directory"); // Raise a Lua error
-    }
-}
+
 static const luaL_Reg mylib_functions[] = {
     {"read_mac", readMacFiles},
     {"read", readPxtFiles},
     {"cwd", changeWorkingDirectory},
-    {"getwd",getWorkingDirectory},
     {NULL, NULL}
 };
 

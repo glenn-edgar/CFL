@@ -1,0 +1,164 @@
+
+
+function initialize_columns()
+    column_number = 0
+    column_list = {}
+    column_names = {}
+    column_id = 0
+    watch_dog_list = {}
+    watch_dog_names = {}
+end
+    
+function define_columns(columns)
+    for i,v in ipairs(columns) do
+       
+       column_names[v] = {}
+       column_names[v]["defined"] = false
+       column_names[v]["number"] = column_number
+       column_number = column_number + 1
+       table.insert(column_list,v)      
+    end
+    
+end
+
+
+
+
+function define_column(name, startup_flag,queue_name)
+   
+   if build_status["column_status"] == true then
+      print("Cannot define column while another column is being defined")
+      os.exit(1)
+   end
+   if(column_names[name] == nil) then
+      print("Column name "..name.." not specified in column list")
+      os.exit(1)
+   end
+   if(column_names[name]["defined"] == true) then
+      print("Column name "..name.." already defined")
+      os.exit(1)
+   end
+   
+   build_status["column_status"] = true
+   build_status["column_name"] = name
+   local column_data = {}
+   column_data["number"] = column_id
+   column_id = column_id + 1
+   column_data["start"] = #column_element_table -- zero based index
+   build_status["number"] = 0 
+   column_data["startup_flag"] = startup_flag   
+   column_data["start_state"] = -1
+   column_data["end_state"] = -1
+   column_data["watch_dog_number"] = -1
+
+   if queue_name == nil then
+      column_data["queue_number"] = -1
+   else
+      column_data["queue_number"] = lookup_named_queue(queue_name)
+   end
+
+   column_names[name]["defined"] = true
+   column_names[name]["data"] = column_data
+  
+end
+
+
+function end_column()
+   
+   if build_status["column_status"] == false then
+      print("Cannot end column while no column is being defined")
+      os.exit(1)
+   end  
+   
+   if build_status["column_element_count"] == 0 then
+      print("Cannot end column with no elements")
+      os.exit(1)
+   end
+   
+   local column_name = build_status["column_name"]
+   local column_data = column_names[column_name]["data"]
+   
+   column_data["number"] = build_status["column_element_count"] - column_data["start"]
+   column_names[column_name]["data"] = column_data
+   build_status["column_status"] = false
+   build_status["column_name"] = nil
+   
+   
+end
+
+
+function check_for_undefined_columns()
+   for i,v in ipairs(column_list) do
+
+      if column_names[v]["defined"] == false then
+         print("Column "..v.." not defined")
+         os.exit(1)
+      end
+   end
+end
+
+
+function output_column_RAM_data_structures()
+    write_output("\n\n//----------RAM data structures for columns ----\n\n")
+    
+    local message = string.format("unsigned char column_RAM_flags[%d];\n",#column_list)
+    write_output(message)
+    message = string.format("unsigned char column_RAM_new_state[%d];\n",#column_list) 
+    write_output(message)
+    message = string.format("void* column_RAM_local_data[%d];\n",#column_list)
+    write_output(message)
+   
+end
+
+local column_header_definition = [[
+/*
+------------------------ ROM data structures for columns --------------------------
+typedef struct Column_ROM_t
+{
+    short                         queue_number; //-1 means no attached event queue
+    bool                          auto_start;   //true or false
+    unsigned short                id;           // position in the table
+    unsigned short                number;       // number of column elements
+    unsigned short                start;        // starting position of the column element
+   short                         start_state;   // start of first column state -1 means no state
+   short                         end_state;     // end of last column state -1 means no state
+   short                         watch_dog_id;  // watch dog number -1 means no watch dog
+} Column_ROM_t;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+*/
+]]
+
+function output_column_ROM_data_structures()
+    write_output(column_header_definition)
+    write_output("\n\n//----------ROM data structures for columns ----\n\n")
+    local message = string.format("static const Column_ROM_t column_data_ROM[] = {\n")
+    write_output(message)
+    for i,v in ipairs(column_list) do
+       queue_number = column_names[v]["data"]["queue_number"]
+      
+       local column_data = column_names[v]["data"]
+       message = string.format("  { %d,%d %s, %d, %d, %d, %d,%d },\n",
+                            i-1,
+                            queue_number,
+                            column_data["startup_flag"],
+                            column_data["number"],
+                            column_data["start"],
+                            column_data["start_state"],
+                            column_data["end_state"],
+                            column_data["watch_dog_number"])
+       write_output(message)
+       
+    end
+    write_output("};\n")
+end
+
+
+
+
+function dump_columns()
+    check_for_undefined_columns()
+    output_column_RAM_data_structures()
+    output_column_ROM_data_structures()
+  end
