@@ -74,7 +74,7 @@ typedef struct Engine_control_CFL_t
 
 typedef void *(*private_heap_malloc)(void *input, unsigned size);
 typedef void (*private_heap_free)(void *input, void *ptr);
-
+typedef void *(*allocate_once_CFL)(void *input, unsigned size);
 typedef struct Handle_CFL_t
 {
 
