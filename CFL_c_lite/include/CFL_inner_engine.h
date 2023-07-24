@@ -22,8 +22,8 @@ typedef struct Time_control_CFL_t
   unsigned short year;
 } Time_control_CFL_t;
 
-typedef void (*Idle_function_CFL_t)(void *input, Time_control_CFL_t *timer_control, bool init_flag);
-typedef void (*Calendar_function_CFL_t)(void *input, Time_control_CFL_t *timer_control, bool init_flag);
+typedef void (*Idle_function_CFL_t)(const void *input, Time_control_CFL_t *timer_control, bool init_flag);
+typedef void (*Calendar_function_CFL_t)(const void *input, Time_control_CFL_t *timer_control, bool init_flag);
 
 typedef struct Column_element_CFL_t
 {
@@ -72,9 +72,14 @@ typedef struct Engine_control_CFL_t
   Event_data_CFL_t ref_event_data;
 } Engine_control_CFL_t;
 
-typedef void *(*private_heap_malloc)(void *input, unsigned size);
-typedef void (*private_heap_free)(void *input, void *ptr);
-typedef void *(*allocate_once_CFL)(void *input, unsigned size);
+
+void *private_heap_malloc_CFL(const void *input, unsigned size);
+void private_heap_free_CFL(const void *input, void *ptr);
+void *allocate_once_CFL(void *handle, unsigned size); 
+
+typedef void *(*private_heap_malloc_fn)(void *, unsigned );
+typedef void (*private_heap_free_fn)(const void *input, void *ptr);
+typedef void *(*allocate_once_fn)(const void *input, unsigned size);
 typedef struct Handle_CFL_t
 {
 
@@ -99,9 +104,9 @@ typedef struct Handle_CFL_t
   Time_control_CFL_t *time_control;
   Engine_control_CFL_t *engine_control;
   Debug_out_CFL_t *debug_function;
-  private_heap_malloc malloc;
-  private_heap_free free;
-  // allocate_once_malloc               allocate_once_malloc;
+  private_heap_malloc_fn malloc;
+  private_heap_free_fn free;
+  allocate_once_fn allocate_once;
   const char *master_heap_starting_location; // set by lua preprocessor
   unsigned master_heap_size;                 // set by lua preprocessor
   unsigned remaining_heap_size;
@@ -112,43 +117,50 @@ typedef struct Handle_CFL_t
 
 } Handle_CFL_t;
 
-void initialize_columns_CFL(void *input);
+void initialize_columns_CFL(const void *input);
 
-bool process_single_sweep_CFL(void *input, Event_data_CFL_t *event_data);
+bool process_single_sweep_CFL(const void *input, Event_data_CFL_t *event_data);
 
-void disable_all_columns_CFL(void *input);
+void disable_all_columns_CFL(const void *input);
 
-void enable_column_CFL(void *input, unsigned column_index);
+void enable_column_CFL(const void *input, unsigned column_index);
 
-void reset_column_CFL(void *input, unsigned column_index);
+void reset_column_CFL(const void *input, unsigned column_index);
 
-void disable_column_CFL(void *input, unsigned column_index);
+void disable_column_CFL(const void *input, unsigned column_index);
 
-bool column_state_CFL(void *input, unsigned column_index);
+bool column_state_CFL(const void *input, unsigned column_index);
 
-bool join_columns_CFL(void *input, unsigned short number_of_columns, unsigned short *column_list);
+bool join_columns_CFL(const void *input, unsigned short number_of_columns, unsigned short *column_list);
 
-void initialize_columns_CFL(void *input);
+void initialize_columns_CFL(const void *input);
 
-void set_local_data_CFL(void *input, unsigned column_index,
+void set_local_data_CFL(const void *input, unsigned column_index,
                         void *data);
 
-void *get_local_data_CFL(void *input, unsigned column_index);
+void *get_local_data_CFL(const void *input, unsigned column_index);
 
-void set_current_column_return_code_CFL(void *input, bool state);
+void set_current_column_return_code_CFL(const void *input, bool state);
 
-bool get_current_column_return_code_CFL(void *input);
+bool get_current_column_return_code_CFL(const void *input);
 
-unsigned get_current_column_element_index_CFL(void *input);
+unsigned get_current_column_element_index_CFL(const void *input);
 
-unsigned short get_current_column_index_CFL(void *input);
+unsigned short get_current_column_index_CFL(const void *input);
 
-void set_column_watch_dog_CFL(void *input, void *params,
+void set_column_watch_dog_CFL(const void *input, void *params,
                               Event_data_CFL_t *event_data);
 
-void clear_column_watch_dog_CFL(void *input, void *params,
+void clear_column_watch_dog_CFL(const void *input, void *params,
                                 Event_data_CFL_t *event_data);
 
-void change_local_column_state_CFL(void *input, unsigned char new_state);
+void change_local_column_state_CFL(const void *input, unsigned char new_state);
+
+Time_control_CFL_t *Get_time_control_CFL(const void *input);
+
+void Create_heap_CFL(const void *input);
+
+void Start_engine_CFL(const const void *input, int ms_tick, Idle_function_CFL_t idle_function,
+                      Calendar_function_CFL_t calendar_function);
 
 #endif

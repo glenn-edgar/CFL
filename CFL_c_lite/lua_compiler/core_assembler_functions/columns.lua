@@ -133,7 +133,7 @@ typedef struct Column_ROM_t
 function output_column_ROM_data_structures()
     write_output(column_header_definition)
     write_output("\n\n//----------ROM data structures for columns ----\n\n")
-    local message = string.format("static const Column_ROM_t column_data_ROM[] = {\n")
+    local message = string.format("static const Column_ROM_CFL_t column_data_ROM[] = {\n")
     write_output(message)
     for i,v in ipairs(column_list) do
        queue_number = column_names[v]["data"]["queue_number"]

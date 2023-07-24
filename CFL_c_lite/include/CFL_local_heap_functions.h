@@ -3,13 +3,13 @@
 
 #include "CFL_inner_engine.h"
 
-void create_allocate_once_heap_CFL(void *input); 
+void create_allocate_once_heap_CFL(const void *input); 
 
 
-void *allocate_once_CFL(Handle_CFL_t *handle, unsigned size); 
 
 
-int remaining_allocate_once_heap_size_CFL(Handle_CFL_t *handle); 
+
+int remaining_allocate_once_heap_size_CFL(const void *input); 
 
 /*
 **
@@ -19,16 +19,13 @@ int remaining_allocate_once_heap_size_CFL(Handle_CFL_t *handle);
 
 
 
-void *private_heap_malloc_CFL(Handle_CFL_t *handle, unsigned size);
 
 
-void private_heap_free_CFL(Handle_CFL_t *handle, void *ptr);
+unsigned private_heap_largest_block_CFL(const void *input);
 
-unsigned private_heap_largest_block_CFL(Handle_CFL_t *handle);
+void private_heap_dump_blocks_CFL(const void *input); 
 
-void private_heap_dump_blocks_CFL(Handle_CFL_t *handle); 
-
-void private_heap_reset_CFL(Handle_CFL_t *handle);
+void private_heap_reset_CFL(const void *input);
 
 
 

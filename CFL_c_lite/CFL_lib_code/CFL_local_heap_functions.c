@@ -13,11 +13,11 @@
 // need to be 4 to protect alignment
 #define PADDING 0
 
-static void setup_private_heap(Handle_CFL_t *handle);
+static void setup_private_heap(const Handle_CFL_t *handle);
 
-void create_allocate_once_heap_CFL(void *input) {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
-  handle->current_heap_location = (void *)handle->master_heap_starting_location;
+void create_allocate_once_heap_CFL(const void *input) {
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+  handle->current_heap_location = (const void *)handle->master_heap_starting_location;
   handle->remaining_heap_size = handle->master_heap_size;  
   setup_private_heap(handle);
   
@@ -33,7 +33,8 @@ static void setup_private_heap(Handle_CFL_t *handle) {
 // this macro will align but over estimate the space
 #define align_8(addr) (((addr) + 7) & (~7))
 
-void *allocate_once_CFL(Handle_CFL_t *handle, unsigned size) {
+void *allocate_once_CFL(const void *input, unsigned size) {
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
   void *return_value;
   
 
@@ -61,8 +62,8 @@ void *allocate_once_CFL(Handle_CFL_t *handle, unsigned size) {
 }
 
 
-int remaining_allocate_once_heap_size_CFL(Handle_CFL_t *handle) {
-
+int remaining_allocate_once_heap_size_CFL(const void *input) {
+  const
   return handle->remaining_heap_size;
 }
 
@@ -74,7 +75,8 @@ int remaining_allocate_once_heap_size_CFL(Handle_CFL_t *handle) {
 
 
 
-void *private_heap_malloc_CFL(Handle_CFL_t *handle, unsigned size) {
+void *private_heap_malloc_CFL(const void *input, unsigned size) {
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   void *return_value;
   if(size == 0){
     ASSERT_PRINT_INT( "cannot allocate zero heap size",size);
@@ -87,20 +89,23 @@ void *private_heap_malloc_CFL(Handle_CFL_t *handle, unsigned size) {
 }
 
 
-void private_heap_free_CFL(Handle_CFL_t *handle, void *ptr) {
+void private_heap_free_CFL(const void *input, void *ptr) {
+   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   free_CFL((CS_MEMORY_CONTROL *)handle->private_heap, ptr);
 }
 
-unsigned private_heap_largest_block_CFL(Handle_CFL_t *handle) {
-
+unsigned private_heap_largest_block_CFL(const void *input) {
+ const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   return largest_block_privateHeap_CFL(
       (CS_MEMORY_CONTROL *)handle->private_heap);
 }
 
-void private_heap_dump_blocks_CFL(Handle_CFL_t *handle) {
+void private_heap_dump_blocks_CFL(const void *input) {
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   dumpHeap_CFL((CS_MEMORY_CONTROL *)handle->private_heap);
 }
 
-void private_heap_reset_CFL(Handle_CFL_t *handle) {
+void private_heap_reset_CFL(const void *input) {
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   reset_privateHeap_CFL((CS_MEMORY_CONTROL *)handle->private_heap);
 }

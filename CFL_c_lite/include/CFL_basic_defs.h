@@ -45,7 +45,7 @@ typedef struct Event_data_CFL_t
 #define ENGINE_TERMINATE_CFL 6
 #define COLUMN_STATE_CHANGE_CFL 7
 
-typedef void (*One_shot_function_CFL_t)(void* handle, void* params, Event_data_CFL_t* event_data);
+typedef void (*One_shot_function_CFL_t)(const void* input, void* params, Event_data_CFL_t* event_data);
 
 typedef struct If_control_CFL_t
 {
@@ -77,9 +77,9 @@ typedef struct Try_column_CFL_t
 
 
 
-typedef bool (*Bool_function_CFL_t)(void* handle, void* params, Event_data_CFL_t* event_data);
-typedef void (*If_function_CFL_t)(void* handle, If_control_CFL_t* params);
-typedef void (*Try_function_CFL_t)(void* handle, Try_column_CFL_t* params);
+typedef bool (*Bool_function_CFL_t)(const void *input, void* params, Event_data_CFL_t* event_data);
+typedef void (*If_function_CFL_t)(const void *input, If_control_CFL_t* params);
+typedef void (*Try_function_CFL_t)(const void *input, Try_column_CFL_t* params);
 
 
 
@@ -94,6 +94,6 @@ typedef union {
     
 } CFL_fn_t;
           
-typedef int (*Column_function_CFL_t)(void* handle, void *aux_fun, void* params, Event_data_CFL_t* event_data);
+typedef int (*Column_function_CFL_t)(const void *input, void *aux_fun, void* params, Event_data_CFL_t* event_data);
 
 #endif

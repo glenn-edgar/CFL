@@ -1,7 +1,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include "CFL_handle.h"
+
 #include "Cfl_engine.h"
 #include "Cfl_inner_engine.h"
 
@@ -11,37 +11,42 @@
 
 
 
-static void default_idle_function(void *handle,
+static void default_idle_function(const void *handle,
                                   Time_control_CFL_t *timer_control,
                                   bool init_flag);
-static void default_calendar_function(void *handle,
+static void default_calendar_function(const void *handle,
                                       Time_control_CFL_t *timer_control,
                                       bool init_flag);
 
 
 
-static void process_event_loop(Handle_CFL_t *handle);
-static bool process_single_loop(Handle_CFL_t *handle);
+static void process_event_loop(const Handle_CFL_t *handle);
+static bool process_single_loop(const Handle_CFL_t *handle);
 
 
 
-Time_control_CFL_t *Get_time_control_CFL(void *input)
+Time_control_CFL_t *Get_time_control_CFL(const void *input)
 {
   Handle_CFL_t *handle;
   handle = (Handle_CFL_t *)input;
   return (Time_control_CFL_t *)handle->time_control;
 }
 
-void Start_engine_CFL(void *input, int ms_tick, Idle_function_CFL_t idle_function,
+void Create_heap_CFL(const void *input)
+{
+  create_allocate_once_heap_CFL(input);
+}
+
+void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_function,
                       Calendar_function_CFL_t calendar_function)
 {
 
  
   
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   Engine_control_CFL_t *engine_control = (Engine_control_CFL_t *)handle->engine_control;
   
-  create_allocate_once_heap_CFL(input);
+  
   if (idle_function != NULL)
   {
     engine_control->idle_function = idle_function;
@@ -59,7 +64,7 @@ void Start_engine_CFL(void *input, int ms_tick, Idle_function_CFL_t idle_functio
     engine_control->calendar_function = default_calendar_function;
   }
 
-  handle->time_control = &engine_control->time_control;
+  //engine_control->time_control  = handle->time_control;
 
   reset_event_queue_CFL(handle,0);
   engine_control->idle_function(handle, &engine_control->time_control, true);
@@ -76,7 +81,7 @@ void Start_engine_CFL(void *input, int ms_tick, Idle_function_CFL_t idle_functio
 
 
 
-static void process_event_loop(Handle_CFL_t *handle)
+static void process_event_loop(const Handle_CFL_t *handle)
 {
   Engine_control_CFL_t *engine_ctrl;
 
@@ -97,7 +102,7 @@ static void process_event_loop(Handle_CFL_t *handle)
   }
 }
 
-static bool process_single_loop(Handle_CFL_t *handle)
+static bool process_single_loop(const Handle_CFL_t *handle)
 {
   Event_data_CFL_t *current_event;
  
@@ -144,7 +149,7 @@ long long unsigned get_elapsed_time_ms(void)
   return elasped_time;
 }
 
-static void default_idle_function(void *handle,
+static void default_idle_function(const void *handle,
                                   Time_control_CFL_t *timer_control,
                                   bool init_flag)
 {
@@ -170,7 +175,7 @@ static void default_idle_function(void *handle,
   }
 }
 
-static void default_calendar_function(void *handle,
+static void default_calendar_function(const void *handle,
                                       Time_control_CFL_t *timer_control,
                                       bool init_flag)
 {

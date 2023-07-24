@@ -12,7 +12,7 @@ typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
 int freeMemory();
 
-void config_debug_handle_CFL(void *input, Debug_out_CFL_t debug_out);
+void config_debug_handle_CFL(const void *input, Debug_out_CFL_t debug_out);
 void Printf_CFL(const char* format, ...);
 static inline void Dump_file_line(const char *file, unsigned line){
    

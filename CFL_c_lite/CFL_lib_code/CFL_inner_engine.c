@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include "CFL_handle.h"
+
 #include "CFL_basic_defs.h"
 #include "CFL_event_manager.h"
 #include "CFL_inner_engine.h"
@@ -9,9 +9,9 @@
 static Event_data_CFL_t init_event = {EVENT_INIT_CFL, false, NULL};
 static Event_data_CFL_t term_event = {EVENT_TERMINATION_CFL, false, NULL};
 
-static inline void disable_all_column_elements(void *input, unsigned column_index)
+static inline void disable_all_column_elements(const void *input, unsigned column_index)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
   const Column_element_CFL_t *column_element_rom = handle->column_elements_ROM;
   unsigned char *flags = handle->column_elements_flags;
@@ -35,11 +35,11 @@ static inline void disable_all_column_elements(void *input, unsigned column_inde
   }
 }
 
-static inline void disable_selected_column_elements(void *input, unsigned short column_index,
+static inline void disable_selected_column_elements(const void *input, unsigned short column_index,
                                              unsigned short start_state, unsigned short end_state)
 {
 
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
   const Column_element_CFL_t *column_element_rom = handle->column_elements_ROM;
   unsigned char *flags = handle->column_elements_flags;
@@ -63,9 +63,9 @@ static inline void disable_selected_column_elements(void *input, unsigned short 
   }
 }
 
-static inline void enable_all_column_elements(void *input, unsigned column_index)
+static inline void enable_all_column_elements(const void *input, unsigned column_index)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
   
   unsigned char *flags = handle->column_elements_flags;
@@ -80,9 +80,9 @@ static inline void enable_all_column_elements(void *input, unsigned column_index
   }
 }
 
-static inline void enable_column_element(void *input, unsigned short column_index, unsigned char column_element_index)
+static inline void enable_column_element(const void *input, unsigned short column_index, unsigned char column_element_index)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
  
   unsigned char *flags = handle->column_elements_flags;
@@ -92,9 +92,9 @@ static inline void enable_column_element(void *input, unsigned short column_inde
   flags[column_element_number] = flags[column_element_number] | COLUMN_ELEMENT_ACTIVE;
 }
 
-static inline void change_column_state(Handle_CFL_t *handle, unsigned column_index)
+static inline void change_column_state(const void *input, unsigned column_index)
 {
-
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column_ROM = handle->column_rom_data + column_index;
 
   int start_state = column_ROM->start_state;
@@ -119,11 +119,11 @@ static inline void change_column_state(Handle_CFL_t *handle, unsigned column_ind
   enable_column_element(handle, column_index, new_state);
 }
 
-static inline bool process_column_watch_dog(void *input,
+static inline bool process_column_watch_dog(const void *input,
                                             unsigned short column_index,
                                             Event_data_CFL_t *event_data)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column_element = handle->column_rom_data + column_index;
 
   short watch_dog_id = column_element->watch_dog_id;
@@ -187,7 +187,7 @@ static inline void validate_return_code(int return_code)
 }
 
 
-static inline int process_column_element(Handle_CFL_t *handle,
+static inline int process_column_element(const Handle_CFL_t *handle,
                                           unsigned short column_element_index,  
                                          Event_data_CFL_t *event_data)
 {
@@ -203,7 +203,7 @@ static inline int process_column_element(Handle_CFL_t *handle,
                                          column_element->params, event_data);
 }
 
-static inline bool inner_process_column(Handle_CFL_t *handle,
+static inline bool inner_process_column(const Handle_CFL_t *handle,
                                         unsigned short column_index,
                                         Event_data_CFL_t *event_data)
 {
@@ -287,7 +287,7 @@ static inline bool inner_process_column(Handle_CFL_t *handle,
   return true;
 }
 
-static inline bool process_column_named_events(Handle_CFL_t *handle,
+static inline bool process_column_named_events(const Handle_CFL_t *handle,
                                                unsigned short column_index,
                                                Event_data_CFL_t *event_data)
 {
@@ -352,11 +352,11 @@ static inline bool process_column_named_events(Handle_CFL_t *handle,
 **
 */
 
-bool process_single_sweep_CFL(void *input,
+bool process_single_sweep_CFL(const void *input,
                               Event_data_CFL_t *event_data)
 {
 
-  Handle_CFL_t *handle = (Handle_CFL_t *)input; 
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input; 
 
   for (unsigned short i = 0; i < handle->number_of_columns; i++)
   {
@@ -396,9 +396,9 @@ bool process_single_sweep_CFL(void *input,
 
 
 
-void disable_all_columns_CFL(void *input)
+void disable_all_columns_CFL(const void *input)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   unsigned column_number = handle->number_of_columns;
   for (unsigned i = 0; i < column_number; i++)
   {
@@ -408,9 +408,9 @@ void disable_all_columns_CFL(void *input)
 }
 
 
-void enable_column_CFL(void *input, unsigned column_index)
+void enable_column_CFL(const void *input, unsigned column_index)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
   enable_all_column_elements(input,column_index);
   handle->column_flags[column_index] = 0;
@@ -424,7 +424,7 @@ void enable_column_CFL(void *input, unsigned column_index)
 
 }
 
-void reset_column_CFL(void *input, unsigned column_index)
+void reset_column_CFL(const void *input, unsigned column_index)
 {
   disable_all_column_elements(input,column_index);
   enable_column_CFL(input,column_index);
@@ -432,25 +432,25 @@ void reset_column_CFL(void *input, unsigned column_index)
 
 
 
-void disable_column_CFL(void *input, unsigned column_index)
+void disable_column_CFL(const void *input, unsigned column_index)
 {
 
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   disable_all_column_elements(input,column_index);
   handle->column_flags[column_index] = 0;
   
 }
-bool column_state_CFL(void *input, unsigned column_index)
+bool column_state_CFL(const void *input, unsigned column_index)
 {
 
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   if(handle->column_flags[column_index] & COLUMN_ACTIVE){
     return true;
   }
   return false;
 }
 
-bool join_columns_CFL(void *input, unsigned short number_of_columns, unsigned short *column_list)
+bool join_columns_CFL(const void *input, unsigned short number_of_columns, unsigned short *column_list)
 {
 
   for (unsigned short i = 0; i < number_of_columns; i++)
@@ -467,9 +467,9 @@ bool join_columns_CFL(void *input, unsigned short number_of_columns, unsigned sh
 
 
 
-void initialize_columns_CFL(void *input)
+void initialize_columns_CFL(const void *input)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = ((Handle_CFL_t *)handle)->column_rom_data;
 
   for (unsigned i = 0; i < handle->number_of_columns; i++)
@@ -493,25 +493,25 @@ void initialize_columns_CFL(void *input)
 
 
 
-void set_local_data_CFL(void *input, unsigned column_index,
+void set_local_data_CFL(const void *input, unsigned column_index,
                         void *data)
 {
 
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
 
   handle->column_local_data[column_index] = data;
 }
 
-void *get_local_data_CFL(void *input, unsigned column_index)
+void *get_local_data_CFL(const void *input, unsigned column_index)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
 
   return handle->column_local_data+column_index;
 }
 
-void set_current_column_return_code_CFL(void *input, bool state)
+void set_current_column_return_code_CFL(const void *input, bool state)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   unsigned column_index = handle->engine_control->current_column_index;
   if (state == true)
   {
@@ -523,9 +523,9 @@ void set_current_column_return_code_CFL(void *input, bool state)
   } 
 }
 
-bool get_current_column_return_code_CFL(void *input)
+bool get_current_column_return_code_CFL(const void *input)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   unsigned column_index = handle->engine_control->current_column_index;
   if(handle->column_flags[column_index] & COLUMN_SUCCESS){
     return true;
@@ -534,23 +534,23 @@ bool get_current_column_return_code_CFL(void *input)
 
 }
 
-unsigned get_current_column_element_index_CFL(void *input)
+unsigned get_current_column_element_index_CFL(const void *input)
 {
-  Handle_CFL_t* handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t* handle = (const Handle_CFL_t *)input;
   return (unsigned)handle->engine_control->current_column_element_index;
 }
 
-unsigned short get_current_column_index_CFL(void *input)
+unsigned short get_current_column_index_CFL(const void *input)
 {
-  Handle_CFL_t* handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t* handle = (const Handle_CFL_t *)input;
   return (unsigned)handle->engine_control->current_column_index;
 }
 
-void set_column_watch_dog_CFL(void *input, void *params,
+void set_column_watch_dog_CFL(const void *input, void *params,
                               Event_data_CFL_t *event_data)
 {
   (void)event_data;
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   unsigned count = *((unsigned *)params);
 
   unsigned current_column_index = handle->engine_control->current_column_index;
@@ -565,10 +565,10 @@ void set_column_watch_dog_CFL(void *input, void *params,
   
 }
 
-void clear_column_watch_dog_CFL(void *input, void *params,
+void clear_column_watch_dog_CFL(const void *input, void *params,
                                 Event_data_CFL_t *event_data)
 {
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   (void)event_data;
   (void)params;
 
@@ -582,10 +582,10 @@ void clear_column_watch_dog_CFL(void *input, void *params,
   
 }
 
-void change_local_column_state_CFL(void *input, unsigned char new_state)
+void change_local_column_state_CFL(const void *input, unsigned char new_state)
 {
  
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
 
   
   unsigned column_index = handle->engine_control->current_column_index;

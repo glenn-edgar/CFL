@@ -1,48 +1,4 @@
-local named_queue_header_code = [[
 
-typedef struct Event_data_t
-{
-
-  bool  malloc_flag;
-  short event_index;
-  void* params;
-
-} Event_data_CFL_t;
-
-typedef struct Event_control_CFL_t {
-  unsigned short id;
-  unsigned short rx_index;
-  unsigned short tx_index;
-  unsigned short current_queued_number;
-  unsigned short max_number;
-  Event_data_CFL_t* event_data_queue;
-
-
-} Event_control_CFL_t;
-
-typedef struct Event_control_RAM_t
-{
-  unsigned short rx_index;
-  unsigned short tx_index;
-    unsigned short current_queued_number;
-} Event_data_RAM_t;
-
-typedef struct Event_control_ROM_t{ 
-  unsigned number;
-  unsigned start_index;
-} Event_control_ROM_t;
-
-
-
-typedef struct Named_event_queue_control_CFL_t
-{
-  
-  unsigned number;
-  Event_control_CFL_t *event_queues;
-} Named_event_queue_control_CFL_t;
-
-
-]]
 
 local queue_list = {}
 local queue_names = {}
@@ -91,7 +47,7 @@ local function dump_ram_data_structures()
    local message = string.format(format_string,number)
    
    write_output(message)
-   format_string = "static Event_control_RAM_t event_control_ram[%d];\n"
+   format_string = "static Event_control_RAM_CFL_t event_control_ram[%d];\n"
    message = string.format(format_string,count)
    write_output(message)
 end
@@ -101,15 +57,15 @@ local function dump_rom_data_structures()
     write_output("\n\n//------  ROM data structures for event queues ----\n\n")
     for i,queue_name in ipairs(queue_list) do
         queue_data = queue_names[queue_name]
-        format_string = "static const Event_control_ROM_t event_control_rom_%s = { %d, %d };\n"
+        format_string = "static const Event_control_ROM_CFL_t event_control_rom_%s = { %d, %d };\n"
         size = queue_data[2]
        
         local message = string.format(format_string,queue_name,number,size)
         number = number + size
         write_output(message)
     end
-    format_string ="static const Named_event_queue_control_CFL_t queue_control = { %d, {\n"
-    local message = string.format(format_string,number)
+    format_string ="static const Event_control_ROM_CFL_t *queue_elements[] = {\n"
+    local message = string.format(format_string)
     write_output(message)
     
     for i,queue_name in ipairs(queue_list) do
@@ -118,7 +74,15 @@ local function dump_rom_data_structures()
         local message = string.format(format_string,queue_name)
         write_output(message)
     end
-    write_output("     }\n};\n")
+    write_output("};\n")
+
+
+    format_string ="static const Named_event_queue_control_CFL_t queue_control = { %d,%d,%s };\n"
+    local message = string.format(format_string,#queue_list,number,"queue_elements")
+    write_output(message)
+    
+  
+
 
 end
 
@@ -142,7 +106,7 @@ typedef struct Event_control_RAM_CFL_t
   unsigned short current_queued_number;
 } Event_data_RAM_t;
 
-typedef struct Event_control_ROM_t{ 
+typedef struct Event_control_ROM_CFL_t{ 
   unsigned                 number;
   unsigned                start_index;
   Event_control_RAM_CFL_t *event_control_ram;
@@ -164,7 +128,7 @@ typedef struct Named_event_queue_control_CFL_t
 
 
 function dump_event_queues()
-    write_output(header_documentation)
+    
     dump_ram_data_structures()
     dump_rom_data_structures()
 

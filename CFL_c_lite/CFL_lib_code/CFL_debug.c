@@ -3,10 +3,10 @@
 #include "Cfl_debug.h"
 
 static Debug_out_CFL_t debug_fn;
-static void *handle;
+static const void *handle;
 
 
-void config_debug_handle_CFL(void *input, Debug_out_CFL_t debug_out)
+void config_debug_handle_CFL(const void *input, Debug_out_CFL_t debug_out)
 {
 
     handle =  input;
