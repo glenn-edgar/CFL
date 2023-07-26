@@ -1,7 +1,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-
+#include "CFL_private_heap.h"
+#include "CFL_local_heap_functions.h"
 #include "CFL_basic_defs.h"
 #include "CFL_event_manager.h"
 #include "CFL_inner_engine.h"

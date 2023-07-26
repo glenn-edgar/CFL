@@ -1,16 +1,15 @@
 
 
-#include "Cfl_debug.h"
+#include "CFL_inner_engine.h"
 
-static Debug_out_CFL_t debug_fn;
-static const void *handle;
+static const Handle_CFL_t *handle;
 
-
-void config_debug_handle_CFL(const void *input, Debug_out_CFL_t debug_out)
+Debug_out_CFL_t debug_fn;
+void config_debug_handle_CFL(const void *input)
 {
-
-    handle =  input;
-    debug_fn = debug_out;
+   handle = (Handle_CFL_t *)input;
+    
+    debug_fn = handle->debug_function;
 }
 
 

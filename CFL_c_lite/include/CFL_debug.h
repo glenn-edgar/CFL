@@ -4,15 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include "CFL_inner_engine.h"
 
 #define ENABLE_DEBUG_MSG_CFL
 #define PRINT_BUF_SIZE_CFL 256
 
-typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
+
 
 int freeMemory();
 
-void config_debug_handle_CFL(const void *input, Debug_out_CFL_t debug_out);
+void config_debug_handle_CFL(const void *input);
 void Printf_CFL(const char* format, ...);
 static inline void Dump_file_line(const char *file, unsigned line){
    

@@ -78,59 +78,57 @@ static unsigned char column_element_RAM[0];
 
 static const Column_element_CFL_t column_elements_ROM[] = {
 };
+#include <unistd.h>
 
 
-static Time_control_CFL_t tgmildztzt;
-
-
-
-
-static Engine_control_CFL_t mwdgtqpodw;
-
-
-/*
---------------------------- Handle definition ------------------------------
-typedef struct Handle_CFL_t
+void debug_write(const void *buf, unsigned count)
 {
 
-  Named_event_queue_control_CFL_t *queue_rom;
-  Event_control_RAM_CFL_t *queue_ram;
-  Event_data_CFL_t *event_data;
+    write(STDOUT_FILENO, buf, count);
+}
 
-  unsigned char *column_elements_flags;
-  const Column_element_CFL_t *column_elements_ROM;
 
-  unsigned char *column_flags;
-  void **column_local_data;
-  unsigned char *column_state;
-  const unsigned short number_of_columns;
-  const Column_ROM_CFL_t *column_rom_data;
 
-  const unsigned short number_of_watch_dogs;
-  bool *watch_dog_active;
-  unsigned *watch_dog_count;
-  unsigned *watch_dog_trigger_count;
-  const Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
-  Time_control_CFL_t *time_control;
-  Engine_control_CFL_t *engine_control;
-  Debug_out_CFL_t *debug_function;
-  private_heap_malloc_fn malloc;
-  private_heap_free_fn free;
-  allocate_once_fn allocate_once;
-  const char *master_heap_starting_location; // set by lua preprocessor
-  unsigned master_heap_size;                 // set by lua preprocessor
-  unsigned remaining_heap_size;
-  char *current_heap_location;
-  char *private_heap;      // set by lua preprocessor
-  char *working_heap_area; // set by lua preprocessor
-  unsigned private_heap_size;
 
-} Handle_CFL_t;
 
- 
+static Time_control_CFL_t hxvonqtiye;
+
+
+
+
+static Engine_control_CFL_t hkzagxknko;
+
+
+/*allocate once heap space */
+
+static char nsdesahphx[2000];
+
+
+/* remaining allocate heap size */
+
+static unsigned mxvvbtsyib;
+
+
+/* current heap pointer */
+
+static char* hjlvkxqxgw;
+
+
+/* heap block area */
+
+static CS_MEMORY_CONTROL aohjqcftim;
+
+
+/* heap storeage area */
+
+static char vjnvxcohrs[1000];
+
+
+
+ /*
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
-const struct Handle_CFL_t ndaookcvwl =
+const struct Handle_CFL_t gkhsgwrcip =
 {
 
   .queue_rom    = &queue_control,
@@ -151,27 +149,23 @@ const struct Handle_CFL_t ndaookcvwl =
   .watch_dog_count = NULL,
   .watch_dog_trigger_count = NULL,
   .watch_dog_rom_data = NULL,
-  .time_control = &tgmildztzt,
-  .engine_control =&mwdgtqpodw,
-  .debug_function =NULL,
+  .time_control = &hxvonqtiye,
+  .engine_control =&hkzagxknko,
+  .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
-  .master_heap_starting_location = NULL,
-  .master_heap_size = 0,
-  .remaining_heap_size = 0,
-  .current_heap_location = NULL,
-   .private_heap   = NULL,
-  .working_heap_area   =NULL,
-  .private_heap_size =   0,
+  .master_heap_starting_location = nsdesahphx,
+  .master_heap_size = 2000,
+  .remaining_heap_size = &mxvvbtsyib,
+  .current_heap_location = &hjlvkxqxgw,
+   .private_heap   = &aohjqcftim,
+  .working_heap_area   = vjnvxcohrs,
+  .private_heap_size =   1000,
 } ;
 
 
-
-static void test_entry_point() {
- Start_engine_CFL(&ndaookcvwl,2000,1000);
-}
 const Handle_CFL_t*  Get_handle_CFL(){
-    return &ndaookcvwl;
+    return &gkhsgwrcip;
 }
 #endif

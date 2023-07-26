@@ -6,20 +6,20 @@
 #include "test_script.h"
 
 
-static void test_debug_write(Handle_CFL_t *handle);
-static void test_working_heap(Handle_CFL_t *handle);
+static void test_debug_write(const Handle_CFL_t *handle);
+static void test_working_heap(const Handle_CFL_t *handle);
 
-static void test_allocate_once_heap(Handle_CFL_t *handle);
+static void test_allocate_once_heap(const Handle_CFL_t *handle);
 
 int main() {
 
 
 
   
-  Handle_CFL_t *handle = Get_handle_CFL();
+  const Handle_CFL_t *handle = Get_handle_CFL();
   
 
-  
+   config_debug_handle_CFL(handle);
    test_debug_write(handle);
    test_allocate_once_heap(handle);
    test_working_heap(handle);
@@ -32,15 +32,15 @@ int main() {
    Also the debug write function is tested
 */
 
-static void test_debug_write(Handle_CFL_t *handle){
+static void test_debug_write(const Handle_CFL_t *handle){
  
- #if 0
+   (void)handle;
    
    Printf_CFL("test message  debug write is ok \n");
   
-    Printf_CFL("amount of allocate once heap %d \n",Allocate_once_remaining_heap_size_CFL(handle));
-   Printf_CFL("largest free block %d \n",Private_heap_largest_free_block_CFL(input));
-#endif  
+   Printf_CFL("amount of allocate once heap %d \n",remaining_allocate_once_heap_size_CFL(handle));
+   Printf_CFL("largest free block %d \n", private_heap_largest_block_CFL(handle));
+
   
 }
 
@@ -51,8 +51,8 @@ static void test_debug_write(Handle_CFL_t *handle){
 
 */
 
-static void test_allocate_once_heap(Handle_CFL_t *handle) {
- 
+static void test_allocate_once_heap(const Handle_CFL_t *handle) {
+ (void)handle;
 #if 0
   void* temp;
   Printf_CFL("test allocate once heap\n");
@@ -72,7 +72,8 @@ static void test_allocate_once_heap(Handle_CFL_t *handle) {
 
 */
 
-static void test_working_heap(Handle_CFL_t *handle) {
+static void test_working_heap(const Handle_CFL_t *handle) {
+   (void)handle;
   #if 0
   void* input = Configure_engine_CFL(config_handle, 50000, 2000);
   void* test_array[10];

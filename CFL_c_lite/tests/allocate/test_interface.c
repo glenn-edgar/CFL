@@ -3,11 +3,6 @@
 #include <time.h>
 #include "CFL_inner_engine.h"
 
-void debug_write(const void *buf, unsigned count)
-{
-
-    write(STDOUT_FILENO, buf, count);
-}
 
 void delay_ms(unsigned int milliseconds)
 {

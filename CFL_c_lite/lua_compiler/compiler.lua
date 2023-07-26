@@ -41,6 +41,9 @@ end
 time_control_name = nil -- global variable
 handle_name = nil -- global variable
 engine_name = nil -- global variable
+master_heap_starting_location_name = nil -- global variable
+remaing_size_name = nil -- global variable
+current_heap_pointer = nil -- global variable
 function dump_header(debug_function)
     time_control_name = generate_unique_function_name()
     local message = string.format("\n\nstatic Time_control_CFL_t %s;\n\n\n",time_control_name);
@@ -48,48 +51,69 @@ function dump_header(debug_function)
     engine_name = generate_unique_function_name()
     message = string.format("\n\nstatic Engine_control_CFL_t %s;\n\n\n",engine_name)
     write_output(message)
+    master_heap_starting_location_name = generate_unique_function_name()
+    message = string.format("/*allocate once heap space */\n\nstatic char %s[%s];\n\n\n",master_heap_starting_location_name, build_status["allocate_once_heap_size"])
+    write_output(message)
+    remaing_size_name = generate_unique_function_name()
+    message = string.format("/* remaining allocate heap size */\n\nstatic unsigned %s;\n\n\n",remaing_size_name)
+    write_output(message)
     handle_name = generate_unique_function_name()
+    current_heap_pointer = generate_unique_function_name()
+    message = string.format("/* current heap pointer */\n\nstatic char* %s;\n\n\n",current_heap_pointer)
+    write_output(message)
+    heap_block_control = generate_unique_function_name()
+    message = string.format("/* heap block area */\n\nstatic CS_MEMORY_CONTROL %s;\n\n\n",heap_block_control)
+    write_output(message)
+    heap_storeage_area = generate_unique_function_name()
+    message = string.format("/* heap storeage area */\n\nstatic char %s[%s];\n\n\n",heap_storeage_area, build_status["private_heap_size"])
+    write_output(message)
+    
+    local header_def = [[
+    
+    /*
+    --------------------------- Handle definition ------------------------------
+    typedef struct Handle_CFL_t
+    {
+    
+      const Named_event_queue_control_CFL_t *queue_rom;
+      Event_control_RAM_CFL_t *queue_ram;
+      Event_data_CFL_t *event_data;
+    
+      unsigned char *column_elements_flags;
+      const Column_element_CFL_t *column_elements_ROM;
+    
+      unsigned char *column_flags;
+      void **column_local_data;
+      unsigned char *column_state;
+      const unsigned short number_of_columns;
+      const Column_ROM_CFL_t *column_rom_data;
+    
+      const unsigned short number_of_watch_dogs;
+      bool *watch_dog_active;
+      unsigned *watch_dog_count;
+      unsigned *watch_dog_trigger_count;
+      const Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
+      Time_control_CFL_t *time_control;
+      Engine_control_CFL_t *engine_control;
+      Debug_out_CFL_t *debug_function;
+      private_heap_malloc_fn malloc;
+      private_heap_free_fn free;
+      allocate_once_fn allocate_once;
+      char *master_heap_starting_location; 
+      const unsigned master_heap_size;             
+      unsigned *remaining_heap_size;  // set by c runtime
+      char **current_heap_location;  // set by c runtime
+      CS_MEMORY_CONTROL *private_heap;      
+      char *working_heap_area; 
+      unsigned private_heap_size;
+    
+    } Handle_CFL_t;
+    
+
+    ]]
     local header_code = [[
-/*
---------------------------- Handle definition ------------------------------
-typedef struct Handle_CFL_t
-{
 
-  Named_event_queue_control_CFL_t *queue_rom;
-  Event_control_RAM_CFL_t *queue_ram;
-  Event_data_CFL_t *event_data;
-
-  unsigned char *column_elements_flags;
-  const Column_element_CFL_t *column_elements_ROM;
-
-  unsigned char *column_flags;
-  void **column_local_data;
-  unsigned char *column_state;
-  const unsigned short number_of_columns;
-  const Column_ROM_CFL_t *column_rom_data;
-
-  const unsigned short number_of_watch_dogs;
-  bool *watch_dog_active;
-  unsigned *watch_dog_count;
-  unsigned *watch_dog_trigger_count;
-  const Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
-  Time_control_CFL_t *time_control;
-  Engine_control_CFL_t *engine_control;
-  Debug_out_CFL_t *debug_function;
-  private_heap_malloc_fn malloc;
-  private_heap_free_fn free;
-  allocate_once_fn allocate_once;
-  const char *master_heap_starting_location; // set by lua preprocessor
-  unsigned master_heap_size;                 // set by lua preprocessor
-  unsigned remaining_heap_size;
-  char *current_heap_location;
-  char *private_heap;      // set by lua preprocessor
-  char *working_heap_area; // set by lua preprocessor
-  unsigned private_heap_size;
-
-} Handle_CFL_t;
-
- 
+ /*
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 const struct Handle_CFL_t %s =
@@ -115,36 +139,30 @@ const struct Handle_CFL_t %s =
   .watch_dog_rom_data = NULL,
   .time_control = &%s,
   .engine_control =&%s,
-  .debug_function =NULL,
+  .debug_function = %s,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
-  .master_heap_starting_location = NULL,
-  .master_heap_size = 0,
-  .remaining_heap_size = 0,
-  .current_heap_location = NULL,
-   .private_heap   = NULL,
-  .working_heap_area   =NULL,
-  .private_heap_size =   0,
+  .master_heap_starting_location = %s,
+  .master_heap_size = %s,
+  .remaining_heap_size = &%s,
+  .current_heap_location = &%s,
+  .private_heap   = &%s,
+  .working_heap_area   = %s,
+  .private_heap_size =   %s,
 } ;
-
 
 
 ]]
 
 
-local message = string.format(header_code,handle_name,#column_list,time_control_name,engine_name)   
+local message = string.format(header_code,handle_name,#column_list,time_control_name,engine_name,debug_function,
+master_heap_starting_location_name, build_status["allocate_once_heap_size"],remaing_size_name,current_heap_pointer,heap_block_control,
+heap_storeage_area,build_status["private_heap_size"])   
 write_output(message)
 
 
-local message = "static void "..build_status["entry_point"].."() {\n"
-message = string.format(message)
-write_output(message)
-message = " Start_engine_CFL(&%s,%s,%s);\n"
-message = string.format(message,handle_name,build_status["allocate_once_heap_size"],
-                              build_status["private_heap_size"])
-write_output(message)
-write_output("}\n")
+
 
 format = "const Handle_CFL_t*  Get_handle_CFL(){\n"
 message = string.format(format)
@@ -157,7 +175,7 @@ end
 
 
 
-function dump_output(debug_function)
+function dump_output(interface_code,debug_function)
    print("Dumping output")
    message = '#include "CFL_inner_engine.h"\n'
     write_output(message)
@@ -171,7 +189,7 @@ function dump_output(debug_function)
     dump_event_queues()
     dump_columns()
     dump_column_elements()
-  
+    write_output(interface_code)
     dump_header(debug_function)
     message = "#endif\n"
     write_output(message)

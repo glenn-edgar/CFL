@@ -13,22 +13,16 @@
 // need to be 4 to protect alignment
 #define PADDING 0
 
-static void setup_private_heap(const Handle_CFL_t *handle);
 
 void create_allocate_once_heap_CFL(const void *input) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  handle->current_heap_location = (const void *)handle->master_heap_starting_location;
-  handle->remaining_heap_size = handle->master_heap_size;  
-  setup_private_heap(handle);
-  
+  *handle->current_heap_location = handle->master_heap_starting_location;
+  *handle->remaining_heap_size = handle->master_heap_size;  
+   initialize_privateHeap_CFL(handle->private_heap, handle->private_heap_size, handle->working_heap_area);
+                    
 }
 
-static void setup_private_heap(Handle_CFL_t *handle) {
-  
- 
-  initialize_privateHeap_CFL((CS_MEMORY_CONTROL *)handle->private_heap,
-                            handle->private_heap_size, handle->working_heap_area);
-}
+
 
 // this macro will align but over estimate the space
 #define align_8(addr) (((addr) + 7) & (~7))
@@ -48,23 +42,23 @@ void *allocate_once_CFL(const void *input, unsigned size) {
   if ((size % 8) != 0) {
     size = size + align_8(size);
   }
-  if (size >= handle->remaining_heap_size) {
+  if (size >= *handle->remaining_heap_size) {
   
     ASSERT_PRINT_F("local heap space exceeded space: %d requested %d", handle->remaining_heap_size,
             size);
   }
 
-  return_value = (void *)handle->current_heap_location;
-  handle->current_heap_location += size + HEAP_PROTECTION;
-  handle->remaining_heap_size -= size + HEAP_PROTECTION;
+  return_value = (void *)*handle->current_heap_location;
+  *handle->current_heap_location += size + HEAP_PROTECTION;
+  *handle->remaining_heap_size -= size + HEAP_PROTECTION;
 
   return return_value;
 }
 
 
 int remaining_allocate_once_heap_size_CFL(const void *input) {
-  const
-  return handle->remaining_heap_size;
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+  return *handle->remaining_heap_size;
 }
 
 /*
@@ -81,7 +75,7 @@ void *private_heap_malloc_CFL(const void *input, unsigned size) {
   if(size == 0){
     ASSERT_PRINT_INT( "cannot allocate zero heap size",size);
   }
-  return_value =  malloc_CFL((CS_MEMORY_CONTROL *)handle->private_heap, size);
+  return_value =  malloc_CFL(handle->private_heap, size);
   if(return_value == NULL){
     ASSERT_PRINT_INT( "ran out of heap space",size);
   }
@@ -91,21 +85,20 @@ void *private_heap_malloc_CFL(const void *input, unsigned size) {
 
 void private_heap_free_CFL(const void *input, void *ptr) {
    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  free_CFL((CS_MEMORY_CONTROL *)handle->private_heap, ptr);
+  free_CFL(handle->private_heap, ptr);
 }
 
 unsigned private_heap_largest_block_CFL(const void *input) {
  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  return largest_block_privateHeap_CFL(
-      (CS_MEMORY_CONTROL *)handle->private_heap);
+  return largest_block_privateHeap_CFL(handle->private_heap);
 }
 
 void private_heap_dump_blocks_CFL(const void *input) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  dumpHeap_CFL((CS_MEMORY_CONTROL *)handle->private_heap);
+  dumpHeap_CFL(handle->private_heap);
 }
 
 void private_heap_reset_CFL(const void *input) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  reset_privateHeap_CFL((CS_MEMORY_CONTROL *)handle->private_heap);
+  reset_privateHeap_CFL(handle->private_heap);
 }

@@ -3,6 +3,10 @@
 #include "CFL_debug.h"
 #include "CFL_basic_defs.h"
 #include "CFL_event_manager.h"
+#include "CFL_private_heap.h"
+#include "CFL_local_heap_functions.h"
+
+typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
 typedef long long unsigned (*Elasped_ms_fn)(void);
 
@@ -75,11 +79,18 @@ typedef struct Engine_control_CFL_t
 
 void *private_heap_malloc_CFL(const void *input, unsigned size);
 void private_heap_free_CFL(const void *input, void *ptr);
-void *allocate_once_CFL(void *handle, unsigned size); 
+void *allocate_once_CFL(const void *input, unsigned size); 
 
-typedef void *(*private_heap_malloc_fn)(void *, unsigned );
+typedef void *(*private_heap_malloc_fn)(const void *input, unsigned size );
 typedef void (*private_heap_free_fn)(const void *input, void *ptr);
 typedef void *(*allocate_once_fn)(const void *input, unsigned size);
+
+/*
+  Structure set by lua preprocessor unless noted
+
+
+
+*/
 typedef struct Handle_CFL_t
 {
 
@@ -103,16 +114,16 @@ typedef struct Handle_CFL_t
   const Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
   Time_control_CFL_t *time_control;
   Engine_control_CFL_t *engine_control;
-  Debug_out_CFL_t *debug_function;
+  Debug_out_CFL_t debug_function;
   private_heap_malloc_fn malloc;
   private_heap_free_fn free;
   allocate_once_fn allocate_once;
-  const char *master_heap_starting_location; // set by lua preprocessor
-  unsigned master_heap_size;                 // set by lua preprocessor
-  unsigned remaining_heap_size;
-  char *current_heap_location;
-  char *private_heap;      // set by lua preprocessor
-  char *working_heap_area; // set by lua preprocessor
+  char *master_heap_starting_location; 
+  const unsigned master_heap_size;             
+  unsigned *remaining_heap_size;  // set by c runtime
+  char **current_heap_location;  // set by c runtime
+  CS_MEMORY_CONTROL *private_heap;      
+  char *working_heap_area; 
   unsigned private_heap_size;
 
 } Handle_CFL_t;
