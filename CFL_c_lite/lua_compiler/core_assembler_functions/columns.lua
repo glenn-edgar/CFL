@@ -113,18 +113,17 @@ end
 local column_header_definition = [[
 /*
 ------------------------ ROM data structures for columns --------------------------
-typedef struct Column_ROM_t
+typedef struct Column_ROM_CFL_t
 {
-    short                         queue_number; //-1 means no attached event queue
-    bool                          auto_start;   //true or false
-    unsigned short                id;           // position in the table
-    unsigned short                number;       // number of column elements
-    unsigned short                start;        // starting position of the column element
-   short                         start_state;   // start of first column state -1 means no state
-   short                         end_state;     // end of last column state -1 means no state
-   short                         watch_dog_id;  // watch dog number -1 means no watch dog
-} Column_ROM_t;
-
+  short queue_number;
+  bool auto_start;
+  unsigned short id;
+  unsigned short number;
+  unsigned short start;
+  short start_state;
+  short end_state;
+  short watch_dog_id;
+} Column_ROM_CFL_t;
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
@@ -139,10 +138,10 @@ function output_column_ROM_data_structures()
        queue_number = column_names[v]["data"]["queue_number"]
       
        local column_data = column_names[v]["data"]
-       message = string.format("  { %d,%d %s, %d, %d, %d, %d,%d },\n",
-                            i-1,
+       message = string.format("  { %d,%s, %d, %d, %d, %d, %d,%d },\n",
                             queue_number,
                             column_data["startup_flag"],
+                            i-1,
                             column_data["number"],
                             column_data["start"],
                             column_data["start_state"],

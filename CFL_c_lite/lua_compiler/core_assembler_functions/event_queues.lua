@@ -13,6 +13,7 @@ function define_named_queue(name,size)
      end
     
     queue_names[name] = {name, size,queue_number}
+    
     return_value = queue_number
     queue_number = queue_number + 1
     table.insert(queue_list,name)
@@ -31,6 +32,7 @@ function lookup_named_queue(queue_name)
         print("Error: queue name "..queue_name.." not defined")
         os.exit(1)
     end
+    
     return queue_names[queue_name][3]
 end
 
@@ -60,7 +62,7 @@ local function dump_rom_data_structures()
         format_string = "static const Event_control_ROM_CFL_t event_control_rom_%s = { %d, %d };\n"
         size = queue_data[2]
        
-        local message = string.format(format_string,queue_name,number,size)
+        local message = string.format(format_string,queue_name,size, number)
         number = number + size
         write_output(message)
     end

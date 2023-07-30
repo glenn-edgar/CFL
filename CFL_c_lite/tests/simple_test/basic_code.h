@@ -1,10 +1,11 @@
-
+#ifndef __BASIC_CODE_H__
+#define __BASIC_CODE_H__
 #ifdef __cplusplus
 extern "C" {
 #endif
 #include <stdbool.h>   
 
-
+#include "CFL_inner_engine.h"
 
 
 //----------Ref function header code ----

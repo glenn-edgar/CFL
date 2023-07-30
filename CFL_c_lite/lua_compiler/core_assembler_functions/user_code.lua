@@ -2,8 +2,8 @@ local user_code = {}
 local basic_code = {}
 local basic_header_code = {}
 
-local basic_file_name = "basic_code.c"
-local basic_header_name = "basic_code.h"
+local basic_file_name = "run_time_code_CFL.c"
+local basic_header_name = "run_time_code_CFL.h"
 
 function Store_user_code(code)
      table.insert(user_code, code) 
@@ -31,7 +31,7 @@ local header_start = [[
 extern "C" {
 #endif
 #include <stdbool.h>   
-
+#include "CFL_inner_engine.h"
 
 ]]
 
@@ -52,10 +52,12 @@ function dump_basic_header_code()
         print("Cannot open output file " .. output_file)
         os.exit(1)
     end
-    output:write(header_start)
     local name = string.match(basic_header_name, "(.+)%.[^%.]+$")
-    write_output('#ifndef __'..name..'_H__\n')
-    write_output('#define __'..name..'_H__\n')
+    output:write('#ifndef __'..name..'_H__\n')
+    output:write('#define __'..name..'_H__\n')
+    output:write(header_start)
+    
+    
     local message = "\n\n//----------Ref function header code ----\n\n"
     output:write(message)
     for i, str in ipairs(basic_header_code) do output:write(str) end
@@ -71,7 +73,8 @@ function dump_basic_code()
         os.exit(1)
     end
 
-    local message = "\n\n//----------User  code ----\n\n"
+    local message = '\n\n//----------Run time code  ----\n\n#include "run_time_code_CFL.h"\n\n'
+    
     output:write(message)
     for i, str in ipairs(basic_code) do output:write(str) end
     output:close()

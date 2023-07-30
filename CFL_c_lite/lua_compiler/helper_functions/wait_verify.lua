@@ -2,7 +2,7 @@
 local while_control_header_code = [[
 
 
-typedef struct While_control_RAM_t{
+typedef struct While_control_RAM_CFL_t{
     int current_count;
 } While_control_RAM_CFL_t;
 
@@ -12,31 +12,38 @@ typedef struct While_control_ROM_t
     int time_out_ms;
     bool terminate_flag;
     void* user_data;
-    While_control_RAM_t *while_control_ram;
+    While_control_RAM_CFL_t *while_control_ram;
     One_shot_function_CFL_t user_time_out_fn;
     
 } While_control_ROM_CFL_t;
 
-int while_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
+int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 ]]
 local while_control_code = [[
-  
-int while_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+  static inline int generate_return_code_while(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }  
+int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
 {
     Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
     
-    While_control_ROM_CFL_t while_ctrl = (While_control_ROM_CFL_t *)params;
+    While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
     While_control_RAM_CFL_t *while_ctrl_ram = while_ctrl->while_control_ram;
-
+    printf("while_handler_CFL\n");
     if (event_data->event_index == EVENT_INIT_CFL)
     {
-
+        
         while_ctrl_ram->current_count = 0;
         bool_fn(handle, while_ctrl->user_data, event_data);
         return CONTINUE_CFL;
     }
-
+    exit(0);
     if (bool_fn(handle, while_ctrl->user_data, event_data) == true)
     {
         return DISABLE_CFL;
@@ -49,7 +56,7 @@ int while_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t 
     {
         return HALT_CFL;
     }
-    while_ctrl_ram->current_count += event_data->event_data;
+    while_ctrl_ram->current_count += *(unsigned short *)event_data->params;
     if (while_ctrl_ram->current_count < while_ctrl->time_out_ms)
     {
         return HALT_CFL;
@@ -57,7 +64,7 @@ int while_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t 
     // Time out at this point
     while_ctrl->user_time_out_fn(handle, while_ctrl->user_data, event_data);
 
-    return generate_return_code(while_ctrl->terminate_flag);
+    return generate_return_code_while(while_ctrl->terminate_flag);
 }
 
 
@@ -92,7 +99,7 @@ function Wait(bool_fn_name, time_out_ms, terminate_flag, one_shot_time_out_fn, u
                         tostring(user_data), one_shot_time_out_fn, unique_name)
   Store_user_code(message)
 
-  
+  print("Wait",bool_fn_name, time_out_ms, terminate_flag, one_shot_time_out_fn, user_data)
   Store_column_element(fn_column, fn_boolean,'(void *)'..unique_name..'_rom')
 end
 
@@ -110,13 +117,20 @@ typedef struct Verify_control_ROM_CFL_t
 
 // handle time_out_ms -1
 
-int verify_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
 
 ]]
 local verify_handler_code = [[
+  static inline int generate_return_code_verify(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }
 
-
-int verify_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
 {
     Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
     
@@ -139,7 +153,7 @@ int verify_handler_CFL(void *handle, void *aux_fn, void *params,Event_data_CFL_t
         {
             verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
         }
-        return generate_return_code(verify_control->terminate_flag);
+        return generate_return_code_verify(verify_control->terminate_flag);
     }
     return CONTINUE_CFL;
 }
@@ -195,7 +209,7 @@ typedef struct While_event_control_ROM_t
 
 
 
-static bool wait_event_handler(void *handle, void *params,
+bool wait_event_handler(const void *handle, void *params,
                                Event_data_CFL_t *event_data)
 {
   (void)handle;
@@ -250,32 +264,43 @@ function Wait_event(event_id, number_of_events, time_out_ms, terminate_flag, one
 end
 
 
-local wait_time_delay_code = [[
-typedef struct While_time_control_CFL_t
-{
-    unsigned time_delay;
-    unsigned ending_time;
-} While_time_control_CFL_t;
-    
+local wait_time_delay_header_code = [[
 
-static bool wait_time_delay(void *input, void *params,
+     
+typedef struct While_time_control_ROM_t
+{
+   unsigned short time_delay;
+   unsigned short *ending_time;
+} While_time_control_ROM_CFL_t;
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
+                            Event_data_CFL_t *event_data);
+]]
+
+
+local wait_time_delay_code = [[
+ 
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
                             Event_data_CFL_t *event_data)
 {
   
-
-  While_time_control_RAM_t *while_time_control = (While_time_control_RAM_t *)params;
-
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
+  printf("wait_time_delay_CFL\n");
   if (event_data->event_index == EVENT_INIT_CFL)
   {
     
-    while_time_control->ending_time =
-        Get_current_ms_value(input) + while_time_control->time_delay;
+    *while_time_control->ending_time =
+        handle->time_control->current_millis + while_time_control->time_delay;
 
     return false;
   }
   if (event_data->event_index == TIMER_TICK_CFL)
   {
-    if (while_time_control->ending_time <= Get_current_ms_value(input))
+    if (*while_time_control->ending_time <= handle->time_control->current_millis)
     {
       return true;
     }
@@ -284,20 +309,24 @@ static bool wait_time_delay(void *input, void *params,
   return false;
 }
 ]]
-Store_boolean_function("WAIT_TIME_DELAY",'wait_time_delay', wait_time_delay_code)
+Store_boolean_function("WAIT_TIME_DELAY",'wait_time_delay_CFL', wait_time_delay_code,wait_time_delay_header_code)
 
 local wait_time_delay_ram = [[
-    While_time_control_RAM_t *%s_ram = { 0,0 };\n current count
+    unsigned short %s;
+    const While_time_control_ROM_CFL_t %s = { %s,&%s };
 ]]
 
 
 function Wait_delay(time_delay_ms)
   local boolean_name = Get_boolean_function("WAIT_TIME_DELAY")
   local column_fn_name = Get_column_function("WHILE_HANDLER")
-  local unique_name = generate_unique_function_name()
-  local message = string.format(wait_time_delay_ram, unique_name)
-  Store_user_code('unsigned '..unique_name..' = '..time_delay_ms..';\n')
-  store_column_element(column_fn_name,boolean_name,'(void *)'..unique_name..'_ram')
+  local unique_name_struct = generate_unique_function_name()
+  local unique_name_end_time = generate_unique_function_name()
+
+
+  local message = string.format(wait_time_delay_ram, unique_name_end_time,unique_name_struct,time_delay_ms,unique_name_end_time)
+  Store_user_code(message)
+  Wait("WAIT_TIME_DELAY", 0, true, NULL, unique_name_struct)
 end
 
 
@@ -306,7 +335,7 @@ end
 
 local true_constant_handler_code = [[
 
-static bool true_constant_handler(void *handle, void *params,
+bool true_constant_handler(void *handle, void *params,
                                   Event_data_CFL_t *event_data)
 {
   (void)handle;
@@ -318,7 +347,7 @@ static bool true_constant_handler(void *handle, void *params,
 Store_boolean_function("TRUE",'true_constant_handler', true_constant_handler_code)
 
 local false_constant_handler_code = [[
-static bool false_constant_handler(void *handle, void *params,
+bool false_constant_handler(void *handle, void *params,
                                    Event_data_CFL_t *event_data)
 {
   (void)handle;

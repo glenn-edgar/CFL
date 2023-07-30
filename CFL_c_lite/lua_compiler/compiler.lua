@@ -35,7 +35,7 @@ function start_build(entry_point,allocate_once_heap_size, private_heap_size,
     initialize_event_queues(default_event_queue_size)
     initialize_columns()
     initialize_column_elements()
-    define_named_queue("main_queue",default_event_queue_size)
+    
 
 end
 time_control_name = nil -- global variable
@@ -173,23 +173,32 @@ write_output(message)
 
 end
 
+CFL_global_variables = [[
 
+static const int reset_buffer[1] = { RESET_CFL };
+static const int halt_buffer[1] = { HALT_CFL };
+static const int terminate_buffer[1] = { TERMINATE_CFL };
+static const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
 
-function dump_output(interface_code,debug_function)
+]]
+
+function dump_output(debug_function)
    print("Dumping output")
-   message = '#include "CFL_inner_engine.h"\n'
+   message = '#include "run_time_code_CFL.h"\n'
     write_output(message)
-    --dump_functions()
+
+    write_output(CFL_global_variables)
+    dump_functions()
    
-    --dump_basic_header_code()
+    dump_basic_header_code()
     
-    --dump_basic_code()
+    dump_basic_code()
   
-    --dump_user_code()
+    dump_user_code()
     dump_event_queues()
     dump_columns()
     dump_column_elements()
-    write_output(interface_code)
+    
     dump_header(debug_function)
     message = "#endif\n"
     write_output(message)

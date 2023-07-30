@@ -91,44 +91,44 @@ void debug_write(const void *buf, unsigned count)
 
 
 
-static Time_control_CFL_t hxvonqtiye;
+static Time_control_CFL_t qbiievzdve;
 
 
 
 
-static Engine_control_CFL_t hkzagxknko;
+static Engine_control_CFL_t htwfipfycn;
 
 
 /*allocate once heap space */
 
-static char nsdesahphx[2000];
+static char yzwitwbzff[2000];
 
 
 /* remaining allocate heap size */
 
-static unsigned mxvvbtsyib;
+static unsigned vniqwddtoz;
 
 
 /* current heap pointer */
 
-static char* hjlvkxqxgw;
+static char* azguclisai;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL aohjqcftim;
+static CS_MEMORY_CONTROL iviqeuwdxc;
 
 
 /* heap storeage area */
 
-static char vjnvxcohrs[1000];
+static char daoufgehjh[1000];
 
 
 
  /*
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
-const struct Handle_CFL_t gkhsgwrcip =
+const struct Handle_CFL_t tdhgtpuren =
 {
 
   .queue_rom    = &queue_control,
@@ -149,23 +149,23 @@ const struct Handle_CFL_t gkhsgwrcip =
   .watch_dog_count = NULL,
   .watch_dog_trigger_count = NULL,
   .watch_dog_rom_data = NULL,
-  .time_control = &hxvonqtiye,
-  .engine_control =&hkzagxknko,
+  .time_control = &qbiievzdve,
+  .engine_control =&htwfipfycn,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
-  .master_heap_starting_location = nsdesahphx,
+  .master_heap_starting_location = yzwitwbzff,
   .master_heap_size = 2000,
-  .remaining_heap_size = &mxvvbtsyib,
-  .current_heap_location = &hjlvkxqxgw,
-   .private_heap   = &aohjqcftim,
-  .working_heap_area   = vjnvxcohrs,
+  .remaining_heap_size = &vniqwddtoz,
+  .current_heap_location = &azguclisai,
+  .private_heap   = &iviqeuwdxc,
+  .working_heap_area   = daoufgehjh,
   .private_heap_size =   1000,
 } ;
 
 
 const Handle_CFL_t*  Get_handle_CFL(){
-    return &gkhsgwrcip;
+    return &tdhgtpuren;
 }
 #endif

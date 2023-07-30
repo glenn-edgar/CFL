@@ -19,7 +19,7 @@ int main() {
   const Handle_CFL_t *handle = Get_handle_CFL();
   
 
-   config_debug_handle_CFL(handle);
+   Initialize_engine_CFL(handle);
    test_debug_write(handle);
    test_allocate_once_heap(handle);
    test_working_heap(handle);
@@ -47,22 +47,22 @@ static void test_debug_write(const Handle_CFL_t *handle){
 
 /*
    This test makes sure that allocate once heap is working.
-   Also the function Allocate_once_remaining_heap_size_CFL is checked
+   Also the function remaining_allocate_once_heap_size_CFL is checked
 
 */
 
 static void test_allocate_once_heap(const Handle_CFL_t *handle) {
- (void)handle;
-#if 0
+
+
   void* temp;
   Printf_CFL("test allocate once heap\n");
  
-  Printf_CFL("amount of allocate once heap %d\n",Allocate_once_remaining_heap_size_CFL(input));
+  Printf_CFL("amount of allocate once heap %d\n", remaining_allocate_once_heap_size_CFL(handle));
   Printf_CFL("allocationg 101 bytes\n");
-  temp = Allocate_once_malloc_CFL(input, 101); // test mod 8 allignment
+  temp = handle->allocate_once(handle, 101); // test mod 8 allignment
   Printf_CFL("memory pointer %p \n", temp);
- Printf_CFL("amount of allocate once heap %d \n",Allocate_once_remaining_heap_size_CFL(input));
- #endif
+ Printf_CFL("amount of allocate once heap %d \n",remaining_allocate_once_heap_size_CFL(handle));
+
 }
 
 /*
@@ -73,31 +73,30 @@ static void test_allocate_once_heap(const Handle_CFL_t *handle) {
 */
 
 static void test_working_heap(const Handle_CFL_t *handle) {
-   (void)handle;
-  #if 0
-  void* input = Configure_engine_CFL(config_handle, 50000, 2000);
+ 
+ 
   void* test_array[10];
   unsigned size[10] = { 11, 23, 33, 44, 55, 66, 77, 88, 99, 199 };
   Printf_CFL("private heap size \n");
-  Printf_CFL("largest free block %d \n",Private_heap_largest_free_block_CFL(input));
+  Printf_CFL("largest free block %d \n",private_heap_largest_block_CFL(handle));
   for (int i = 0; i < 10; i++) {
     Printf_CFL("malloc size %d \n",size[i]);
-    test_array[i] = Private_heap_malloc_CFL(input, size[i]);
+    test_array[i] = handle->malloc(handle, size[i]);
     memset(test_array[i],0xff, size[i]);
-     Printf_CFL("largest private heap size %d \n",Private_heap_largest_free_block_CFL(input));
+     Printf_CFL("largest private heap size %d \n",private_heap_largest_block_CFL(handle));
   }
   // making sure heap allocates and reclaimes blocks
-  Private_heap_free_CFL(input, test_array[9]);
-  Private_heap_free_CFL(input, test_array[0]);
-  Private_heap_free_CFL(input, test_array[8]);
-  Private_heap_free_CFL(input, test_array[1]);
-  Private_heap_free_CFL(input, test_array[7]);
-  Private_heap_free_CFL(input, test_array[2]);
-  Private_heap_free_CFL(input, test_array[6]);
-  Private_heap_free_CFL(input, test_array[3]);
-  Private_heap_free_CFL(input, test_array[5]);
-  Private_heap_free_CFL(input, test_array[4]);
+  handle->free(handle, test_array[9]);
+   handle->free(handle, test_array[0]);
+   handle->free(handle, test_array[8]);
+   handle->free(handle, test_array[1]);
+   handle->free(handle, test_array[7]);
+   handle->free(handle, test_array[2]);
+   handle->free(handle, test_array[6]);
+   handle->free(handle, test_array[3]);
+  handle->free(handle, test_array[5]);
+   handle->free(handle, test_array[4]);
 
-  Printf_CFL("largest private heap size %d \n",Private_heap_largest_free_block_CFL(input));
-  #endif
+  Printf_CFL("largest private heap size %d \n",private_heap_largest_block_CFL(handle));
+
 }

@@ -194,12 +194,15 @@ static inline int process_column_element(const Handle_CFL_t *handle,
 {
 
   const Column_element_CFL_t *column_element = handle->column_elements_ROM + column_element_index;
-  if ((handle->column_elements_flags[column_element_index] & COLUMN_ELEMENT_INITIALIZED) != 0)
+  if ((handle->column_elements_flags[column_element_index] & COLUMN_ELEMENT_INITIALIZED) == 0)
   {
-
+ 
     column_element->column_function(handle, column_element->aux_fn,
                                     column_element->params, &init_event);
+    handle->column_elements_flags[column_element_index] = 
+        handle->column_elements_flags[column_element_index] | COLUMN_ELEMENT_INITIALIZED;
   }
+ 
   return column_element->column_function(handle, column_element->aux_fn,
                                          column_element->params, event_data);
 }
@@ -210,7 +213,7 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
 {
 
   
-  
+
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
 
   if((handle->column_flags[column_index] & COLUMN_ACTIVE) == 0){
@@ -229,58 +232,68 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
   
   
   unsigned column_element_count = 0;
+  
   for (unsigned i = 0; i < column->number; i++)
   {
-   
+    printf("process column element a %d %d %d %d \n",column_index,i,column->start+i,handle->column_elements_flags[column->start + i]);
     if((handle->column_elements_flags[column->start + i] & COLUMN_ELEMENT_ACTIVE) == 0)
     {
       continue;
     }
+   printf("process column element b %d %d %d %d \n",column_index,i,column->start+i,handle->column_elements_flags[column->start + i]);
     column_element_count += 1;
     handle->engine_control->current_column_element_index = i;
     
 
-    int return_code = process_column_element(handle, i, event_data);
-
+    int return_code = process_column_element(handle, column->start+i, event_data);
+    printf("return code %d \n",return_code);
     validate_return_code(return_code);
    
 
     if (return_code == COLUMN_STATE_CHANGE_CFL)
     {
-     
-      change_column_state(handle, column_index);
+      ASSERT_PRINT_INT("column state change not supportedd \n", column->id);
+      //change_column_state(handle, column_index);
       return true; // terminates column processing
     }
 
     if (return_code == ENGINE_TERMINATE_CFL)
     {
+
+     printf("terminate engine %d\n",i);
+ 
       return false;
     }
     if (return_code == TERMINATE_CFL)
     {
+       printf("terminate  %d\n",i);
+     
+     
       disable_column_CFL(handle, column->id);
      
       return true;
     }
     if (return_code == RESET_CFL)
     {
-    
+       printf("reset %d\n",column->id);
+     
       reset_column_CFL(handle, column->id);
       return true;
     }
     if (return_code == HALT_CFL)
     {
-
+       printf("halt %d\n",column->id);
+       
       return true;
     }
     if (return_code == DISABLE_CFL)
     {
-
-     handle->column_elements_flags[column->start + i] = ~(COLUMN_ELEMENT_ACTIVE|COLUMN_ELEMENT_INITIALIZED);
+     handle->column_elements_flags[column->start + i] &= ~(COLUMN_ELEMENT_ACTIVE);
     }
   }
   if (column_element_count == 0)
   {
+    printf("zero elements %d\n",column->id );
     // column has no active column elements
     disable_column_CFL(handle, column->id);
   }
@@ -297,12 +310,14 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
   Event_data_CFL_t *temp;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
 
-
+ 
   if (column->queue_number < 0)
   {
+
     return true;
   }
 
+  
   if (is_queue_empty_CFL(handle,column->queue_number) == true)
   {
     return true;
@@ -358,32 +373,31 @@ bool process_single_sweep_CFL(const void *input,
 {
 
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input; 
-
+  
   for (unsigned short i = 0; i < handle->number_of_columns; i++)
   {
 
-    const Column_ROM_CFL_t *column = handle->column_rom_data + i; 
+    const Column_ROM_CFL_t *column = handle->column_rom_data + i;
+    printf("\n\n  ***************  %d %d **************\n",i,handle->column_flags[i]);
     if ((handle->column_flags[i]&COLUMN_ACTIVE)==0)
     {
       continue;
     }
-    {
-      // column could have been disabled by a previous column
-      continue;
-    }
-
+    
+    printf("process column %d \n",i);
     handle->engine_control->current_column_index = column->id;
-
+    
     bool result = true;
     if (column->queue_number >= 0)
     {
-
+     
       result = process_column_named_events(handle,i, event_data);
     }
     if (result == true)
     {
-
+      printf("made it here \n");
       result = inner_process_column(handle,i, event_data);
+ 
     }
     if (result == false)
     {
@@ -391,6 +405,7 @@ bool process_single_sweep_CFL(const void *input,
       return false; // engine shut down
     }
   }
+
   return true;
 }
 
@@ -416,7 +431,7 @@ void enable_column_CFL(const void *input, unsigned column_index)
   enable_all_column_elements(input,column_index);
   handle->column_flags[column_index] = 0;
   handle->column_flags[column_index] = handle->column_flags[column_index] | COLUMN_ACTIVE;
-  change_column_state(handle, column_index);
+ 
   if(column->watch_dog_id >= 0){
     handle->watch_dog_active[column->watch_dog_id] = false;
     handle->watch_dog_count[column->watch_dog_id] = 0;
@@ -472,22 +487,40 @@ void initialize_columns_CFL(const void *input)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = ((Handle_CFL_t *)handle)->column_rom_data;
-
+  //printf("initialize columns %d\n",handle->number_of_columns);
+  
   for (unsigned i = 0; i < handle->number_of_columns; i++)
   {
+        #if 0
+    const Column_ROM_CFL_t *wcol = column + i;
 
-    if (column->auto_start == true)
+    printf("auto start %d %d %d %d %d %d %d %d %d  \n",i,wcol->queue_number,
+                                     wcol->auto_start,
+                                     wcol->id,
+                                     wcol->number,
+                                     wcol->start,
+                                     wcol->start_state,
+                                     wcol->end_state,
+                                     wcol->watch_dog_id);
+    #endif
+    if (column[i].auto_start == true)
     {
-      enable_column_CFL(handle, column->id);
-      handle->column_state[column->id] = COLUMN_ACTIVE;
+
+      
+      handle->column_flags[i] = COLUMN_ACTIVE;
+      reset_column_CFL(handle,i);
     }
     else
     {
 
-      handle->column_flags[column->id] = 0;
+      handle->column_flags[i] = 0;
     }
-    column++;
+   
+    
+    
   }
+  
+  
 }
 
 
