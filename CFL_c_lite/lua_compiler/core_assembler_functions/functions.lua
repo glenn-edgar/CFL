@@ -116,6 +116,25 @@ function Store_one_shot_function(op_code,c_function_name,function_code, function
     --print("functions.lua: " .. op_code .. " function code inserted")
 end
 
+local null_function_name = "null_function"
+local null_code = [[
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
+]]
+
+local null_header_code = [[
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
+]]
+
+Store_one_shot_function('NULL',null_function_name,null_code, null_header_code)
+
+
 function Activate_one_shot_function(op_code)
   
     if (one_shot_functions[op_code] == nil) then

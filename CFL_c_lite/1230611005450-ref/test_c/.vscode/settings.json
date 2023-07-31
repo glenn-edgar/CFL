@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.pxt": "c",
+        "test_column_data.h": "c"
+    }
+}

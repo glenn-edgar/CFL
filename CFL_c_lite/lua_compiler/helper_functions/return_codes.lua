@@ -19,7 +19,7 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     {
         return CONTINUE_CFL;
     }
-    printf("return code = %d\n",*return_code);
+   
     return *return_code;
 }
 
