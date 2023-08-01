@@ -188,6 +188,7 @@ function dump_output(debug_function)
     write_output(message)
 
     write_output(CFL_global_variables)
+    dump_event_queues()
     dump_functions()
    
     dump_basic_header_code()
@@ -195,14 +196,13 @@ function dump_output(debug_function)
     dump_basic_code()
   
     dump_user_code()
-    dump_event_queues()
+   
     dump_columns()
     dump_column_elements()
     
     dump_header(debug_function)
-    message = "#endif\n"
-    write_output(message)
-
+    write_output(header_end)
+    
 end
 
 

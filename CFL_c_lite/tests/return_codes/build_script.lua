@@ -100,37 +100,51 @@ Store_user_code(user_code)
 Store_one_shot_function("TEST_ONE_SHOT",'test_one_shot',test_one_shot_code,test_one_shot_header_code)  
 Store_one_shot_function("TEST_BID_ONE_SHOT",'test_one_bid_shot',test_one_bid_shot_code,test_one_bid_header_code)  
 
+set_user_event_start(100)
+add_user_event("test_event","test_event")
+Store_user_code('\n\nstatic const char *user_test_event_data = "test message";\n\n')
+generate_event("user_test_event",get_event("test_event"),true, '(void *)user_test_event_data')
 
-
- 
 define_column("column1",true,"queue1")
   Log_msg("this is a test message")
   One_shot("TEST_ONE_SHOT", 'test_one_shot_message')
   One_shot_terminate("TEST_BID_ONE_SHOT",'test_bid_one_shot_message')
   Wait_delay(2000)
+  Log_msg("reseting the column every 2 seconds")
   reset_column()
 end_column()
 
 define_column("column2",true,"queue2")
 Log_msg('test_halt_column')
+   Log_msg("halting the column")
    halt_column()       
 end_column()
 
 define_column("column3",true,"queue3")
 Log_msg( 'test_terminate_column')
 Wait_delay(7500)
-Log_msg( 'column3 is terminating')
-   terminate_column()
+Log_msg( 'column 3 is terminating after 7.5 seconds')
+terminate_column()
 end_column()
 
-define_columns({"column4"})
+define_columns({"column4","column5"})
 
 define_column("column4",true,nil)
 Log_msg( 'test_terminate_engine')
 Wait_delay(10000)
-Log_msg( 'column4 is terminating engine')
-   terminate_engine()
+Log_msg( 'column 4 is terminating engine after 10 seconds')
+terminate_engine()
 end_column()
+
+define_column("column5",true,nil)
+Log_msg( 'test_terminate_engine 5')
+local event = get_event("second")
+Wait_event(event, 9, 0, true, 'NULL', 'NULL')
+Log_msg( 'column 5 is terminating engine after 9 seconds')
+terminate_column()
+end_column()
+
+
 
 dump_output('debug_write')
 

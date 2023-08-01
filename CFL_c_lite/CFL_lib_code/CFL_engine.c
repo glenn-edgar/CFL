@@ -65,14 +65,14 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
     engine_control->calendar_function = default_calendar_function;
   }
 
-  //engine_control->time_control  = handle->time_control;
+  
 
   reset_event_queue_CFL(handle,0);
   
-  engine_control->idle_function(handle, &engine_control->time_control, true);
-  engine_control->calendar_function(handle, &engine_control->time_control,
+  engine_control->idle_function(handle, handle->time_control, true);
+  engine_control->calendar_function(handle, handle->time_control,
                                     true);
-  engine_control->time_control.tick_ms = ms_tick;
+  handle->time_control->tick_ms = ms_tick;
 
 
 
@@ -93,8 +93,8 @@ static void process_event_loop(const Handle_CFL_t *handle)
 
   while (true)
   {
-    engine_ctrl->idle_function(handle, &engine_ctrl->time_control, false);
-    engine_ctrl->calendar_function(handle, &engine_ctrl->time_control, false);
+    engine_ctrl->idle_function(handle, handle->time_control, false);
+    engine_ctrl->calendar_function(handle, handle->time_control, false);
 
     while ( get_queue_number_CFL(handle,0) > 0)
     { 
@@ -103,7 +103,7 @@ static void process_event_loop(const Handle_CFL_t *handle)
       // Empty event queue
       if (process_single_loop(handle) == false)
       {
-        printf("Engine is done \n");
+       
         return; // Engine is done
       }
       
@@ -117,9 +117,7 @@ static bool process_single_loop(const Handle_CFL_t *handle)
  
   
   current_event = dequeue_event_CFL(handle,0);
-  printf(" recived event %d \n",current_event->event_index);
-  printf(" recieved data %d \n",*((int*)current_event->params));
-  printf("malloc flag %d \n",current_event->malloc_flag );
+  
   if (current_event == NULL)
   {
     ASSERT_PRINT("Internal Program Error", "");

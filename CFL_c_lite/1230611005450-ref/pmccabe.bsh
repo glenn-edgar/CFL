@@ -1,2 +1,0 @@
-pmccabe -v *.c
-pmccabe -v *.cpp

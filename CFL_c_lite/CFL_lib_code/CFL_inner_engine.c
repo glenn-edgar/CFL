@@ -7,8 +7,8 @@
 #include "CFL_event_manager.h"
 #include "CFL_inner_engine.h"
 
-static Event_data_CFL_t init_event = {EVENT_INIT_CFL, false, NULL};
-static Event_data_CFL_t term_event = {EVENT_TERMINATION_CFL, false, NULL};
+static Event_data_CFL_t init_event = {EVENT_INIT_CFL, false, NULL,true,NULL};
+static Event_data_CFL_t term_event = {EVENT_TERMINATION_CFL, false,NULL,true,NULL};
 
 static inline void disable_all_column_elements(const void *input, unsigned column_index)
 {
@@ -235,18 +235,20 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
   
   for (unsigned i = 0; i < column->number; i++)
   {
-    printf("process column element a %d %d %d %d \n",column_index,i,column->start+i,handle->column_elements_flags[column->start + i]);
+    
     if((handle->column_elements_flags[column->start + i] & COLUMN_ELEMENT_ACTIVE) == 0)
     {
       continue;
     }
-   printf("process column element b %d %d %d %d \n",column_index,i,column->start+i,handle->column_elements_flags[column->start + i]);
+   
+   
     column_element_count += 1;
     handle->engine_control->current_column_element_index = i;
     
 
     int return_code = process_column_element(handle, column->start+i, event_data);
-    printf("return code %d \n",return_code);
+    
+    
     validate_return_code(return_code);
    
 
@@ -260,13 +262,12 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
     if (return_code == ENGINE_TERMINATE_CFL)
     {
 
-     printf("terminate engine %d\n",i);
- 
+    
       return false;
     }
     if (return_code == TERMINATE_CFL)
     {
-       printf("terminate  %d\n",i);
+     
      
      
       disable_column_CFL(handle, column->id);
@@ -275,14 +276,14 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
     }
     if (return_code == RESET_CFL)
     {
-       printf("reset %d\n",column->id);
+       
      
       reset_column_CFL(handle, column->id);
       return true;
     }
     if (return_code == HALT_CFL)
     {
-       printf("halt %d\n",column->id);
+      
        
       return true;
     }
@@ -378,13 +379,13 @@ bool process_single_sweep_CFL(const void *input,
   {
 
     const Column_ROM_CFL_t *column = handle->column_rom_data + i;
-    printf("\n\n  ***************  %d %d **************\n",i,handle->column_flags[i]);
+    
     if ((handle->column_flags[i]&COLUMN_ACTIVE)==0)
     {
       continue;
     }
     
-    printf("process column %d \n",i);
+    
     handle->engine_control->current_column_index = column->id;
     
     bool result = true;
@@ -395,7 +396,7 @@ bool process_single_sweep_CFL(const void *input,
     }
     if (result == true)
     {
-      printf("made it here \n");
+     
       result = inner_process_column(handle,i, event_data);
  
     }
@@ -487,7 +488,6 @@ void initialize_columns_CFL(const void *input)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = ((Handle_CFL_t *)handle)->column_rom_data;
-  //printf("initialize columns %d\n",handle->number_of_columns);
   
   for (unsigned i = 0; i < handle->number_of_columns; i++)
   {

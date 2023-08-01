@@ -5,6 +5,23 @@
 #include "run_time_code_CFL.h"
 
 
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
+}
+
 
 
 
@@ -14,7 +31,7 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     (void)aux_fn;
     int *return_code;
     return_code = (int *)params;
-    printf("return_condition_CFL = %d\n",*return_code);
+    
     if (event_data->event_index == EVENT_INIT_CFL)
     {
         return CONTINUE_CFL;
@@ -34,23 +51,21 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
 {
     Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
-   
+    
     const While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
-   
     While_control_RAM_CFL_t *while_ctrl_ram = while_ctrl->while_control_ram;
-   
+    
     if (event_data->event_index == EVENT_INIT_CFL)
     {
-       
+        
         while_ctrl_ram->current_count = 0;
         bool_fn(handle,(void *) while_ctrl->user_data, event_data);
-       
+        
         return CONTINUE_CFL;
     }
-    printf("while_handler_CFL main\n");
+    
     if (bool_fn(handle, (void *)while_ctrl->user_data, event_data) == true)
     {
-        printf("while_handler_CFL main true\n");
         return DISABLE_CFL;
     }
     if (while_ctrl->time_out_ms <= 0)
@@ -89,23 +104,6 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   return DISABLE_CFL;
 }
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-
-  return CONTINUE_CFL;
-}
-
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
 {
@@ -125,6 +123,13 @@ void log_message_CFL(const void *input, void *params,
               column_index, column_element_number, *message);
 }
 
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
 
 void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
 {
@@ -141,13 +146,6 @@ void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
   
 }
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
 
 void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
 {
@@ -172,6 +170,37 @@ void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
    
  }
 
+
+
+bool wait_event_handler(const void *handle, void *params,
+                               Event_data_CFL_t *event_data)
+{
+  (void)handle;
+ 
+   
+  const While_event_control_ROM_t *while_event_control_rom = (const While_event_control_ROM_t *)params;
+  unsigned *current_count = while_event_control_rom->current_count;
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+
+    *current_count = 0;
+    
+    return true;
+  }
+  
+  if (event_data->event_index == while_event_control_rom->event_index)
+  {
+
+    *current_count += 1;
+    if (*current_count >= while_event_control_rom->number_of_events)
+    {
+    
+      return true;
+    }
+  }
+
+  return false;
+}
  
 
 
@@ -181,22 +210,18 @@ bool wait_time_delay_CFL(const void *input, void *params,
   
   Handle_CFL_t *handle = (Handle_CFL_t *)input;
   const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
-  printf("wait_time_delay_CFL %p \n",while_time_control);
+  
   if (event_data->event_index == EVENT_INIT_CFL)
   {
-     printf("wait_time_delay_CFL init\n");
-    //printf("wait_time_delay_CFL init %d\n",handle->time_control->current_millis);
-    printf("wait_time_delay_CFL init %d\n",*while_time_control->ending_time);
-    *while_time_control->ending_time =
-        handle->time_control->current_millis + while_time_control->time_delay;
-    printf("wait_time_delay_CFL init end %d\n",*while_time_control->ending_time);
+    
+    *while_time_control->start_time = handle->time_control->current_millis;
+    
     return false;
   }
   if (event_data->event_index == TIMER_TICK_CFL)
   {
-    printf("wait_time_delay_CFL timer tick %d %d %d\n",*while_time_control->ending_time,handle->time_control->current_millis,
-    handle->time_control->current_millis);
-    if (*while_time_control->ending_time <= handle->time_control->current_millis)
+    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
+    if (timeElasped >= while_time_control->time_delay)
     {
       return true;
     }

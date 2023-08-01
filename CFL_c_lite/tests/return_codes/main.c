@@ -15,8 +15,8 @@ int main() {
   
   const Handle_CFL_t *handle = Get_handle_CFL();
   Initialize_engine_CFL(handle);
-  Start_engine_CFL(handle,500,default_idle_function,default_calendar_function);
- 
+  Start_engine_CFL(handle,10,default_idle_function,default_calendar_function);
+  printf("Engine is done");
 }
 
 

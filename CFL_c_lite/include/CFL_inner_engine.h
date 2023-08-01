@@ -14,8 +14,8 @@ typedef struct Time_control_CFL_t
 {
   int tick_ms;
   Elasped_ms_fn ms_fn;
-  unsigned short current_millis;
-  unsigned short start_millis;
+  unsigned  current_millis;
+  unsigned  start_millis;
   unsigned char second;
   unsigned char minute;
   unsigned char hour;
@@ -67,7 +67,7 @@ typedef struct Column_ROM_CFL_t
 typedef struct Engine_control_CFL_t
 {
 
-  Time_control_CFL_t time_control;
+  
   Idle_function_CFL_t idle_function;
   Calendar_function_CFL_t calendar_function;
   unsigned short current_column_index;

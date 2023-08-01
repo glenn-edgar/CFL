@@ -14,7 +14,7 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     (void)aux_fn;
     int *return_code;
     return_code = (int *)params;
-    printf("return_condition_CFL = %d\n",*return_code);
+    
     if (event_data->event_index == EVENT_INIT_CFL)
     {
         return CONTINUE_CFL;

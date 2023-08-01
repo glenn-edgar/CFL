@@ -25,7 +25,7 @@ function dump_user_code()
     write_output(message)
     for i, str in ipairs(user_code) do write_output(str) end
 end
-local header_start = [[
+header_start = [[
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +35,7 @@ extern "C" {
 
 ]]
 
-local header_end = [[
+header_end = [[
    
 
 #ifdef __cplusplus

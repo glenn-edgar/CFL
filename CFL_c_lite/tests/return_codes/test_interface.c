@@ -37,12 +37,12 @@ void default_idle_function(const void *input,
     {
         
         delay_ms(timer_control->tick_ms);
-        printf("elasped time %lld\n", get_elapsed_time_ms() );
+        
   
         timer_control->current_millis = get_elapsed_time_ms();
         timer_control->start_millis = timer_control->current_millis;
-        handle->time_control->current_millis = timer_control->current_millis;
-        printf("elasped time %d %d\n", timer_control->current_millis,handle->time_control->current_millis); 
+        
+        
 
         event_data.event_index = TIMER_TICK_CFL;
         

@@ -86,7 +86,8 @@ end
 function Activate_column_function(op_code)
 
     if (column_functions[op_code] == nil) then
-        print("Error: column function " .. op_code .. " not defined")
+      
+        print("Error: column function ++ " .. op_code .. " not defined")
         os.exit(1)
     end
     active_column_functions[op_code] = true
@@ -95,7 +96,8 @@ end
 
 function Get_column_function(op_code) 
     if (column_functions[op_code] == nil) then
-        print("Error: column function " .. op_code .. " not defined")
+        print("get_column_function")
+        print("Error: column function -- " .. op_code .. " not defined")
         os.exit(1)
     end
     Activate_column_function(op_code)
@@ -178,7 +180,7 @@ end
 function Activate_boolean_function(op_code)
 
     if (boolean_functions[op_code] == nil) then
-        print("Error: column function " .. op_code .. " not defined")
+        print("Error: bool function ++ " .. op_code .. " not defined")
         os.exit(1)
     end
     active_boolean_functions[op_code] = true
@@ -187,7 +189,7 @@ end
 
 function Get_boolean_function(op_code) 
     if (boolean_functions[op_code] == nil) then
-        print("Error: column function " .. op_code .. " not defined")
+        print("Error: bool function -- " .. op_code .. " not defined")
         os.exit(1)
     end
     Activate_boolean_function(op_code)
