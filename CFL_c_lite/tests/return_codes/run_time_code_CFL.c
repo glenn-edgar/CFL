@@ -5,7 +5,9 @@
 #include "run_time_code_CFL.h"
 
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
 {
 
   One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
@@ -13,13 +15,9 @@ int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *p
   if (event_data->event_index == EVENT_INIT_CFL)
   {
     fn(handle, params, event_data);
+    return DISABLE_CFL;
   }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-
-  return CONTINUE_CFL;
+  return DISABLE_CFL;
 }
 
 
@@ -89,9 +87,7 @@ int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_
 
 
 
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
 
   One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
@@ -99,10 +95,30 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   if (event_data->event_index == EVENT_INIT_CFL)
   {
     fn(handle, params, event_data);
-    return DISABLE_CFL;
   }
-  return DISABLE_CFL;
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
 }
+
+void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+   (void)input;
+ 
+  char **message;
+  
+ 
+  message = (char **)params;
+  Printf_CFL("Init event  %s\n",*message);  
+ 
+  
+}
+
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -121,29 +137,6 @@ void log_message_CFL(const void *input, void *params,
   column_element_number = get_current_column_element_index_CFL(input);
   Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
               column_index, column_element_number, *message);
-}
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
-
-void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-   (void)input;
- 
-  char **message;
-  
- 
-  message = (char **)params;
-  Printf_CFL("Init event  %s\n",*message);  
- 
-  
 }
 
 
@@ -169,6 +162,23 @@ void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
  
    
  }
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
+
+void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+  Event_data_CFL_t *event_data_to_send = (Event_data_CFL_t *)params;
+  enqueue_event_CFL(input,0,event_data_to_send); 
+
+}
 
 
 

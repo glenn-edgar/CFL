@@ -9,8 +9,7 @@ typedef struct Event_data_CFL_t
   short event_index;
   bool  malloc_flag;
   void* params;
-  bool  const_params_flag;
-  const void* const_params;
+  
 
 } Event_data_CFL_t;
 

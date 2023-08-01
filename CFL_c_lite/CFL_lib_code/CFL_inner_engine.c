@@ -7,8 +7,8 @@
 #include "CFL_event_manager.h"
 #include "CFL_inner_engine.h"
 
-static Event_data_CFL_t init_event = {EVENT_INIT_CFL, false, NULL,true,NULL};
-static Event_data_CFL_t term_event = {EVENT_TERMINATION_CFL, false,NULL,true,NULL};
+static Event_data_CFL_t init_event = {EVENT_INIT_CFL, false, NULL};
+static Event_data_CFL_t term_event = {EVENT_TERMINATION_CFL, false,NULL};
 
 static inline void disable_all_column_elements(const void *input, unsigned column_index)
 {
@@ -348,16 +348,7 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
     {
       return false;  // engine shut down
     }
-    if(current_event->malloc_flag == true){
-      if(current_event->const_params_flag == true){
-        handle->free(handle,current_event->const_params);
-      }
-      else{
-        handle->free(handle,current_event->params);
-      }
-      
-      current_event->malloc_flag = false;
-    }
+    free_event_CFL(handle,  event_data);
     
     event_data->event_index = handle->engine_control->ref_event_data.event_index;
     event_data->malloc_flag = handle->engine_control->ref_event_data.malloc_flag;
@@ -647,3 +638,14 @@ void change_local_column_state_CFL(const void *input, unsigned char new_state)
     handle->column_state[column_index] = column_ROM->start_state + new_state;
   }
 }
+
+void free_event_CFL( const void *input, Event_data_CFL_t * event_data)
+{
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+  if(event_data->malloc_flag == true){
+   
+      handle->free(handle,event_data->params);
+      event_data->malloc_flag = false;
+  }
+}
+

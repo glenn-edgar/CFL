@@ -96,7 +96,7 @@ void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 
   (void)event_data;
   Event_data_CFL_t *event_data_to_send = (Event_data_CFL_t *)params;
-  enqueue_event_CFL(input,0,event_data); 
+  enqueue_event_CFL(input,0,event_data_to_send); 
 
 }
 
@@ -141,14 +141,14 @@ function One_shot_terminate(fn_string, user_data)
 end  
 
 local generate_event_string = [[
-const Event_data_CFL_t %s = { %s, %s, %s };
+const Event_data_CFL_t %s = { %s, %s, %s, };
 ]]
 
 function generate_event(name,event_index, malloc_flag, params)
   
   local message = string.format(generate_event_string,name,event_index, malloc_flag, params)
   Store_user_code(message) 
-  --return event_data
+  return name
 end
 
 function send_global_event(event_data)

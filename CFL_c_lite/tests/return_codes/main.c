@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <unistd.h>
 #include "CFL_inner_engine.h"
 #include "test_interface.h"
 #include "test_script.h"

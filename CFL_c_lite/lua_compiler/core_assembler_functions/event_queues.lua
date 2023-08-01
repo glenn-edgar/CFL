@@ -37,6 +37,7 @@ function add_system_event(event_name,data,number)
  end
  event_names[event_name] = {number,data}
  
+ 
 end
 
 add_system_event("timer_tick",'TIMER_TICK_CFL',-7)
@@ -54,7 +55,8 @@ function add_user_event(event_name,data)
    end
    event_names[event_name] = {current_event_number,data}
    user_event_names[event_name] = {current_event_number,data}
-   current_event_number = current_event_number +1 
+   current_event_number = current_event_number +1
+   return data 
 end
 
 

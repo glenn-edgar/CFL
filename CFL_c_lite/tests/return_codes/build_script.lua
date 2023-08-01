@@ -83,7 +83,7 @@ local user_code = [[
 
 static const char *test_one_shot_message = "test_one_shot";
 static const char *test_bid_one_shot_message = "test_one_bid_shot";
-#include <unistd.h>
+
 
 void debug_write(const void *buf, unsigned count)
 {
@@ -101,14 +101,16 @@ Store_one_shot_function("TEST_ONE_SHOT",'test_one_shot',test_one_shot_code,test_
 Store_one_shot_function("TEST_BID_ONE_SHOT",'test_one_bid_shot',test_one_bid_shot_code,test_one_bid_header_code)  
 
 set_user_event_start(100)
-add_user_event("test_event","test_event")
-Store_user_code('\n\nstatic const char *user_test_event_data = "test message";\n\n')
-generate_event("user_test_event",get_event("test_event"),true, '(void *)user_test_event_data')
+test_event_id = add_user_event("test_event","test_event")
+Store_user_code('\n\nstatic const char user_test_event_data[] = "test message";\n\n')
+test_def = generate_event("user_test_event",get_event("test_event"),false, '( void *)user_test_event_data')
 
 define_column("column1",true,"queue1")
   Log_msg("this is a test message")
   One_shot("TEST_ONE_SHOT", 'test_one_shot_message')
   One_shot_terminate("TEST_BID_ONE_SHOT",'test_bid_one_shot_message')
+  send_global_event(test_def)
+  send_global_event(test_def)
   Wait_delay(2000)
   Log_msg("reseting the column every 2 seconds")
   reset_column()
@@ -137,10 +139,11 @@ terminate_engine()
 end_column()
 
 define_column("column5",true,nil)
-Log_msg( 'test_terminate_engine 5')
+Log_msg( 'test_terminate_engine 5 second termination')
 local event = get_event("second")
-Wait_event(event, 9, 0, true, 'NULL', 'NULL')
-Log_msg( 'column 5 is terminating engine after 9 seconds')
+Wait_event(test_event_id,9, 0, true, 'NULL', 'NULL')
+
+Log_msg( 'column 5 is terminating engine after 9 events')
 terminate_column()
 end_column()
 
