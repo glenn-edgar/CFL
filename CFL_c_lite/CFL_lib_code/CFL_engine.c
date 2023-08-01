@@ -133,7 +133,13 @@ static bool process_single_loop(const Handle_CFL_t *handle)
     return false; // Engine terminate event
   }
    if(current_event->malloc_flag == true){
-      handle->free(handle,current_event->params);
+      if(current_event->const_params_flag == true){
+        handle->free(handle,current_event->const_params);
+      }
+      else{
+        handle->free(handle,current_event->params);
+      }
+      
       current_event->malloc_flag = false;
     }
     
@@ -180,6 +186,8 @@ static void default_idle_function(const void *handle,
     event_data.event_index = TIMER_TICK_CFL;
     event_data.malloc_flag = false;
     event_data.params = &time_tick;
+    event_data.const_params_flag = false;
+    event_data.const_params = NULL;
     enqueue_event_CFL(handle,0, &event_data); 
   
   }

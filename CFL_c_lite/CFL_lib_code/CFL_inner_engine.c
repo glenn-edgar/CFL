@@ -348,10 +348,17 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
     {
       return false;  // engine shut down
     }
-    if(event_data->malloc_flag == true){
-      handle->free(handle,event_data->params);
-      event_data->malloc_flag = false;
+    if(current_event->malloc_flag == true){
+      if(current_event->const_params_flag == true){
+        handle->free(handle,current_event->const_params);
+      }
+      else{
+        handle->free(handle,current_event->params);
+      }
+      
+      current_event->malloc_flag = false;
     }
+    
     event_data->event_index = handle->engine_control->ref_event_data.event_index;
     event_data->malloc_flag = handle->engine_control->ref_event_data.malloc_flag;
     event_data->params = handle->engine_control->ref_event_data.params;
