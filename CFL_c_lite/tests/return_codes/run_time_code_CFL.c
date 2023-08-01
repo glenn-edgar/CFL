@@ -5,9 +5,7 @@
 #include "run_time_code_CFL.h"
 
 
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
 
   One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
@@ -15,29 +13,14 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   if (event_data->event_index == EVENT_INIT_CFL)
   {
     fn(handle, params, event_data);
-    return DISABLE_CFL;
   }
-  return DISABLE_CFL;
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
 }
-
-
-
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)aux_fn;
-    int *return_code;
-    return_code = (int *)params;
-    
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-   
-    return *return_code;
-}
-
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -87,7 +70,28 @@ int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_
 
 
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+
+
+
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)aux_fn;
+    int *return_code;
+    return_code = (int *)params;
+    
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+   
+    return *return_code;
+}
+
+
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
 {
 
   One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
@@ -95,30 +99,17 @@ int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *p
   if (event_data->event_index == EVENT_INIT_CFL)
   {
     fn(handle, params, event_data);
+    return DISABLE_CFL;
   }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-
-  return CONTINUE_CFL;
+  return DISABLE_CFL;
 }
-
-void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-   (void)input;
- 
-  char **message;
-  
- 
-  message = (char **)params;
-  Printf_CFL("Init event  %s\n",*message);  
- 
-  
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
 }
-
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -163,13 +154,22 @@ void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
    
  }
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
+
+void test_one_shot(void *input, void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+   (void)input;
+ 
+  char **message;
+  
+ 
+  message = (char **)params;
+  Printf_CFL("Init event  %s\n",*message);  
+ 
+  
 }
+
 
 void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 {
