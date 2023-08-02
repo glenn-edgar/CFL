@@ -67,7 +67,7 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
 
   
 
-  reset_event_queue_CFL(handle,0);
+  reset_all_queues(handle);
   
   engine_control->idle_function(handle, handle->time_control, true);
   engine_control->calendar_function(handle, handle->time_control,

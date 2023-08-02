@@ -649,3 +649,16 @@ void free_event_CFL( const void *input, Event_data_CFL_t * event_data)
   }
 }
 
+void reset_all_queues(const void *input){
+   Handle_CFL_t *handle = (Handle_CFL_t *)input;
+   const Named_event_queue_control_CFL_t *queue_rom = handle->queue_rom;
+   const unsigned number = queue_rom->number;
+  
+   Event_control_RAM_CFL_t *event_control = handle->queue_ram;
+   for(unsigned i = 0; i < number; i++){
+     event_control[i].rx_index = 0;
+     event_control[i].tx_index = 0;
+     event_control[i].current_queued_number = 0;
+   }
+}
+

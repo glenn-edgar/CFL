@@ -171,6 +171,8 @@ Time_control_CFL_t *Get_time_control_CFL(const void *input);
 
 void free_event_CFL(const void *input, Event_data_CFL_t * event_data);
 
+void reset_all_queues(const void *input);
+
 void Initialize_engine_CFL(const void *input);
 
 void Start_engine_CFL(const const void *input, int ms_tick, Idle_function_CFL_t idle_function,
