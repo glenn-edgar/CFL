@@ -59,6 +59,13 @@ function add_user_event(event_name,data)
    return data 
 end
 
+function get_event_number(event_name)
+    if event_names[event_name] == nil then
+        print("Error: event name "..event_name.." not defined")
+        os.exit(1)
+    end
+    return event_names[event_name][1]
+end
 
 function get_event(event_name)
     if event_names[event_name] == nil then

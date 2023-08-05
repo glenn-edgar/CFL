@@ -149,10 +149,12 @@ end
 
 function Get_one_shot_function(op_code)
     if op_code == nil then
+        Activate_one_shot_function(op_code)
         return 'NULL'
     end
 
     if opcode == 'NULL' then
+        Activate_one_shot_function(op_code)
         return 'NULL'
     end
     

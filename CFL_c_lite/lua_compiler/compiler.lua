@@ -1,5 +1,10 @@
+dofile("template_processor.lua")
+--- to test preprocessor
+---- dofile("test_preprocessor.lua")
+
 PXT.cwd("core_assembler_functions")
 dofile("io.lua")
+
 
 dofile("names.lua")
 dofile("user_code.lua")
@@ -20,18 +25,21 @@ function initialize_build_variables()
     build_status = {}
     build_status["column_status"] = false
     build_status["column_name"] = nil
+    build_status["allocate_once_heap_pointer"] = nil
     build_status["allocate_once_heap_size"] = 0
     build_status["private_heap_size"] = 0
 
 end
 
-function start_build(entry_point,allocate_once_heap_size, private_heap_size,
-                     default_event_queue_size,debug_function)
+function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap_size, private_heap_size,
+                     default_event_queue_size)
 
+    
     initialize_build_variables()
     build_status["entry_point"] = entry_point
     build_status["allocate_once_heap_size"] = allocate_once_heap_size
     build_status["private_heap_size"] = private_heap_size
+    build_status["allocate_once_heap_pointer"] = allocate_once_heap_pointer
     initialize_event_queues(default_event_queue_size)
     initialize_columns()
     initialize_column_elements()
@@ -51,8 +59,9 @@ function dump_header(debug_function)
     engine_name = generate_unique_function_name()
     message = string.format("\n\nstatic Engine_control_CFL_t %s;\n\n\n",engine_name)
     write_output(message)
-    master_heap_starting_location_name = generate_unique_function_name()
-    message = string.format("/*allocate once heap space */\n\nstatic char %s[%s];\n\n\n",master_heap_starting_location_name, build_status["allocate_once_heap_size"])
+  
+    --master_heap_starting_location_name = generate_unique_function_name()
+    --message = string.format("/*allocate once heap space */\n\nstatic char %s[%s];\n\n\n",master_heap_starting_location_name, build_status["allocate_once_heap_size"])
     write_output(message)
     remaing_size_name = generate_unique_function_name()
     message = string.format("/* remaining allocate heap size */\n\nstatic unsigned %s;\n\n\n",remaing_size_name)
@@ -64,9 +73,9 @@ function dump_header(debug_function)
     heap_block_control = generate_unique_function_name()
     message = string.format("/* heap block area */\n\nstatic CS_MEMORY_CONTROL %s;\n\n\n",heap_block_control)
     write_output(message)
-    heap_storeage_area = generate_unique_function_name()
-    message = string.format("/* heap storeage area */\n\nstatic char %s[%s];\n\n\n",heap_storeage_area, build_status["private_heap_size"])
-    write_output(message)
+    --heap_storeage_area = generate_unique_function_name()
+    --message = string.format("/* heap storeage area */\n\nstatic char %s[%s];\n\n\n",heap_storeage_area, build_status["private_heap_size"])
+    --write_output(message)
     
     local header_def = [[
     
@@ -104,7 +113,7 @@ function dump_header(debug_function)
       unsigned *remaining_heap_size;  // set by c runtime
       char **current_heap_location;  // set by c runtime
       CS_MEMORY_CONTROL *private_heap;      
-      char *working_heap_area; 
+      //char *working_heap_area; 
       unsigned private_heap_size;
     
     } Handle_CFL_t;
@@ -143,12 +152,11 @@ const struct Handle_CFL_t %s =
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
-  .master_heap_starting_location = %s,
+  .master_heap_starting_location = &%s,
   .master_heap_size = %s,
   .remaining_heap_size = &%s,
   .current_heap_location = &%s,
   .private_heap   = &%s,
-  .working_heap_area   = %s,
   .private_heap_size =   %s,
 } ;
 
@@ -157,15 +165,16 @@ const struct Handle_CFL_t %s =
 
 
 local message = string.format(header_code,handle_name,#column_list,time_control_name,engine_name,debug_function,
-master_heap_starting_location_name, build_status["allocate_once_heap_size"],remaing_size_name,current_heap_pointer,heap_block_control,
-heap_storeage_area,build_status["private_heap_size"])   
+build_status["allocate_once_heap_pointer"], build_status["allocate_once_heap_size"],remaing_size_name,current_heap_pointer,
+heap_block_control,build_status["private_heap_size"])   
 write_output(message)
 
 
 
 
-format = "const Handle_CFL_t*  Get_handle_CFL(){\n"
-message = string.format(format)
+format = "const Handle_CFL_t*  %s(){\n"
+message = string.format(format,build_status["entry_point"])
+
 write_output(message)
 format = "    return &%s;\n}\n"
 message = string.format(format,handle_name)

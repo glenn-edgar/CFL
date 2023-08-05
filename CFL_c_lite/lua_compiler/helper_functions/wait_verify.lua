@@ -13,7 +13,7 @@ typedef struct While_control_ROM_t
     const bool terminate_flag;
     const void* user_data;
     While_control_RAM_CFL_t *while_control_ram;
-    const One_shot_function_CFL_t user_time_out_fn;
+    One_shot_function_CFL_t user_time_out_fn;
     
 } While_control_ROM_CFL_t;
 
@@ -77,7 +77,7 @@ local while_template_data_rom = [[
 
   
 
-static const While_control_ROM_CFL_t %s_rom = { %d ,%s, &%s,&%s_ram,%s};
+static const While_control_ROM_CFL_t %s_rom = { %d ,%s, %s,&%s_ram,%s};
 
     
 ]]
@@ -88,17 +88,7 @@ local while_template_data_ram = [[
 static While_control_RAM_CFL_t %s_ram = { 0 };  // current count 
 
 ]]
---[[
-typedef struct While_control_ROM_t
-{
-    int time_out_ms;
-    bool terminate_flag;
-    void* user_data;
-    While_control_RAM_CFL_t *while_control_ram;
-    One_shot_function_CFL_t user_time_out_fn;
-    
-} While_control_ROM_CFL_t;
-]]--
+
 
 function Wait(bool_fn_name, time_out_ms, terminate_flag, one_shot_time_out_fn, user_data)
  
@@ -106,12 +96,20 @@ function Wait(bool_fn_name, time_out_ms, terminate_flag, one_shot_time_out_fn, u
   local fn_boolean = Get_boolean_function(bool_fn_name)
   local fn_time_out = Get_one_shot_function(one_shot_time_out_fn)
   
+
   -- generate unique name
   local unique_name_ram = generate_unique_function_name()
   local message = string.format(while_template_data_ram, unique_name_ram)
 
   Store_user_code(message)
   local unique_name_rom = generate_unique_function_name()
+ 
+  if user_data == 'NULL' then
+    user_data = 'NULL'
+  else
+    user_data = '&'..user_data
+  end
+
 
  
   message = string.format(while_template_data_rom, unique_name_rom, time_out_ms, tostring(terminate_flag), 
@@ -131,11 +129,11 @@ typedef struct Verify_control_ROM_CFL_t
    bool terminate_flag;
    void* user_data;
    One_shot_function_CFL_t user_termination_fn;
-} Verify_control_ROM_CFLt;
+} Verify_control_ROM_CFL_t;
 
 
 
-int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 ]]
 local verify_handler_code = [[
@@ -153,7 +151,7 @@ int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data
     Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
     
 
-    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_t *)params;
+    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
     if (event_data->event_index == EVENT_INIT_CFL)
     {
 
@@ -181,21 +179,21 @@ Store_column_function("VERIFY_HANDLER",'verify_handler_CFL',verify_handler_code,
 
 
 local verify_template_data_rom = [[
-    static Verify_control_ROM_CFL_t *%s_rom = { %s, %s, %s };\n;  // terminate flag,user data,one shot function
+    static Verify_control_ROM_CFL_t %s_rom = { %s, %s, %s };  // terminate flag,user data,one shot function
 ]]
 
-function Verify(bool_fn_name, time_out_ms, terminate_flag, one_shot_time_out_fn, user_data)
+function Verify(bool_fn_name, terminate_flag, one_shot_time_out_fn, user_data)
     local fn_column = Get_column_function("VERIFY_HANDLER")
     local fn_boolean = Get_boolean_function(bool_fn_name)
     local fn_time_out = Get_one_shot_function(one_shot_time_out_fn)
 
     local unique_name = generate_unique_function_name()
     
-    message = string.format(verify_template_data_rom, unique_name,terminate_flag,user_data,one_shot_time_out_fn)
+    message = string.format(verify_template_data_rom, unique_name,terminate_flag,user_data,fn_time_out)
     Store_user_code(message)
 
     
-    store_column_element(fn_column, fn_boolean,'(void *)'..unique_name..'_rom')
+    store_column_element(fn_column, fn_boolean,'(void *)&'..unique_name..'_rom')
   end
   
 
@@ -207,10 +205,7 @@ local wait_event_control_header_code = [[
 
 
 
-typedef struct While_event_control_RAM_t
-{
-    unsigned  current_count;
-} While_event_control_RAM_t;
+
 
 typedef struct While_event_control_ROM_t
 {
@@ -219,9 +214,8 @@ typedef struct While_event_control_ROM_t
    int       time_out_ms;
    bool      terminate_flag;
    const void* user_data;
-   One_shot_function_CFL_t user_termination_fn;
    unsigned  *current_count;
-
+  
 } While_event_control_ROM_t;
 
 bool wait_event_handler(const void *handle, void *params,
@@ -268,23 +262,21 @@ local wait_event_ram = [[
  unsigned %s_ram;
 ]]
 local wait_event_rom = [[
-const While_event_control_ROM_t %s_rom = { %s,%s,%s,%s,%s,%s,&%s_ram };  
-// number of events,event index,time out,terminate flag,user data,one shot function ram_pit
+const While_event_control_ROM_t %s_rom = { %s,%s,%s,%s,%s,&%s_ram };  
+// number of events,event index,time out,terminate flag, ram_pit
 ]]
 
 
 function Wait_event(event_id, number_of_events, time_out_ms, terminate_flag, one_shot_time_out_name, user_data)
   
   
-  local one_shot_time_out_fn_name = Get_one_shot_function(one_shot_time_out_name)
   local unique_name = generate_unique_function_name()
   local message = string.format(wait_event_ram, unique_name)
   Store_user_code(message)
-  message = string.format(wait_event_rom, unique_name,number_of_events,event_id,time_out_ms, tostring(terminate_flag), 
-                            tostring(user_data), one_shot_time_out_fn_name,unique_name)
+  message = string.format(wait_event_rom, unique_name,number_of_events,event_id,time_out_ms, tostring(terminate_flag),user_data,unique_name)
   Store_user_code(message)
  
-  Wait("WAIT_EVENT", time_out_ms, terminate_flag, one_shot_time_out_fn,unique_name..'_rom')
+  Wait("WAIT_EVENT", time_out_ms, terminate_flag, one_shot_time_out_name,unique_name..'_rom')
  
 end
 
@@ -360,6 +352,10 @@ function Wait_delay(time_delay_ms)
   Wait("WAIT_TIME_DELAY", 0, true, 'NULL', unique_name_struct)
 end
 
+local true_constant_header_code = [[
+bool true_constant_handler(void *handle, void *params,
+  Event_data_CFL_t *event_data); 
+]]
 
 local true_constant_handler_code = [[
 
@@ -372,7 +368,14 @@ bool true_constant_handler(void *handle, void *params,
   return true;
 }
 ]]
-Store_boolean_function("TRUE",'true_constant_handler', true_constant_handler_code)
+
+Store_boolean_function("TRUE",'true_constant_handler', true_constant_handler_code,true_constant_header_code)
+
+local false_constant_header_code = [[
+bool false_constant_handler(void *handle, void *params,
+  Event_data_CFL_t *event_data);
+]]
+
 
 local false_constant_handler_code = [[
 bool false_constant_handler(void *handle, void *params,
@@ -385,7 +388,7 @@ bool false_constant_handler(void *handle, void *params,
 }
 ]]
 
-Store_boolean_function("FALSE",'false_constant_handler', false_constant_handler_code)
+Store_boolean_function("FALSE",'false_constant_handler', false_constant_handler_code,false_constant_header_code)
 
 
 

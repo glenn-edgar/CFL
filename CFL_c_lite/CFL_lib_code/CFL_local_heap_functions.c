@@ -16,9 +16,13 @@
 
 void create_allocate_once_heap_CFL(const void *input) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  *handle->current_heap_location = handle->master_heap_starting_location;
+  *handle->current_heap_location = *handle->master_heap_starting_location;
   *handle->remaining_heap_size = handle->master_heap_size;  
-   initialize_privateHeap_CFL(handle->private_heap, handle->private_heap_size, handle->working_heap_area);
+  printf("master heap size %d\n",handle->master_heap_size);
+  printf("master heap start %p\n",*handle->master_heap_starting_location);
+  printf("private heap size %d\n",handle->private_heap_size);
+  char *heap_start = (char *)allocate_once_CFL(handle, handle->private_heap_size);
+   initialize_privateHeap_CFL(handle->private_heap, handle->private_heap_size,heap_start);
                     
 }
 

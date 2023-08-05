@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "CFL_inner_engine.h"
-
+#include <unistd.h>
 #include "test_script.h"
 
 
@@ -15,15 +15,16 @@ int main() {
 
 
 
-  
-  const Handle_CFL_t *handle = Get_handle_CFL();
-  
+  create_allocate_once_heap();  // create allocate once heap
 
+  const Handle_CFL_t *handle = test_entry_point();
+  printf("Private heap size %d \n", handle->private_heap_size);   
+  
    Initialize_engine_CFL(handle);
    test_debug_write(handle);
    test_allocate_once_heap(handle);
    test_working_heap(handle);
-    
+   free_allocate_once_heap(); // free allocate once heap
  
 }
 
