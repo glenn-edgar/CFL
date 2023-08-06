@@ -123,7 +123,7 @@ typedef struct Handle_CFL_t
   unsigned *remaining_heap_size;  // set by c runtime
   char **current_heap_location;  // set by c runtime
   CS_MEMORY_CONTROL *private_heap;      
-  //char **working_heap_area; 
+  
   unsigned private_heap_size;
 
 } Handle_CFL_t;

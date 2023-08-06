@@ -88,7 +88,7 @@ bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data)
     if(event_data->event_index == EVENT_INIT_CFL)
     {
         *count = 0;
-        Printf_CFL("\n\ninit event received\n\n");
+        Printf_CFL("\n\ninit event received from user function\n\n");
     }
     if(event_data->event_index == EVENT_TEST_EVENT)
     {
@@ -116,6 +116,16 @@ void debug_write(const void *buf, unsigned count)
 
     write(STDOUT_FILENO, buf, count);
 }
+char *allocate_once_memory = NULL;
+
+void create_allocate_once_heap(){
+    allocate_once_memory = (char *)malloc(2000);
+}
+
+void free_allocate_once_heap(){
+    free(allocate_once_memory);
+}
+
 static const char wait_event_reset_message[] = "wait event reset function called\n";
 static const char wait_event_terminate_message[] = "wait event terminate function called\n";
 ]]
@@ -132,7 +142,7 @@ local entry_point = "test_entry_point"
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
 local default_event_queue_size = 10 
-start_build(entry_point,allocate_once_heap_size,private_heap_size,default_event_queue_size)  
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size)  
 
 
 
@@ -144,8 +154,8 @@ define_columns(column_list)
 
 define_column("termination_engine",true,nil)
    Log_msg("this column will terminate the engine")
-   Wait_delay(11000)
-   Log_msg("stopping engine because 11 seconds have passed")
+   Wait_delay(16000)
+   Log_msg("stopping engine because 16 seconds have passed")
    terminate_engine()
 end_column()
 
@@ -169,7 +179,7 @@ end_column()
 
 define_column("wait_reset",true,nil)
    Log_msg("this demonstrates the reset feature of the wait opcode")
-   Wait("FALSE",5000, true, "WAIT_EVENT_RESET", 'wait_event_reset_message')
+   Wait("FALSE",5000, false, "WAIT_EVENT_RESET", 'wait_event_reset_message')
    Log_msg("10 events have been received")
    Log_msg("terminating column")
    terminate_column()

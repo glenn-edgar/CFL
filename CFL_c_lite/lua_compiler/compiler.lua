@@ -60,8 +60,7 @@ function dump_header(debug_function)
     message = string.format("\n\nstatic Engine_control_CFL_t %s;\n\n\n",engine_name)
     write_output(message)
   
-    --master_heap_starting_location_name = generate_unique_function_name()
-    --message = string.format("/*allocate once heap space */\n\nstatic char %s[%s];\n\n\n",master_heap_starting_location_name, build_status["allocate_once_heap_size"])
+    
     write_output(message)
     remaing_size_name = generate_unique_function_name()
     message = string.format("/* remaining allocate heap size */\n\nstatic unsigned %s;\n\n\n",remaing_size_name)
@@ -73,9 +72,7 @@ function dump_header(debug_function)
     heap_block_control = generate_unique_function_name()
     message = string.format("/* heap block area */\n\nstatic CS_MEMORY_CONTROL %s;\n\n\n",heap_block_control)
     write_output(message)
-    --heap_storeage_area = generate_unique_function_name()
-    --message = string.format("/* heap storeage area */\n\nstatic char %s[%s];\n\n\n",heap_storeage_area, build_status["private_heap_size"])
-    --write_output(message)
+    
     
     local header_def = [[
     

@@ -112,6 +112,7 @@ local function dump_ram_data_structures()
  
    for i,queue_name in ipairs(queue_list) do
       queue_data = queue_names[queue_name]
+     
       count = count + 1
       number = number + queue_data[2]
    end

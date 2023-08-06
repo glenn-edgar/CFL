@@ -41,6 +41,17 @@ void debug_write(const void *buf, unsigned count)
     write(STDOUT_FILENO, buf, count);
 }
 
+char *allocate_once_memory = NULL;
+
+void create_allocate_once_heap(){
+    allocate_once_memory = (char *)malloc(2000);
+}
+
+void free_allocate_once_heap(){
+    free(allocate_once_memory);
+}
+
+
 static const char wait_event_reset_message[] = "wait event reset function called\n";
 ]]
 
@@ -56,7 +67,7 @@ local entry_point = "test_entry_point"
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
 local default_event_queue_size = 10 
-start_build(entry_point,allocate_once_heap_size,private_heap_size,default_event_queue_size)  
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size)  
 
 -- start of user events
 set_user_event_start(100)

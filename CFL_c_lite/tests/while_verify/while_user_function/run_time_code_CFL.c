@@ -4,6 +4,56 @@
 
 #include "run_time_code_CFL.h"
 
+  static inline int generate_return_code_while(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }  
+int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
+    
+    const While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
+    While_control_RAM_CFL_t *while_ctrl_ram = while_ctrl->while_control_ram;
+    
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+       
+        
+        while_ctrl_ram->current_count = 0;
+        bool_fn(handle,(void *) while_ctrl->user_data, event_data);
+        
+        return CONTINUE_CFL;
+    }
+    
+    if (bool_fn(handle, (void *)while_ctrl->user_data, event_data) == true)
+    {
+        return DISABLE_CFL;
+    }
+    if (while_ctrl->time_out_ms <= 0)
+    {
+        return HALT_CFL;
+    }
+    if (event_data->event_index != TIMER_TICK_CFL)
+    {
+        return HALT_CFL;
+    }
+    while_ctrl_ram->current_count += *(unsigned short *)event_data->params;
+    if (while_ctrl_ram->current_count < while_ctrl->time_out_ms)
+    {
+        return HALT_CFL;
+    }
+    // Time out at this point
+    while_ctrl->user_time_out_fn(handle, (void *)while_ctrl->user_data, event_data);
+    
+    return generate_return_code_while(while_ctrl->terminate_flag);
+}
+
+
 
 
 
@@ -38,54 +88,27 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   }
   return DISABLE_CFL;
 }
-  static inline int generate_return_code_while(bool termination_flag)
-  {
-    if (termination_flag == true)
-    {
-      return TERMINATE_CFL;
-    }
-    return RESET_CFL;
-  }  
-int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
-{
-    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
-    
-    const While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
-    While_control_RAM_CFL_t *while_ctrl_ram = while_ctrl->while_control_ram;
-    
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        
-        while_ctrl_ram->current_count = 0;
-        bool_fn(handle,(void *) while_ctrl->user_data, event_data);
-        
-        return CONTINUE_CFL;
-    }
-    
-    if (bool_fn(handle, (void *)while_ctrl->user_data, event_data) == true)
-    {
-        return DISABLE_CFL;
-    }
-    if (while_ctrl->time_out_ms <= 0)
-    {
-        return HALT_CFL;
-    }
-    if (event_data->event_index != TIMER_TICK_CFL)
-    {
-        return HALT_CFL;
-    }
-    while_ctrl_ram->current_count += *(unsigned short *)event_data->params;
-    if (while_ctrl_ram->current_count < while_ctrl->time_out_ms)
-    {
-        return HALT_CFL;
-    }
-    // Time out at this point
-    while_ctrl->user_time_out_fn(handle, (void *)while_ctrl->user_data, event_data);
-
-    return generate_return_code_while(while_ctrl->terminate_flag);
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
 }
 
+void wait_event_terminate(const void *input, void *params,Event_data_CFL_t *event_data)
+{
 
+  (void)event_data;
+   (void)input;
+ 
+   
+   char *message = (char *)params;
+  
+  Printf_CFL("\n\n *************** Terminate function ---   %s\n\n",message);  
+ 
+  
+}
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -107,37 +130,6 @@ void log_message_CFL(const void *input, void *params,
 }
 
 
-void wait_event_terminate(const void *input, void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-   (void)input;
- 
-   
-   char *message = (char *)params;
-  
-  Printf_CFL("\n\n *************** Terminate function ---   %s\n\n",message);  
- 
-  
-}
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
-
-void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-  Event_data_CFL_t *event_data_to_send = (Event_data_CFL_t *)params;
-  enqueue_event_CFL(input,0,event_data_to_send); 
-
-}
-
-
 void wait_event_reset(const void *input, void *params,Event_data_CFL_t *event_data)
 {
 
@@ -151,38 +143,15 @@ void wait_event_reset(const void *input, void *params,Event_data_CFL_t *event_da
  
   
 }
-bool false_constant_handler(void *handle, void *params,
-                                   Event_data_CFL_t *event_data)
+
+void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 {
-  (void)handle;
-  (void)params;
+
   (void)event_data;
-  return false;
-}
+  Event_data_CFL_t *event_data_to_send = (Event_data_CFL_t *)params;
+  enqueue_event_CFL(input,0,event_data_to_send); 
 
-#define EVENT_TEST_EVENT 100
-
-bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data)
-{
-    (void)input;
-    unsigned *count = (unsigned *)params;
-    if(event_data->event_index == EVENT_INIT_CFL)
-    {
-        *count = 0;
-        Printf_CFL("\n\ninit event received\n\n");
-    }
-    if(event_data->event_index == EVENT_TEST_EVENT)
-    {
-       *count = *count + 1;
-        if(*count == 5)
-        {
-            Printf_CFL("\n\n 5 events received returning true \n\n");
-            return true;
-        }
-    }
-    return false;
 }
-      
 
  
 
@@ -212,3 +181,36 @@ bool wait_time_delay_CFL(const void *input, void *params,
 
   return false;
 }
+bool false_constant_handler(void *handle, void *params,
+                                   Event_data_CFL_t *event_data)
+{
+  (void)handle;
+  (void)params;
+  (void)event_data;
+  return false;
+}
+
+#define EVENT_TEST_EVENT 100
+
+bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data)
+{
+    (void)input;
+    unsigned *count = (unsigned *)params;
+    if(event_data->event_index == EVENT_INIT_CFL)
+    {
+        *count = 0;
+        Printf_CFL("\n\ninit event received from user function\n\n");
+    }
+    if(event_data->event_index == EVENT_TEST_EVENT)
+    {
+       *count = *count + 1;
+        if(*count == 5)
+        {
+            Printf_CFL("\n\n 5 events received returning true \n\n");
+            return true;
+        }
+    }
+    return false;
+}
+      
+

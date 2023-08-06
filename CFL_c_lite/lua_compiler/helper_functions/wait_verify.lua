@@ -29,8 +29,9 @@ local while_control_code = [[
     }
     return RESET_CFL;
   }  
-int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_CFL_t *event_data)
 {
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
     Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
     
     const While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
@@ -38,6 +39,7 @@ int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_
     
     if (event_data->event_index == EVENT_INIT_CFL)
     {
+       
         
         while_ctrl_ram->current_count = 0;
         bool_fn(handle,(void *) while_ctrl->user_data, event_data);
@@ -64,7 +66,7 @@ int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_
     }
     // Time out at this point
     while_ctrl->user_time_out_fn(handle, (void *)while_ctrl->user_data, event_data);
-
+    
     return generate_return_code_while(while_ctrl->terminate_flag);
 }
 

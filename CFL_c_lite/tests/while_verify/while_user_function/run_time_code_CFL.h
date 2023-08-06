@@ -12,14 +12,6 @@ extern "C" {
 //----------Ref function header code ----
 
 
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data);
-
-    
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
-
-
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -39,27 +31,32 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data);
+
+    
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
+
+void wait_event_terminate(const void *input, void *params,Event_data_CFL_t *event_data);
+
+
+
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data);
 
 
-void wait_event_terminate(const void *input, void *params,Event_data_CFL_t *event_data);
+void wait_event_reset(const void *input, void *params,Event_data_CFL_t *event_data);
 
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
 
 void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
 
 
-
-void wait_event_reset(const void *input, void *params,Event_data_CFL_t *event_data);
-
-
-bool false_constant_handler(void *handle, void *params,
-  Event_data_CFL_t *event_data);
-bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data);
 
      
 typedef struct While_time_control_ROM_t
@@ -71,6 +68,9 @@ typedef struct While_time_control_ROM_t
 
 bool wait_time_delay_CFL(const void *input, void *params,
                             Event_data_CFL_t *event_data);
+bool false_constant_handler(void *handle, void *params,
+  Event_data_CFL_t *event_data);
+bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data);
    
 
 #ifdef __cplusplus

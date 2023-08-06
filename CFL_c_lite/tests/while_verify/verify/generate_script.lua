@@ -12,7 +12,7 @@ local entry_point = "test_entry_point"
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
 local default_event_queue_size = 10 
-start_build(entry_point,allocate_once_heap_size,private_heap_size,default_event_queue_size)
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size)
 
 set_user_event_start(100)
 local test_event_id = add_user_event("test_event","test_event")
@@ -41,6 +41,15 @@ void debug_write(const void *buf, unsigned count)
 static unsigned test_counter_1 = 0;
 static unsigned test_counter_2 = 0;
 
+char *allocate_once_memory = NULL;
+
+void create_allocate_once_heap(){
+    allocate_once_memory = (char *)malloc(2000);
+}
+
+void free_allocate_once_heap(){
+    free(allocate_once_memory);
+}
 
 ]]
 

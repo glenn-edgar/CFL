@@ -54,14 +54,6 @@ int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data
 void null_function(const void *handle,
     void *params, Event_data_CFL_t *event_data);
 
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data);
-
-
-void verify_one_shot_terminate(const void *input, void *params,Event_data_CFL_t *event_data);
-
-
 void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
 
 
@@ -69,7 +61,12 @@ void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data
 void verify_one_shot_reset(const void *input, void *params,Event_data_CFL_t *event_data);
 
 
-bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data);
+void verify_one_shot_terminate(const void *input, void *params,Event_data_CFL_t *event_data);
+
+
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data);
 
 
      
@@ -84,6 +81,9 @@ bool wait_time_delay_CFL(const void *input, void *params,
                             Event_data_CFL_t *event_data);
 bool false_constant_handler(void *handle, void *params,
   Event_data_CFL_t *event_data);
+
+bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data);
+
    
 
 #ifdef __cplusplus

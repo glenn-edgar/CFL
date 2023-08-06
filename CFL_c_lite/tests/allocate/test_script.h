@@ -109,39 +109,39 @@ static const Column_element_CFL_t column_elements_ROM[] = {
 };
 
 
-static Time_control_CFL_t hxzssymwnj;
+static Time_control_CFL_t xfbnlrvarc;
 
 
 
 
-static Engine_control_CFL_t sqovqyiirf;
+static Engine_control_CFL_t fwzwzowuoh;
 
 
 
 
-static Engine_control_CFL_t sqovqyiirf;
+static Engine_control_CFL_t fwzwzowuoh;
 
 
 /* remaining allocate heap size */
 
-static unsigned mbyacavlxy;
+static unsigned ninhxqtais;
 
 
 /* current heap pointer */
 
-static char* relaroksbe;
+static char* znvgteomtm;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL mhkzhdycuc;
+static CS_MEMORY_CONTROL qodsflphma;
 
 
 
  /*
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
-const struct Handle_CFL_t thddcffzhf =
+const struct Handle_CFL_t ogjollozom =
 {
 
   .queue_rom    = &queue_control,
@@ -162,23 +162,23 @@ const struct Handle_CFL_t thddcffzhf =
   .watch_dog_count = NULL,
   .watch_dog_trigger_count = NULL,
   .watch_dog_rom_data = NULL,
-  .time_control = &hxzssymwnj,
-  .engine_control =&sqovqyiirf,
+  .time_control = &xfbnlrvarc,
+  .engine_control =&fwzwzowuoh,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
   .master_heap_starting_location = &allocate_once_memory,
   .master_heap_size = 2000,
-  .remaining_heap_size = &mbyacavlxy,
-  .current_heap_location = &relaroksbe,
-  .private_heap   = &mhkzhdycuc,
+  .remaining_heap_size = &ninhxqtais,
+  .current_heap_location = &znvgteomtm,
+  .private_heap   = &qodsflphma,
   .private_heap_size =   1000,
 } ;
 
 
 const Handle_CFL_t*  test_entry_point(){
-    return &thddcffzhf;
+    return &ogjollozom;
 }
    
 

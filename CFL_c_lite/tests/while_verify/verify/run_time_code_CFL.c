@@ -131,36 +131,6 @@ void null_function(const void *handle,
     return;
 }
 
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-
- 
-  char **message;
-  
-  unsigned column_index;
-  int column_element_number;
-  message = (char **)params;
-
-  column_index = get_current_column_index_CFL(input);
-  column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
-              column_index, column_element_number, *message);
-}
-
- 
-void verify_one_shot_terminate(const void *input, void *params,Event_data_CFL_t *event_data){
-      (void)input;
-      (void)params;
-      (void)event_data;
-      static char terminate_message[] = "  verify is terminating the column ";
-      Printf_CFL("verify one shot reset function called %s\n\n",terminate_message);
-
-
-}
-
 void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 {
 
@@ -180,28 +150,34 @@ void verify_one_shot_reset(const void *input, void *params,Event_data_CFL_t *eve
 
 
 }
-#define EVENT_TEST_EVENT 100
-#define EVENT_TEST_EVENT_COUNT 5
+ 
+void verify_one_shot_terminate(const void *input, void *params,Event_data_CFL_t *event_data){
+      (void)input;
+      (void)params;
+      (void)event_data;
+      static char terminate_message[] = "  verify is terminating the column ";
+      Printf_CFL("verify one shot reset function called %s\n\n",terminate_message);
+
+
+}
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+
+ 
+  char **message;
   
-bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data){
-   (void)input;
-   
-   unsigned *count = (unsigned *)params;
-   
-   if(event_data->event_index == EVENT_INIT_CFL){
-     
-      *count = 0;
-      Printf_CFL("\n\ninit event received\n\n");
-   }
-   if(event_data->event_index == EVENT_TEST_EVENT){
-      *count = *count + 1;
-      //printf("event count = %d\n",count);
-      if(*count >= EVENT_TEST_EVENT_COUNT){
-         Printf_CFL("\n\n 5 events received returning false \n\n");
-         return false;  // verify will fail at this point
-      }
-   }
-   return true; // verify will pass at this point
+  unsigned column_index;
+  int column_element_number;
+  message = (char **)params;
+
+  column_index = get_current_column_index_CFL(input);
+  column_element_number = get_current_column_element_index_CFL(input);
+  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
+              column_index, column_element_number, *message);
 }
 
  
@@ -240,3 +216,27 @@ bool false_constant_handler(void *handle, void *params,
   (void)event_data;
   return false;
 }
+#define EVENT_TEST_EVENT 100
+#define EVENT_TEST_EVENT_COUNT 5
+  
+bool test_bool_fn(const void *input, void *params,Event_data_CFL_t *event_data){
+   (void)input;
+   
+   unsigned *count = (unsigned *)params;
+   
+   if(event_data->event_index == EVENT_INIT_CFL){
+     
+      *count = 0;
+      Printf_CFL("\n\ninit event received\n\n");
+   }
+   if(event_data->event_index == EVENT_TEST_EVENT){
+      *count = *count + 1;
+      //printf("event count = %d\n",count);
+      if(*count >= EVENT_TEST_EVENT_COUNT){
+         Printf_CFL("\n\n 5 events received returning false \n\n");
+         return false;  // verify will fail at this point
+      }
+   }
+   return true; // verify will pass at this point
+}
+

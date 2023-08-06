@@ -2,6 +2,10 @@
 
 
 
-lua test_script.lua
+lua generate_script.lua
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+make clean
 make
 

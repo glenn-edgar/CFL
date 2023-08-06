@@ -382,7 +382,7 @@ bool process_single_sweep_CFL(const void *input,
     {
       continue;
     }
-    
+   
     
     handle->engine_control->current_column_index = column->id;
     
@@ -394,7 +394,7 @@ bool process_single_sweep_CFL(const void *input,
     }
     if (result == true)
     {
-     
+      
       result = inner_process_column(handle,i, event_data);
  
     }
@@ -501,6 +501,7 @@ void initialize_columns_CFL(const void *input)
                                      wcol->end_state,
                                      wcol->watch_dog_id);
     #endif
+    
     if (column[i].auto_start == true)
     {
 
