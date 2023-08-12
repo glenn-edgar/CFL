@@ -1,16 +1,20 @@
-local user_code = {}
+
 local basic_code = {}
 local basic_header_code = {}
+local user_code = {}
+
 
 local basic_file_name = "run_time_code_CFL.c"
 local basic_header_name = "run_time_code_CFL.h"
 
-function Store_user_code(code)
-     table.insert(user_code, code) 
+function reset_code_buffers()
+    basic_code = {}
+    basic_header_code = {}
+    user_code = {}
 end
 
 function Store_basic_code(code) 
-    
+  
     table.insert(basic_code, code) 
 end
 
@@ -20,11 +24,18 @@ function Store_basic_header_code(code)
     table.insert(basic_header_code, code) 
 end
 
-function dump_user_code()
-    local message = "\n\n//----------User code ----\n\n"
-    write_output(message)
-    for i, str in ipairs(user_code) do write_output(str) end
+function Store_user_code(code)
+    table.insert(user_code, code)
 end
+
+function Dump_user_code()
+    
+    for i, str in ipairs(user_code) do 
+      write_output(str) 
+    end
+
+end
+
 header_start = [[
 
 #ifdef __cplusplus
@@ -79,3 +90,4 @@ function dump_basic_code()
     for i, str in ipairs(basic_code) do output:write(str) end
     output:close()
 end
+

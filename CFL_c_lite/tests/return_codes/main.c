@@ -4,6 +4,26 @@
 #include "CFL_inner_engine.h"
 #include <unistd.h>
 #include "test_interface.h"
+
+
+
+void debug_write(const void *buf, unsigned count)
+{
+
+    write(STDOUT_FILENO, buf, count);
+}
+
+char *allocate_once_memory = NULL;
+
+void create_allocate_once_heap(){
+    allocate_once_memory = (char *)malloc(2000);
+}
+
+void free_allocate_once_heap(){
+    free(allocate_once_memory);
+}
+
+
 #include "test_script.h"
 
 

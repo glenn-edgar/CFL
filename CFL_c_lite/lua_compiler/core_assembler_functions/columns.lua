@@ -100,12 +100,14 @@ end
 
 function output_column_RAM_data_structures()
     write_output("\n\n//----------RAM data structures for columns ----\n\n")
-    
-    local message = string.format("unsigned char column_RAM_flags[%d];\n",#column_list)
+    build_status["column_flags"] = generate_unique_function_name() 
+    local message = string.format("unsigned char %s[%d];\n",build_status["column_flags"],#column_list)
     write_output(message)
-    message = string.format("unsigned char column_RAM_new_state[%d];\n",#column_list) 
+    build_status["new_state"] = generate_unique_function_name()
+    message = string.format("unsigned char %s[%d];\n",build_status["new_state"],#column_list) 
     write_output(message)
-    message = string.format("void* column_RAM_local_data[%d];\n",#column_list)
+      build_status["local_data"] = generate_unique_function_name()
+    message = string.format("void* %s[%d];\n",build_status["local_data"],#column_list)
     write_output(message)
    
 end
@@ -132,7 +134,8 @@ typedef struct Column_ROM_CFL_t
 function output_column_ROM_data_structures()
     write_output(column_header_definition)
     write_output("\n\n//----------ROM data structures for columns ----\n\n")
-    local message = string.format("static const Column_ROM_CFL_t column_data_ROM[] = {\n")
+    build_status["column_data"] = generate_unique_function_name()
+    local message = string.format("static const Column_ROM_CFL_t %s[] = {\n",build_status["column_data"])
     write_output(message)
     for i,v in ipairs(column_list) do
        queue_number = column_names[v]["data"]["queue_number"]

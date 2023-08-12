@@ -31,7 +31,7 @@ function write_output(str)
    output:write(str)
 end
 
-function set_output(output_file)
+function set_h_file(output_file)
 
    os.remove(output_file)
    output = io.open(output_file,"w")

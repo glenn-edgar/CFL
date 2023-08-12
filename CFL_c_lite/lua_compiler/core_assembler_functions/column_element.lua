@@ -17,7 +17,7 @@ function store_column_element(column_function,helper_function,user_data)
   local header_definition = [[
 
   /* 
-  ------------------------ Column element structure --------------------------
+  ------------------------ Column element Flash structure --------------------------
      typedef struct Column_element_CFL_t {
         Column_function_CFL_t column_function;
         void *aux_fn;
@@ -31,12 +31,17 @@ function store_column_element(column_function,helper_function,user_data)
   ]]
 
   function dump_column_elements()
-    write_output(header_definition)
-    local message = string.format("\n\nstatic unsigned char column_element_RAM[%s];\n\n",build_status["column_element_count"])
-    write_output(message);
-    message = "\n\n//----------Column elements ----\n\n"
+    
+    message = "\n\n//----------Column elements RAM structures----\n\n"
     write_output(message)
-    local message = string.format("static const Column_element_CFL_t column_elements_ROM[] = {\n")
+    build_status["column_element_ram"] = generate_unique_function_name()
+    local message = string.format("\n\nstatic unsigned char %s[%s];\n\n",build_status["column_element_ram"],build_status["column_element_count"])
+    write_output(message);
+    message = "\n\n//----------Column elements Flash structures----\n\n"
+    write_output(header_definition)
+    write_output(message)
+    build_status["column_element_rom"] = generate_unique_function_name()
+    local message = string.format("static const Column_element_CFL_t %s[] = {\n",build_status["column_element_rom"])
     write_output(message)
    
     for i,element in ipairs(column_element_table) do

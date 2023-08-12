@@ -6,14 +6,14 @@ PXT.cwd(newDirectory)
 dofile("compiler.lua")
 PXT.cwd(current_working_directory)
 
-set_output("test_script.h")
+set_h_file("test_script.h")
 
 local entry_point = "test_entry_point"
 
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
 local default_event_queue_size = 10 
-start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size)  
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')  
 
 
 local column_list = {"column1","column2","column3"}
@@ -80,40 +80,19 @@ void test_one_bid_shot(void *input, void *params,Event_data_CFL_t *event_data)
 
 ]]
 
-local user_code = [[
-
+Store_user_code([[
 static const char *test_one_shot_message = "test_one_shot";
 static const char *test_bid_one_shot_message = "test_one_bid_shot";
-
-
-void debug_write(const void *buf, unsigned count)
-{
-
-    write(STDOUT_FILENO, buf, count);
-}
-
-char *allocate_once_memory = NULL;
-
-void create_allocate_once_heap(){
-    allocate_once_memory = (char *)malloc(2000);
-}
-
-void free_allocate_once_heap(){
-    free(allocate_once_memory);
-}
-
-]]
-
-Store_user_code(user_code)
-
+static const char user_test_event_data[] = "test message";
+]])
 
 Store_one_shot_function("TEST_ONE_SHOT",'test_one_shot',test_one_shot_code,test_one_shot_header_code)  
 Store_one_shot_function("TEST_BID_ONE_SHOT",'test_one_bid_shot',test_one_bid_shot_code,test_one_bid_header_code)  
 
 set_user_event_start(100)
-test_event_id = add_user_event("test_event","test_event")
-Store_user_code('\n\nstatic const char user_test_event_data[] = "test message";\n\n')
-test_def = generate_event("user_test_event",get_event("test_event"),false, '( void *)user_test_event_data')
+test_event_id = add_user_event("test_event")
+
+test_def = generate_event(get_event("test_event"),false, '( void *)user_test_event_data')
 
 define_column("column1",true,"queue1")
   Log_msg("this is a test message")
@@ -159,5 +138,6 @@ end_column()
 
 
 
-dump_output('debug_write')
+dump_build()
+dump_runtime_support()
 

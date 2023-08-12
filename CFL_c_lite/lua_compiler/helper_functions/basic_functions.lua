@@ -144,8 +144,8 @@ local generate_event_string = [[
 const Event_data_CFL_t %s = { %s, %s, %s, };
 ]]
 
-function generate_event(name,event_index, malloc_flag, params)
-  
+function generate_event(event_index, malloc_flag, params)
+  name = generate_unique_function_name()
   local message = string.format(generate_event_string,name,event_index, malloc_flag, params)
   Store_user_code(message) 
   return name

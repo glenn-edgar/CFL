@@ -5,6 +5,10 @@
 
 local function_code = [[
 
+const int reset_buffer[1] = { RESET_CFL };
+const int halt_buffer[1] = { HALT_CFL };
+const int terminate_buffer[1] = { TERMINATE_CFL };
+const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
 
 
 
@@ -26,6 +30,11 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
 ]]
 
 local function_code_header = [[
+
+extern const int reset_buffer[1];
+extern const int halt_buffer[1];
+extern const int terminate_buffer[1];
+extern const int terminate_engine_buffer[1];
 
 int return_condition_code_CFL(const void *handle, void *aux_fn,
     void *params, Event_data_CFL_t *event_data);

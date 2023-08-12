@@ -12,7 +12,20 @@ local user_event_names = {}
 local start_event_number = 100 
 local current_event_number = start_event_number
 
+function reset_user_defined_events()
+  event_names = {}
+  user_event_names = {}
+  start_event_number = 100 
+  current_event_number = start_event_number
+  add_system_event("timer_tick",'TIMER_TICK_CFL',-7)
+  add_system_event("second",'SECOND_TICK_CFL',-6)
+  add_system_event("minute",'MINUTE_TICK_CFL',-5)
+  add_system_event("hour",'HOUR_TICK_CFL',-4)
+  add_system_event("day",'DAY_TICK_CFL',-3)
+  add_system_event("month",'MONTH_TICK_CFL',-2)
+  add_system_event("year",'YEAR_TICK_CFL',-1)
 
+end
 
 function set_user_event_start(number)
   start_event_number = number
@@ -40,19 +53,13 @@ function add_system_event(event_name,data,number)
  
 end
 
-add_system_event("timer_tick",'TIMER_TICK_CFL',-7)
-add_system_event("second",'SECOND_TICK_CFL',-6)
-add_system_event("minute",'MINUTE_TICK_CFL',-5)
-add_system_event("hour",'HOUR_TICK_CFL',-4)
-add_system_event("day",'DAY_TICK_CFL',-3)
-add_system_event("month",'MONTH_TICK_CFL',-2)
-add_system_event("year",'YEAR_TICK_CFL',-1)
 
-function add_user_event(event_name,data)
+function add_user_event(event_name)
    if event_names[event_name] ~= nil then
       print("Error: event name "..event_name.." is already defined")
       os.exit(1)
    end
+   data = generate_unique_function_name()
    event_names[event_name] = {current_event_number,data}
    user_event_names[event_name] = {current_event_number,data}
    current_event_number = current_event_number +1
@@ -109,50 +116,52 @@ end
 local function dump_ram_data_structures()
    local number = 0
    local count  = 0
- 
+   build_status["event_queue_ram"] = generate_unique_function_name()
    for i,queue_name in ipairs(queue_list) do
       queue_data = queue_names[queue_name]
      
       count = count + 1
       number = number + queue_data[2]
    end
+   build_status["event_data"] = generate_unique_function_name()
    write_output("\n\n//----------RAM data structures for event queues ----\n\n")
-   format_string = "static Event_data_CFL_t event_data_array[%d];\n"
-   local message = string.format(format_string,number)
+   format_string = "static Event_data_CFL_t %s[%d];\n"
+   local message = string.format(format_string, build_status["event_data"],number)
    
    write_output(message)
-   format_string = "static Event_control_RAM_CFL_t event_control_ram[%d];\n"
-   message = string.format(format_string,count)
+   format_string = "static Event_control_RAM_CFL_t %s[%d];\n"
+   message = string.format(format_string,build_status["event_queue_ram"],count)
    write_output(message)
 end
 
 local function dump_rom_data_structures()
     number = 0;
+    build_status["event_queue_rom"] = generate_unique_function_name()
     write_output("\n\n//------  ROM data structures for event queues ----\n\n")
     for i,queue_name in ipairs(queue_list) do
         queue_data = queue_names[queue_name]
-        format_string = "static const Event_control_ROM_CFL_t event_control_rom_%s = { %d, %d };\n"
+        format_string = "static const Event_control_ROM_CFL_t %s_%s = { %d, %d };\n"
         size = queue_data[2]
        
-        local message = string.format(format_string,queue_name,size, number)
+        local message = string.format(format_string,build_status["event_queue_rom"],queue_name,size, number)
         number = number + size
         write_output(message)
     end
-    format_string ="static const Event_control_ROM_CFL_t *queue_elements[] = {\n"
-    local message = string.format(format_string)
+    format_string ="static const Event_control_ROM_CFL_t *%s[] = {\n"
+    local message = string.format(format_string,build_status["event_queue_rom"])
     write_output(message)
     
     for i,queue_name in ipairs(queue_list) do
 
-        format_string = "     &event_control_rom_%s,\n"
-        local message = string.format(format_string,queue_name)
+        format_string = "     &%s_%s,\n"
+        local message = string.format(format_string,build_status["event_queue_rom"],queue_name)
         write_output(message)
     end
     write_output("};\n")
 
-
-    format_string ="static const Named_event_queue_control_CFL_t queue_control = { %d,%d,%s };\n"
-    local message = string.format(format_string,#queue_list,number,"queue_elements")
+    build_status["event_queue_control"] = generate_unique_function_name()
+    format_string ="static const Named_event_queue_control_CFL_t %s = { %d,%d,%s };\n"
+    local message = string.format(format_string,build_status["event_queue_control"],#queue_list,number,build_status["event_queue_rom"])
     write_output(message)
     
   

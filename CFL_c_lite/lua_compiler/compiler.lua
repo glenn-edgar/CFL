@@ -20,7 +20,7 @@ PXT.cwd("../")
 PXT.cwd("helper_functions")
 dofile("op_code_loader.lua")
 PXT.cwd("../")
-
+build_status = {} -- ensure global variable
 function initialize_build_variables()
     build_status = {}
     build_status["column_status"] = false
@@ -28,11 +28,12 @@ function initialize_build_variables()
     build_status["allocate_once_heap_pointer"] = nil
     build_status["allocate_once_heap_size"] = 0
     build_status["private_heap_size"] = 0
+    
 
 end
 
 function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap_size, private_heap_size,
-                     default_event_queue_size)
+                     default_event_queue_size,debug_function)
 
     
     initialize_build_variables()
@@ -40,9 +41,13 @@ function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap
     build_status["allocate_once_heap_size"] = allocate_once_heap_size
     build_status["private_heap_size"] = private_heap_size
     build_status["allocate_once_heap_pointer"] = allocate_once_heap_pointer
+    build_status["default_event_queue_size"] = default_event_queue_size
+    build_status["debug_function"] = debug_function
+    reset_user_defined_events()
     initialize_event_queues(default_event_queue_size)
     initialize_columns()
     initialize_column_elements()
+    reset_code_buffers()
     
 
 end
@@ -52,7 +57,9 @@ engine_name = nil -- global variable
 master_heap_starting_location_name = nil -- global variable
 remaing_size_name = nil -- global variable
 current_heap_pointer = nil -- global variable
-function dump_header(debug_function)
+
+
+function dump_header()
     time_control_name = generate_unique_function_name()
     local message = string.format("\n\nstatic Time_control_CFL_t %s;\n\n\n",time_control_name);
     write_output(message)
@@ -125,18 +132,18 @@ function dump_header(debug_function)
 const struct Handle_CFL_t %s =
 {
 
-  .queue_rom    = &queue_control,
-  .queue_ram = event_control_ram,
-  .event_data = event_data_array,
+  .queue_rom    = &%s,
+  .queue_ram =  %s,
+  .event_data = %s,
 
-  .column_elements_flags =column_element_RAM ,
-  .column_elements_ROM = column_elements_ROM,
+  .column_elements_flags =%s,
+  .column_elements_ROM = %s,
 
-  .column_flags = column_RAM_flags,
-  .column_local_data = column_RAM_local_data,
-  .column_state = column_RAM_new_state,
+  .column_flags = %s,
+  .column_local_data = %s,
+  .column_state = %s,
   .number_of_columns = %d,
-  .column_rom_data = column_data_ROM,
+  .column_rom_data = %s,
 
   .number_of_watch_dogs = 0,
   .watch_dog_active = NULL,
@@ -161,9 +168,31 @@ const struct Handle_CFL_t %s =
 ]]
 
 
-local message = string.format(header_code,handle_name,#column_list,time_control_name,engine_name,debug_function,
-build_status["allocate_once_heap_pointer"], build_status["allocate_once_heap_size"],remaing_size_name,current_heap_pointer,
-heap_block_control,build_status["private_heap_size"])   
+local message = string.format(header_code,
+                              handle_name,
+                              build_status["event_queue_control"],
+                              build_status["event_queue_ram"],
+                              build_status["event_data"],
+
+                              build_status["column_element_ram"],
+                              build_status["column_element_rom"],
+                              
+                              build_status["column_flags"],
+                              build_status["local_data"],
+                              build_status["new_state"],
+                              #column_list,
+                              build_status["column_data"],
+                              
+                              
+                              time_control_name,
+                              engine_name,
+                              build_status["debug_function"],
+                              build_status["allocate_once_heap_pointer"], 
+                              build_status["allocate_once_heap_size"],
+                              remaing_size_name,
+                              current_heap_pointer,
+                              heap_block_control,
+                              build_status["private_heap_size"])   
 write_output(message)
 
 
@@ -179,37 +208,33 @@ write_output(message)
 
 end
 
-CFL_global_variables = [[
 
-static const int reset_buffer[1] = { RESET_CFL };
-static const int halt_buffer[1] = { HALT_CFL };
-static const int terminate_buffer[1] = { TERMINATE_CFL };
-static const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
 
-]]
-
-function dump_output(debug_function)
-   print("Dumping output")
-   message = '#include "run_time_code_CFL.h"\n'
-    write_output(message)
-
-    write_output(CFL_global_variables)
-    dump_event_queues()
-    dump_functions()
-   
-    dump_basic_header_code()
-    
-    dump_basic_code()
+function dump_build()
+  print("Dumping output")
+  message = '#include "run_time_code_CFL.h"\n'
+  write_output(message)
+  dump_event_queues()
+  Dump_user_code()
   
-    dump_user_code()
+  dump_basic_header_code()
+    
+    
    
     dump_columns()
     dump_column_elements()
     
-    dump_header(debug_function)
+    dump_header()
     write_output(header_end)
     
 end
 
+function dump_runtime_support()
+  dump_functions()
+  
+  dump_basic_code()
+  dump_basic_header_code()
+  
+end
 
 
