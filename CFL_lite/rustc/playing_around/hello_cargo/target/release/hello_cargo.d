@@ -1,0 +1,1 @@
+/mnt/c/Users/glenn/OneDrive/DHT11/Documents/CFL/CFL_lite/rustc/playing_around/hello_cargo/target/release/hello_cargo: /mnt/c/Users/glenn/OneDrive/DHT11/Documents/CFL/CFL_lite/rustc/playing_around/hello_cargo/src/main.rs
