@@ -181,7 +181,7 @@ Store_column_function("VERIFY_HANDLER",'verify_handler_CFL',verify_handler_code,
 
 
 local verify_template_data_rom = [[
-    static Verify_control_ROM_CFL_t %s_rom = { %s, %s, %s };  // terminate flag,user data,one shot function
+    static Verify_control_ROM_CFL_t %s = { %s, %s, %s };  // terminate flag,user data,one shot function
 ]]
 
 function Verify(bool_fn_name, terminate_flag, one_shot_time_out_fn, user_data)
@@ -197,7 +197,7 @@ function Verify(bool_fn_name, terminate_flag, one_shot_time_out_fn, user_data)
     Store_user_code(message)
 
     
-    store_column_element(fn_column, fn_boolean,'(void *)&'..unique_name..'_rom')
+    store_column_element(fn_column, fn_boolean,'(void *)&'..unique_name.."_rom")
   end
   
 

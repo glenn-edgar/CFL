@@ -63,8 +63,6 @@ void* column_RAM_local_data_CFL[4];
 typedef struct Column_watch_dog_ROM_CFL_t
 {
    bool termination_flag;
-   unsigned short column_index;
-   unsigned short trigger_count;
    One_shot_function_CFL_t trigger_function;
 
 } Column_watch_dog_ROM_CFL_t;

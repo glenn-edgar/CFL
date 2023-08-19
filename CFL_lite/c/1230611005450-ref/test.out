@@ -1,0 +1,894 @@
+named_queues/CFL_pipes.c: In function ‘reserve_pipe_control_one_shot_functions_CFL’:
+named_queues/CFL_pipes.c:144:60: warning: unused parameter ‘input’ [-Wunused-parameter]
+ unsigned reserve_pipe_control_one_shot_functions_CFL(void *input)
+                                                            ^~~~~
+named_queues/CFL_pipes.c: In function ‘start_data_pipe’:
+named_queues/CFL_pipes.c:235:74: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void start_data_pipe(void *input, void *params, Event_data_CFL_t *event_data)
+                                                                          ^~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Asm_reset_data_pipe_CFL’:
+named_queues/CFL_pipes.c:245:36: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_reset_data_pipe_CFL(void *input, const char *pipe_name)
+                                    ^~~~~
+named_queues/CFL_pipes.c: In function ‘reset_data_pipe’:
+named_queues/CFL_pipes.c:254:48: warning: unused parameter ‘params’ [-Wunused-parameter]
+ static void reset_data_pipe(void *input, void *params, Event_data_CFL_t *event_data)
+                                                ^~~~~~
+named_queues/CFL_pipes.c:254:74: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void reset_data_pipe(void *input, void *params, Event_data_CFL_t *event_data)
+                                                                          ^~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Asm_walk_data_pipe_CFL’:
+named_queues/CFL_pipes.c:269:54: warning: unused parameter ‘pipe_name’ [-Wunused-parameter]
+ void Asm_walk_data_pipe_CFL(void *input, const char *pipe_name, const char *reduce_function, void *user_data)
+                                                      ^~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘store_column_data’:
+named_queues/CFL_pipes.c:314:37: warning: unused parameter ‘input’ [-Wunused-parameter]
+ static void store_column_data(void *input, void *params, Event_data_CFL_t *event_data)
+                                     ^~~~~
+named_queues/CFL_pipes.c:314:50: warning: unused parameter ‘params’ [-Wunused-parameter]
+ static void store_column_data(void *input, void *params, Event_data_CFL_t *event_data)
+                                                  ^~~~~~
+named_queues/CFL_pipes.c:314:76: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void store_column_data(void *input, void *params, Event_data_CFL_t *event_data)
+                                                                            ^~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Reset_pipe_CFL’:
+named_queues/CFL_pipes.c:326:27: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Reset_pipe_CFL(void *input, unsigned pipe_id){
+                           ^~~~~
+named_queues/CFL_pipes.c:326:43: warning: unused parameter ‘pipe_id’ [-Wunused-parameter]
+ void Reset_pipe_CFL(void *input, unsigned pipe_id){
+                                           ^~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_chain_control_CFL’:
+named_queues/CFL_pipes.c:334:37: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                     ^~~~~
+named_queues/CFL_pipes.c:334:59: warning: unused parameter ‘chain_number’ [-Wunused-parameter]
+ void Create_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                                           ^~~~~~~~~~~~
+named_queues/CFL_pipes.c:334:88: warning: unused parameter ‘chain_start’ [-Wunused-parameter]
+ void Create_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                                                                        ^~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Verify_chain_control_end_CFL’:
+named_queues/CFL_pipes.c:339:41: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Verify_chain_control_end_CFL(void *input)
+                                         ^~~~~
+named_queues/CFL_pipes.c: In function ‘Create_if_chain_control_CFL’:
+named_queues/CFL_pipes.c:344:40: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_if_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                        ^~~~~
+named_queues/CFL_pipes.c:344:62: warning: unused parameter ‘chain_number’ [-Wunused-parameter]
+ void Create_if_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                                              ^~~~~~~~~~~~
+named_queues/CFL_pipes.c:344:91: warning: unused parameter ‘chain_start’ [-Wunused-parameter]
+ void Create_if_chain_control_CFL(void *input, unsigned short chain_number, unsigned short chain_start)
+                                                                                           ^~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_loop_start_CFL’:
+named_queues/CFL_pipes.c:349:34: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_loop_start_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                  ^~~~~
+named_queues/CFL_pipes.c:349:56: warning: unused parameter ‘loop_start’ [-Wunused-parameter]
+ void Create_loop_start_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                                        ^~~~~~~~~~
+named_queues/CFL_pipes.c:349:83: warning: unused parameter ‘loop_number’ [-Wunused-parameter]
+ void Create_loop_start_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                                                                   ^~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_loop_element_CFL’:
+named_queues/CFL_pipes.c:354:36: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_loop_element_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                    ^~~~~
+named_queues/CFL_pipes.c:354:58: warning: unused parameter ‘loop_start’ [-Wunused-parameter]
+ void Create_loop_element_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                                          ^~~~~~~~~~
+named_queues/CFL_pipes.c:354:85: warning: unused parameter ‘loop_number’ [-Wunused-parameter]
+ void Create_loop_element_CFL(void *input, unsigned short loop_start, unsigned short loop_number)
+                                                                                     ^~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_try_start_CFL’:
+named_queues/CFL_pipes.c:359:33: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_try_start_CFL(void *input, unsigned short try_start, unsigned short try_max_number)
+                                 ^~~~~
+named_queues/CFL_pipes.c:359:55: warning: unused parameter ‘try_start’ [-Wunused-parameter]
+ void Create_try_start_CFL(void *input, unsigned short try_start, unsigned short try_max_number)
+                                                       ^~~~~~~~~
+named_queues/CFL_pipes.c:359:81: warning: unused parameter ‘try_max_number’ [-Wunused-parameter]
+ void Create_try_start_CFL(void *input, unsigned short try_start, unsigned short try_max_number)
+                                                                                 ^~~~~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_try_end_CFL’:
+named_queues/CFL_pipes.c:364:31: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_try_end_CFL(void *input, bool success, bool inverse_flag)
+                               ^~~~~
+named_queues/CFL_pipes.c:364:43: warning: unused parameter ‘success’ [-Wunused-parameter]
+ void Create_try_end_CFL(void *input, bool success, bool inverse_flag)
+                                           ^~~~~~~
+named_queues/CFL_pipes.c:364:57: warning: unused parameter ‘inverse_flag’ [-Wunused-parameter]
+ void Create_try_end_CFL(void *input, bool success, bool inverse_flag)
+                                                         ^~~~~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘Create_chain_element_CFL’:
+named_queues/CFL_pipes.c:369:37: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_chain_element_CFL(void *input)
+                                     ^~~~~
+named_queues/CFL_pipes.c: In function ‘get_pipe_id_CFL’:
+named_queues/CFL_pipes.c:383:45: warning: unused parameter ‘input’ [-Wunused-parameter]
+ static unsigned short get_pipe_id_CFL(void *input, const char *pipe_name)
+                                             ^~~~~
+named_queues/CFL_pipes.c:383:64: warning: unused parameter ‘pipe_name’ [-Wunused-parameter]
+ static unsigned short get_pipe_id_CFL(void *input, const char *pipe_name)
+                                                                ^~~~~~~~~
+named_queues/CFL_pipes.c: In function ‘get_column_pipe_index’:
+named_queues/CFL_pipes.c:389:51: warning: unused parameter ‘input’ [-Wunused-parameter]
+ static unsigned short get_column_pipe_index(void *input)
+                                                   ^~~~~
+named_queues/CFL_pipes.c: In function ‘set_column_pipe_index_CFL’:
+named_queues/CFL_pipes.c:396:45: warning: unused parameter ‘input’ [-Wunused-parameter]
+ static void set_column_pipe_index_CFL(void *input, unsigned short column_id, unsigned short pipe_id)
+                                             ^~~~~
+named_queues/CFL_pipes.c:396:67: warning: unused parameter ‘column_id’ [-Wunused-parameter]
+ static void set_column_pipe_index_CFL(void *input, unsigned short column_id, unsigned short pipe_id)
+                                                                   ^~~~~~~~~
+named_queues/CFL_pipes.c:396:93: warning: unused parameter ‘pipe_id’ [-Wunused-parameter]
+ static void set_column_pipe_index_CFL(void *input, unsigned short column_id, unsigned short pipe_id)
+                                                                                             ^~~~~~~
+engine/CFL_inner_engine.c: In function ‘inner_process_column’:
+engine/CFL_inner_engine.c:201:63: warning: unused parameter ‘column_control’ [-Wunused-parameter]
+                                         Column_control_CFL_t *column_control,
+                                                               ^~~~~~~~~~~~~~
+engine/CFL_inner_engine.c: At top level:
+engine/CFL_inner_engine.c:288:1: warning: ‘inline’ is not at beginning of declaration [-Wold-style-declaration]
+ static bool inline process_column_named_events(Handle_CFL_t *handle,
+ ^~~~~~
+engine/CFL_inner_engine.c: In function ‘Set_column_watch_dog_CFL’:
+engine/CFL_inner_engine.c:672:49: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+                               Event_data_CFL_t *event_data)
+                                                 ^~~~~~~~~~
+engine/CFL_inner_engine.c: In function ‘Clear_column_watch_dog_CFL’:
+engine/CFL_inner_engine.c:685:52: warning: unused parameter ‘params’ [-Wunused-parameter]
+ void Clear_column_watch_dog_CFL(void *input, void *params,
+                                                    ^~~~~~
+engine/CFL_inner_engine.c:686:51: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+                                 Event_data_CFL_t *event_data)
+                                                   ^~~~~~~~~~
+heap/CFL_private_heap.c: In function ‘verifyMemBlock_CFL’:
+heap/CFL_private_heap.c:152:42: warning: unused parameter ‘data’ [-Wunused-parameter]
+ CS_HEAP_BOOLEAN verifyMemBlock_CFL(void *data) {
+                                          ^~~~
+storeage/CFL_element_storeage.c: In function ‘find_cell_location’:
+storeage/CFL_element_storeage.c:160:71: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     if ( (hash_cell->hash == hash_value) &&(hash_cell->secondary_hash == JenkinsHash_CFL(name,strlen(name)) )) {
+                                                                       ^~
+state_machines/CFL_state_machine_rt.c: In function ‘asm_change_state_CFL’:
+state_machines/CFL_state_machine_rt.c:35:82: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void asm_change_state_CFL(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                  ^~~~~~~~~~
+state_machines/CFL_state_machine_rt.c: In function ‘asm_dump_state_machines_CFL’:
+state_machines/CFL_state_machine_rt.c:62:47: warning: unused parameter ‘input’ [-Wunused-parameter]
+ static void asm_dump_state_machines_CFL(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                               ^~~~~
+state_machines/CFL_state_machine_rt.c:62:60: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+ static void asm_dump_state_machines_CFL(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                            ^~~~~~~~~
+state_machines/CFL_state_machine_rt.c:62:89: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void asm_dump_state_machines_CFL(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                         ^~~~~~~~~~
+state_machines/CFL_column_state_machine.c: In function ‘change_column_state’:
+state_machines/CFL_column_state_machine.c:85:51: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int change_column_state(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+                                                   ^~~~~~
+state_machines/CFL_state_machine_asm.c: In function ‘load_sm_change_data_struct’:
+state_machines/CFL_state_machine_asm.c:183:18: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+         if(index < 0){
+                  ^
+basic_chain_flow/CFL_core_aux_functions.c: In function ‘wait_event_handler’:
+basic_chain_flow/CFL_core_aux_functions.c:373:31: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   if (event_data->event_index == while_event_control->event_index)
+                               ^~
+basic_chain_flow/CFL_core_aux_functions.c:356:38: warning: unused parameter ‘handle’ [-Wunused-parameter]
+ static bool wait_event_handler(void *handle, void *params,
+                                      ^~~~~~
+basic_chain_flow/CFL_core_function_assembler.c: In function ‘Asm_store_column_event_CFL’:
+basic_chain_flow/CFL_core_function_assembler.c:117:86: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ void Asm_store_column_event_CFL(void* input, unsigned short index, Event_data_CFL_t* event_data) {
+                                                                                      ^~~~~~~~~~
+basic_chain_flow/CFL_core_function_assembler.c: In function ‘Asm_process_columns_action_CFL’:
+basic_chain_flow/CFL_core_function_assembler.c:246:21: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for (int i = 0; i < col_number; i++) {
+                     ^
+basic_chain_flow/CFL_core_function_assembler.c: In function ‘Asm_for_columns_CFL’:
+basic_chain_flow/CFL_core_function_assembler.c:476:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+   for (unsigned i = 0; i < number_of_columns; i++) {
+                          ^
+basic_chain_flow/CFL_core_functions.c: In function ‘return_condition_code’:
+basic_chain_flow/CFL_core_functions.c:95:40: warning: unused parameter ‘handle’ [-Wunused-parameter]
+ static int return_condition_code(void *handle, void *aux_fn,
+                                        ^~~~~~
+basic_chain_flow/CFL_core_functions.c:95:54: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int return_condition_code(void *handle, void *aux_fn,
+                                                      ^~~~~~
+basic_chain_flow/CFL_core_functions.c: In function ‘enable_columns’:
+basic_chain_flow/CFL_core_functions.c:226:47: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int enable_columns(void *handle, void *aux_fn, void *params,
+                                               ^~~~~~
+basic_chain_flow/CFL_core_functions.c: In function ‘join_handler’:
+basic_chain_flow/CFL_core_functions.c:256:45: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int join_handler(void *handle, void *aux_fn, void *params,
+                                             ^~~~~~
+basic_chain_flow/CFL_core_functions.c: In function ‘for_column_handler’:
+basic_chain_flow/CFL_core_functions.c:406:50: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int for_column_handler(void *input, void *aux_fn, void *params,
+                                                  ^~~~~~
+basic_chain_flow/CFL_core_functions.c: In function ‘enable_join_fn’:
+basic_chain_flow/CFL_core_functions.c:591:46: warning: unused parameter ‘aux_fn’ [-Wunused-parameter]
+ static int enable_join_fn(void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+                                              ^~~~~~
+basic_chain_flow/CFL_tod_functions.c: In function ‘test_tod_condition_lt’:
+basic_chain_flow/CFL_tod_functions.c:107:83: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_tod_condition_lt(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                   ^~~~~~~~~~
+basic_chain_flow/CFL_tod_functions.c: In function ‘test_tod_condition_le’:
+basic_chain_flow/CFL_tod_functions.c:157:83: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_tod_condition_le(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                   ^~~~~~~~~~
+basic_chain_flow/CFL_tod_functions.c: In function ‘test_tod_condition_eq’:
+basic_chain_flow/CFL_tod_functions.c:207:83: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_tod_condition_eq(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                   ^~~~~~~~~~
+basic_chain_flow/CFL_tod_functions.c: In function ‘test_tod_condition_ge’:
+basic_chain_flow/CFL_tod_functions.c:257:83: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_tod_condition_ge(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                   ^~~~~~~~~~
+basic_chain_flow/CFL_tod_functions.c: In function ‘test_tod_condition_gt’:
+basic_chain_flow/CFL_tod_functions.c:307:83: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_tod_condition_gt(void *input, void *user_data, Event_data_CFL_t *event_data)
+                                                                                   ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Create_plc_bit_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:8:38: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_plc_bit_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_bits, bool initial_value)
+                                      ^~~~~
+bit_register_operations/CFL_plc_functions.c:8:57: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Create_plc_bit_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_bits, bool initial_value)
+                                                         ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:8:85: warning: unused parameter ‘number_of_bits’ [-Wunused-parameter]
+ void Create_plc_bit_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_bits, bool initial_value)
+                                                                                     ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:8:106: warning: unused parameter ‘initial_value’ [-Wunused-parameter]
+ void Create_plc_bit_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_bits, bool initial_value)
+                                                                                                          ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_drum_bit_controller_CFL’:
+bit_register_operations/CFL_plc_functions.c:12:44: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_drum_bit_controller_CFL(void *input, const char *bit_buffer_name, unsigned short output_bit,
+                                            ^~~~~
+bit_register_operations/CFL_plc_functions.c:12:63: warning: unused parameter ‘bit_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_drum_bit_controller_CFL(void *input, const char *bit_buffer_name, unsigned short output_bit,
+                                                               ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:12:95: warning: unused parameter ‘output_bit’ [-Wunused-parameter]
+ void Asm_plc_drum_bit_controller_CFL(void *input, const char *bit_buffer_name, unsigned short output_bit,
+                                                                                               ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:13:53: warning: unused parameter ‘number_of_time_steps’ [-Wunused-parameter]
+                                      unsigned short number_of_time_steps, unsigned short *time_values_ms, bool *bit_values,
+                                                     ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:13:91: warning: unused parameter ‘time_values_ms’ [-Wunused-parameter]
+                                      unsigned short number_of_time_steps, unsigned short *time_values_ms, bool *bit_values,
+                                                                                           ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:13:113: warning: unused parameter ‘bit_values’ [-Wunused-parameter]
+                                      unsigned short number_of_time_steps, unsigned short *time_values_ms, bool *bit_values,
+                                                                                                                 ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:14:50: warning: unused parameter ‘register_buffer_name’ [-Wunused-parameter]
+                                      const char *register_buffer_name,
+                                                  ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:15:53: warning: unused parameter ‘step_number’ [-Wunused-parameter]
+                                      unsigned short step_number,
+                                                     ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:16:53: warning: unused parameter ‘time_step_count’ [-Wunused-parameter]
+                                      unsigned short time_step_count,
+                                                     ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:17:53: warning: unused parameter ‘time_step_value’ [-Wunused-parameter]
+                                      unsigned short time_step_value,
+                                                     ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:18:53: warning: unused parameter ‘bit_state’ [-Wunused-parameter]
+                                      unsigned short bit_state)
+                                                     ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_pcl_wait_delay_toggle_CFL’:
+bit_register_operations/CFL_plc_functions.c:22:42: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_pcl_wait_delay_toggle_CFL(void *input, const char *bit_buffer_name, int time_out_ms,
+                                          ^~~~~
+bit_register_operations/CFL_plc_functions.c:22:61: warning: unused parameter ‘bit_buffer_name’ [-Wunused-parameter]
+ void Asm_pcl_wait_delay_toggle_CFL(void *input, const char *bit_buffer_name, int time_out_ms,
+                                                             ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:22:82: warning: unused parameter ‘time_out_ms’ [-Wunused-parameter]
+ void Asm_pcl_wait_delay_toggle_CFL(void *input, const char *bit_buffer_name, int time_out_ms,
+                                                                                  ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:23:51: warning: unused parameter ‘toggle_bit’ [-Wunused-parameter]
+                                    unsigned short toggle_bit)
+                                                   ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_up_counter_CFL’:
+bit_register_operations/CFL_plc_functions.c:28:35: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_up_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                   ^~~~~
+bit_register_operations/CFL_plc_functions.c:28:54: warning: unused parameter ‘bit_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_up_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                      ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:28:83: warning: unused parameter ‘register_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_up_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                                                   ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:29:44: warning: unused parameter ‘toggle_bit’ [-Wunused-parameter]
+                             unsigned short toggle_bit,
+                                            ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:30:44: warning: unused parameter ‘reset_current_count_bit’ [-Wunused-parameter]
+                             unsigned short reset_current_count_bit,
+                                            ^~~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:31:44: warning: unused parameter ‘count_done_bit’ [-Wunused-parameter]
+                             unsigned short count_done_bit,
+                                            ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:32:44: warning: unused parameter ‘load_count_bit’ [-Wunused-parameter]
+                             unsigned short load_count_bit,
+                                            ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:33:44: warning: unused parameter ‘load_register’ [-Wunused-parameter]
+                             unsigned short load_register,
+                                            ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:34:44: warning: unused parameter ‘current_count_register’ [-Wunused-parameter]
+                             unsigned short current_count_register)
+                                            ^~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_down_counter_CFL’:
+bit_register_operations/CFL_plc_functions.c:38:37: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_down_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                     ^~~~~
+bit_register_operations/CFL_plc_functions.c:38:56: warning: unused parameter ‘bit_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_down_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                        ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:38:85: warning: unused parameter ‘register_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_down_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                                                     ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:39:46: warning: unused parameter ‘toggle_bit’ [-Wunused-parameter]
+                               unsigned short toggle_bit,
+                                              ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:40:46: warning: unused parameter ‘reset_current_count_bit’ [-Wunused-parameter]
+                               unsigned short reset_current_count_bit,
+                                              ^~~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:41:46: warning: unused parameter ‘count_done_bit’ [-Wunused-parameter]
+                               unsigned short count_done_bit,
+                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:42:46: warning: unused parameter ‘load_count_bit’ [-Wunused-parameter]
+                               unsigned short load_count_bit,
+                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:43:46: warning: unused parameter ‘load_register’ [-Wunused-parameter]
+                               unsigned short load_register,
+                                              ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:44:46: warning: unused parameter ‘current_count_register’ [-Wunused-parameter]
+                               unsigned short current_count_register)
+                                              ^~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_quad_counter_CFL’:
+bit_register_operations/CFL_plc_functions.c:49:37: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_quad_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                     ^~~~~
+bit_register_operations/CFL_plc_functions.c:49:56: warning: unused parameter ‘bit_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_quad_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                        ^~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:49:85: warning: unused parameter ‘register_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_quad_counter_CFL(void *input, const char *bit_buffer_name, const char *register_buffer_name,
+                                                                                     ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:50:46: warning: unused parameter ‘behind_toggle_bit’ [-Wunused-parameter]
+                               unsigned short behind_toggle_bit,
+                                              ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:51:46: warning: unused parameter ‘forward_toggle_bit’ [-Wunused-parameter]
+                               unsigned short forward_toggle_bit,
+                                              ^~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:52:46: warning: unused parameter ‘reset_current_count_bit’ [-Wunused-parameter]
+                               unsigned short reset_current_count_bit,
+                                              ^~~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:53:46: warning: unused parameter ‘count_done_bit’ [-Wunused-parameter]
+                               unsigned short count_done_bit,
+                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:54:46: warning: unused parameter ‘load_count_bit’ [-Wunused-parameter]
+                               unsigned short load_count_bit,
+                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:55:46: warning: unused parameter ‘load_register’ [-Wunused-parameter]
+                               unsigned short load_register,
+                                              ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:56:46: warning: unused parameter ‘current_count_register’ [-Wunused-parameter]
+                               unsigned short current_count_register)
+                                              ^~~~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_wait_up_transition_CFL’:
+bit_register_operations/CFL_plc_functions.c:60:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_wait_up_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:60:62: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_wait_up_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                              ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:60:76: warning: unused parameter ‘bit_number’ [-Wunused-parameter]
+ void Asm_plc_wait_up_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                            ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:60:104: warning: unused parameter ‘bit_positions’ [-Wunused-parameter]
+ void Asm_plc_wait_up_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                                                        ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_wait_down_transition_CFL’:
+bit_register_operations/CFL_plc_functions.c:63:45: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_wait_down_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                             ^~~~~
+bit_register_operations/CFL_plc_functions.c:63:64: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_wait_down_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:63:78: warning: unused parameter ‘bit_number’ [-Wunused-parameter]
+ void Asm_plc_wait_down_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                              ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:63:106: warning: unused parameter ‘bit_positions’ [-Wunused-parameter]
+ void Asm_plc_wait_down_transition_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                                                          ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_generate_up_pulse_CFL’:
+bit_register_operations/CFL_plc_functions.c:66:42: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_generate_up_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                          ^~~~~
+bit_register_operations/CFL_plc_functions.c:66:61: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_generate_up_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                             ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:66:75: warning: unused parameter ‘bit_number’ [-Wunused-parameter]
+ void Asm_plc_generate_up_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                           ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:66:103: warning: unused parameter ‘bit_positions’ [-Wunused-parameter]
+ void Asm_plc_generate_up_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                                                       ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_generate_down_pulse_CFL’:
+bit_register_operations/CFL_plc_functions.c:69:44: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_generate_down_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                            ^~~~~
+bit_register_operations/CFL_plc_functions.c:69:63: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_generate_down_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                               ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:69:77: warning: unused parameter ‘bit_number’ [-Wunused-parameter]
+ void Asm_plc_generate_down_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                             ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:69:105: warning: unused parameter ‘bit_positions’ [-Wunused-parameter]
+ void Asm_plc_generate_down_pulse_CFL(void *input, const char *buf_name, int bit_number, unsigned short *bit_positions)
+                                                                                                         ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_reset_bit_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:75:41: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_reset_bit_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                         ^~~~~
+bit_register_operations/CFL_plc_functions.c:75:60: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_reset_bit_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                            ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:75:78: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_reset_bit_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                                              ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_set_bit_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:78:42: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_set_bit_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                          ^~~~~
+bit_register_operations/CFL_plc_functions.c:78:61: warning: unused parameter ‘name’ [-Wunused-parameter]
+ void Asm_plc_set_bit_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                             ^~~~
+bit_register_operations/CFL_plc_functions.c:78:82: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_set_bit_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                  ^~~~~~
+bit_register_operations/CFL_plc_functions.c:78:112: warning: unused parameter ‘positions’ [-Wunused-parameter]
+ void Asm_plc_set_bit_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:78:128: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_set_bit_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                                ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_copy_bit_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:82:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_copy_bit_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:82:62: warning: unused parameter ‘from_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_bit_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:82:90: warning: unused parameter ‘to_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_bit_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                          ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:82:119: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_copy_bit_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                                                       ^~~~~~
+bit_register_operations/CFL_plc_functions.c:83:53: warning: unused parameter ‘positions’ [-Wunused-parameter]
+                                     unsigned short *positions)
+                                                     ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_print_bit_buf_CFL’:
+bit_register_operations/CFL_plc_functions.c:87:38: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_print_bit_buf_CFL(void *input, const char *buffer_name)
+                                      ^~~~~
+bit_register_operations/CFL_plc_functions.c:87:57: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_print_bit_buf_CFL(void *input, const char *buffer_name)
+                                                         ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_store_bit_s_expr_CFL’:
+bit_register_operations/CFL_plc_functions.c:90:41: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_store_bit_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                         ^~~~~
+bit_register_operations/CFL_plc_functions.c:90:60: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_store_bit_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                            ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:90:88: warning: unused parameter ‘store_index’ [-Wunused-parameter]
+ void Asm_plc_store_bit_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                        ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:90:113: warning: unused parameter ‘s_expression’ [-Wunused-parameter]
+ void Asm_plc_store_bit_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                                                 ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_wait_bit_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:94:46: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_wait_bit_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                              ^~~~~
+bit_register_operations/CFL_plc_functions.c:94:65: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_wait_bit_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                 ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:94:79: warning: unused parameter ‘time_out_ms’ [-Wunused-parameter]
+ void Asm_plc_wait_bit_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                               ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:94:104: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_wait_bit_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                                                        ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:95:46: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                        void *user_data, bool terminate_flag, const char *s_expression_name)
+                                              ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:95:62: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                        void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                              ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:95:90: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                        void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                          ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_verify_bit_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:99:48: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_verify_bit_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                ^~~~~
+bit_register_operations/CFL_plc_functions.c:99:67: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_verify_bit_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                   ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:99:89: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_verify_bit_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                                         ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:100:48: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:100:64: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:100:92: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                            ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Create_register_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:109:39: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_register_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, short initial_value)
+                                       ^~~~~
+bit_register_operations/CFL_plc_functions.c:109:58: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Create_register_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, short initial_value)
+                                                          ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:109:86: warning: unused parameter ‘number_of_registers’ [-Wunused-parameter]
+ void Create_register_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, short initial_value)
+                                                                                      ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:109:113: warning: unused parameter ‘initial_value’ [-Wunused-parameter]
+ void Create_register_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, short initial_value)
+                                                                                                                 ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_reset_register_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:113:46: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_reset_register_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                              ^~~~~
+bit_register_operations/CFL_plc_functions.c:113:65: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_reset_register_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                                 ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:113:83: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_reset_register_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                                                   ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_set_register_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:117:47: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_set_register_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                               ^~~~~
+bit_register_operations/CFL_plc_functions.c:117:66: warning: unused parameter ‘name’ [-Wunused-parameter]
+ void Asm_plc_set_register_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                  ^~~~
+bit_register_operations/CFL_plc_functions.c:117:87: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_set_register_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                       ^~~~~~
+bit_register_operations/CFL_plc_functions.c:117:117: warning: unused parameter ‘positions’ [-Wunused-parameter]
+ void Asm_plc_set_register_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                     ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:117:133: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_set_register_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                                     ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_copy_register_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:120:48: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_copy_register_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                ^~~~~
+bit_register_operations/CFL_plc_functions.c:120:67: warning: unused parameter ‘from_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_register_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                   ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:120:95: warning: unused parameter ‘to_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_register_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                               ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:120:124: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_copy_register_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                                                            ^~~~~~
+bit_register_operations/CFL_plc_functions.c:121:58: warning: unused parameter ‘positions’ [-Wunused-parameter]
+                                          unsigned short *positions)
+                                                          ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_copy_register_array_CFL’:
+bit_register_operations/CFL_plc_functions.c:124:44: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_copy_register_array_CFL(void *input, const char *from_bufF_name,
+                                            ^~~~~
+bit_register_operations/CFL_plc_functions.c:124:63: warning: unused parameter ‘from_bufF_name’ [-Wunused-parameter]
+ void Asm_plc_copy_register_array_CFL(void *input, const char *from_bufF_name,
+                                                               ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:125:50: warning: unused parameter ‘to_buff_name’ [-Wunused-parameter]
+                                      const char *to_buff_name, unsigned short from_start,
+                                                  ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:125:79: warning: unused parameter ‘from_start’ [-Wunused-parameter]
+                                      const char *to_buff_name, unsigned short from_start,
+                                                                               ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:126:53: warning: unused parameter ‘to_start’ [-Wunused-parameter]
+                                      unsigned short to_start, unsigned short number)
+                                                     ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:126:78: warning: unused parameter ‘number’ [-Wunused-parameter]
+                                      unsigned short to_start, unsigned short number)
+                                                                              ^~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_print_register_buf_CFL’:
+bit_register_operations/CFL_plc_functions.c:129:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_print_register_buf_CFL(void *input, const char *buffer_name)
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:129:62: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_print_register_buf_CFL(void *input, const char *buffer_name)
+                                                              ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_store_register_s_expr_CFL’:
+bit_register_operations/CFL_plc_functions.c:132:46: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_store_register_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                              ^~~~~
+bit_register_operations/CFL_plc_functions.c:132:65: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_store_register_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                 ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:132:93: warning: unused parameter ‘store_index’ [-Wunused-parameter]
+ void Asm_plc_store_register_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                             ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:132:118: warning: unused parameter ‘s_expression’ [-Wunused-parameter]
+ void Asm_plc_store_register_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                                                      ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_search_register_value_CFL’:
+bit_register_operations/CFL_plc_functions.c:136:46: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_search_register_value_CFL(void *input, const char *register_buffer_name, unsigned short start_index, unsigned short end_index,
+                                              ^~~~~
+bit_register_operations/CFL_plc_functions.c:136:65: warning: unused parameter ‘register_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_search_register_value_CFL(void *input, const char *register_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                                 ^~~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:136:102: warning: unused parameter ‘start_index’ [-Wunused-parameter]
+ void Asm_plc_search_register_value_CFL(void *input, const char *register_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                                                                      ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:136:130: warning: unused parameter ‘end_index’ [-Wunused-parameter]
+ void Asm_plc_search_register_value_CFL(void *input, const char *register_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                                                                                                  ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:137:52: warning: unused parameter ‘s_expression’ [-Wunused-parameter]
+                                        const char *s_expression, unsigned short result_value,
+                                                    ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:137:81: warning: unused parameter ‘result_value’ [-Wunused-parameter]
+                                        const char *s_expression, unsigned short result_value,
+                                                                                 ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:138:52: warning: unused parameter ‘bit_index’ [-Wunused-parameter]
+                                        const char *bit_index, unsigned short result_state)
+                                                    ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:138:78: warning: unused parameter ‘result_state’ [-Wunused-parameter]
+                                        const char *bit_index, unsigned short result_state)
+                                                                              ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_wait_register_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:141:51: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_wait_register_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                   ^~~~~
+bit_register_operations/CFL_plc_functions.c:141:70: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_wait_register_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                      ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:141:84: warning: unused parameter ‘time_out_ms’ [-Wunused-parameter]
+ void Asm_plc_wait_register_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                                    ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:141:109: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_wait_register_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                                                             ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:142:51: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                             void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                   ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:142:67: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                             void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                   ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:142:95: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                             void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                               ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_verify_register_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:146:53: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_verify_register_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                     ^~~~~
+bit_register_operations/CFL_plc_functions.c:146:72: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_verify_register_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                        ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:146:94: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_verify_register_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                                              ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:147:53: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                               void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                     ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:147:69: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                               void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                     ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:147:97: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                               void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                                 ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Create_float_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:156:36: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Create_float_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, float initial_value)
+                                    ^~~~~
+bit_register_operations/CFL_plc_functions.c:156:55: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Create_float_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, float initial_value)
+                                                       ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:156:83: warning: unused parameter ‘number_of_registers’ [-Wunused-parameter]
+ void Create_float_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, float initial_value)
+                                                                                   ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:156:110: warning: unused parameter ‘initial_value’ [-Wunused-parameter]
+ void Create_float_buffer_CFL(void *input, const char *buffer_name, unsigned short number_of_registers, float initial_value)
+                                                                                                              ^~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_reset_float_buffer_CFL’:
+bit_register_operations/CFL_plc_functions.c:159:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_reset_float_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:159:62: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_reset_float_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                              ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:159:80: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_reset_float_buffer_CFL(void *input, const char *buffer_name, bool value)
+                                                                                ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_set_float_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:162:44: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_set_float_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                            ^~~~~
+bit_register_operations/CFL_plc_functions.c:162:63: warning: unused parameter ‘name’ [-Wunused-parameter]
+ void Asm_plc_set_float_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                               ^~~~
+bit_register_operations/CFL_plc_functions.c:162:84: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_set_float_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                    ^~~~~~
+bit_register_operations/CFL_plc_functions.c:162:114: warning: unused parameter ‘positions’ [-Wunused-parameter]
+ void Asm_plc_set_float_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                  ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:162:130: warning: unused parameter ‘value’ [-Wunused-parameter]
+ void Asm_plc_set_float_positions_CFL(void *input, const char *name, unsigned short number, const unsigned short *positions, bool value)
+                                                                                                                                  ^~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_copy_float_positions_CFL’:
+bit_register_operations/CFL_plc_functions.c:165:45: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_copy_float_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                             ^~~~~
+bit_register_operations/CFL_plc_functions.c:165:64: warning: unused parameter ‘from_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_float_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:165:92: warning: unused parameter ‘to_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_float_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                            ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:165:121: warning: unused parameter ‘number’ [-Wunused-parameter]
+ void Asm_plc_copy_float_positions_CFL(void *input, const char *from_buff_name, const char *to_buff_name, unsigned short number,
+                                                                                                                         ^~~~~~
+bit_register_operations/CFL_plc_functions.c:166:55: warning: unused parameter ‘positions’ [-Wunused-parameter]
+                                       unsigned short *positions)
+                                                       ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_copy_float_array_CFL’:
+bit_register_operations/CFL_plc_functions.c:169:41: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_copy_float_array_CFL(void *input, const char *from_bufF_name, const char *to_buff_name,
+                                         ^~~~~
+bit_register_operations/CFL_plc_functions.c:169:60: warning: unused parameter ‘from_bufF_name’ [-Wunused-parameter]
+ void Asm_plc_copy_float_array_CFL(void *input, const char *from_bufF_name, const char *to_buff_name,
+                                                            ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:169:88: warning: unused parameter ‘to_buff_name’ [-Wunused-parameter]
+ void Asm_plc_copy_float_array_CFL(void *input, const char *from_bufF_name, const char *to_buff_name,
+                                                                                        ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:170:50: warning: unused parameter ‘from_start’ [-Wunused-parameter]
+                                   unsigned short from_start, unsigned short to_start, unsigned short number)
+                                                  ^~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:170:77: warning: unused parameter ‘to_start’ [-Wunused-parameter]
+                                   unsigned short from_start, unsigned short to_start, unsigned short number)
+                                                                             ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:170:102: warning: unused parameter ‘number’ [-Wunused-parameter]
+                                   unsigned short from_start, unsigned short to_start, unsigned short number)
+                                                                                                      ^~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_print_float_buf_CFL’:
+bit_register_operations/CFL_plc_functions.c:173:40: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_print_float_buf_CFL(void *input, const char *buffer_name)
+                                        ^~~~~
+bit_register_operations/CFL_plc_functions.c:173:59: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_print_float_buf_CFL(void *input, const char *buffer_name)
+                                                           ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_store_float_s_expr_CFL’:
+bit_register_operations/CFL_plc_functions.c:176:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_store_float_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:176:62: warning: unused parameter ‘buffer_name’ [-Wunused-parameter]
+ void Asm_plc_store_float_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                              ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:176:90: warning: unused parameter ‘store_index’ [-Wunused-parameter]
+ void Asm_plc_store_float_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                          ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:176:115: warning: unused parameter ‘s_expression’ [-Wunused-parameter]
+ void Asm_plc_store_float_s_expr_CFL(void *input, const char *buffer_name, unsigned short store_index, const char *s_expression)
+                                                                                                                   ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_search_float_value_CFL’:
+bit_register_operations/CFL_plc_functions.c:180:43: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_search_float_value_CFL(void *input, const char *float_buffer_name, unsigned short start_index, unsigned short end_index,
+                                           ^~~~~
+bit_register_operations/CFL_plc_functions.c:180:62: warning: unused parameter ‘float_buffer_name’ [-Wunused-parameter]
+ void Asm_plc_search_float_value_CFL(void *input, const char *float_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                              ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:180:96: warning: unused parameter ‘start_index’ [-Wunused-parameter]
+ void Asm_plc_search_float_value_CFL(void *input, const char *float_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                                                                ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:180:124: warning: unused parameter ‘end_index’ [-Wunused-parameter]
+ void Asm_plc_search_float_value_CFL(void *input, const char *float_buffer_name, unsigned short start_index, unsigned short end_index,
+                                                                                                                            ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:181:49: warning: unused parameter ‘s_expression’ [-Wunused-parameter]
+                                     const char *s_expression, unsigned short result_value,
+                                                 ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:181:78: warning: unused parameter ‘result_value’ [-Wunused-parameter]
+                                     const char *s_expression, unsigned short result_value,
+                                                                              ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:182:49: warning: unused parameter ‘bit_index’ [-Wunused-parameter]
+                                     const char *bit_index, unsigned short result_state)
+                                                 ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:182:75: warning: unused parameter ‘result_state’ [-Wunused-parameter]
+                                     const char *bit_index, unsigned short result_state)
+                                                                           ^~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_wait_float_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:186:48: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_wait_float_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                ^~~~~
+bit_register_operations/CFL_plc_functions.c:186:67: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_wait_float_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                   ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:186:81: warning: unused parameter ‘time_out_ms’ [-Wunused-parameter]
+ void Asm_plc_wait_float_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                                 ^~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:186:106: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_wait_float_s_expression_CFL(void *input, const char *buf_name, int time_out_ms, const char *one_shot_failure_fn,
+                                                                                                          ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:187:48: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:187:64: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:187:92: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                          void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                            ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c: In function ‘Asm_plc_verify_float_s_expression_CFL’:
+bit_register_operations/CFL_plc_functions.c:191:50: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void Asm_plc_verify_float_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                  ^~~~~
+bit_register_operations/CFL_plc_functions.c:191:69: warning: unused parameter ‘buf_name’ [-Wunused-parameter]
+ void Asm_plc_verify_float_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                     ^~~~~~~~
+bit_register_operations/CFL_plc_functions.c:191:91: warning: unused parameter ‘one_shot_failure_fn’ [-Wunused-parameter]
+ void Asm_plc_verify_float_s_expression_CFL(void *input, const char *buf_name, const char *one_shot_failure_fn,
+                                                                                           ^~~~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:192:50: warning: unused parameter ‘user_data’ [-Wunused-parameter]
+                                            void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                  ^~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:192:66: warning: unused parameter ‘terminate_flag’ [-Wunused-parameter]
+                                            void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                  ^~~~~~~~~~~~~~
+bit_register_operations/CFL_plc_functions.c:192:94: warning: unused parameter ‘s_expression_name’ [-Wunused-parameter]
+                                            void *user_data, bool terminate_flag, const char *s_expression_name)
+                                                                                              ^~~~~~~~~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘load_df_column_functions_CFL’:
+bit_register_operations/CFL_data_flow_function.c:187:41: warning: unused parameter ‘input’ [-Wunused-parameter]
+ void load_df_column_functions_CFL(void* input) {
+                                         ^~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘test_s_expression’:
+bit_register_operations/CFL_data_flow_function.c:220:77: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static bool test_s_expression(void* handle, void* params, Event_data_CFL_t* event_data){
+                                                                             ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘store_s_expression’:
+bit_register_operations/CFL_data_flow_function.c:267:77: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void store_s_expression(void* input, void* params, Event_data_CFL_t* event_data) {
+                                                                             ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘reset_df_buffer’:
+bit_register_operations/CFL_data_flow_function.c:274:77: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void reset_df_buffer(void* input, void* parameter, Event_data_CFL_t* event_data) {
+                                                                             ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘copy_df_buff_array’:
+bit_register_operations/CFL_data_flow_function.c:281:77: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void copy_df_buff_array(void* input, void* params, Event_data_CFL_t* event_data) {
+                                                                             ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘set_df_buf_positions’:
+bit_register_operations/CFL_data_flow_function.c:288:79: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void set_df_buf_positions(void* input, void* params, Event_data_CFL_t* event_data) {
+                                                                               ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘df_buffer_shift’:
+bit_register_operations/CFL_data_flow_function.c:295:74: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void df_buffer_shift(void* input, void* params, Event_data_CFL_t* event_data) {
+                                                                          ^~~~~~~~~~
+bit_register_operations/CFL_data_flow_function.c: In function ‘print_df_buf_CFL’:
+bit_register_operations/CFL_data_flow_function.c:304:78: warning: unused parameter ‘event_data’ [-Wunused-parameter]
+ static void print_df_buf_CFL(void* input, void* parameter, Event_data_CFL_t* event_data) {
+                                                                              ^~~~~~~~~~

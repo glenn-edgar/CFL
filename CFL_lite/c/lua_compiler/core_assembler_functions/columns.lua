@@ -49,7 +49,7 @@ function define_column(name, startup_flag,queue_name)
    column_data["startup_flag"] = startup_flag   
    column_data["start_state"] = -1
    column_data["end_state"] = -1
-   column_data["watch_dog_number"] = -1
+  
 
    if queue_name == nil then
       column_data["queue_number"] = -1
@@ -98,8 +98,24 @@ function check_for_undefined_columns()
 end
 
 
+
 function output_column_RAM_data_structures()
     write_output("\n\n//----------RAM data structures for columns ----\n\n")
+
+    build_status["watch_dog_trigger_count"] = generate_unique_function_name()
+    local message = string.format("unsigned %s[%d];\n",build_status["watch_dog_trigger_count"],#column_list)
+    write_output(message)
+    
+    build_status["watch_dog_count"] = generate_unique_function_name()
+    local message = string.format("unsigned %s[%d];\n",build_status["watch_dog_count"],#column_list)
+    write_output(message)
+    
+    build_status["watch_dog_id"] = generate_unique_function_name()
+    local message = string.format("unsigned short %s[%d];\n",build_status["watch_dog_id"],#column_list)
+    write_output(message)
+    
+    
+    
     build_status["column_flags"] = generate_unique_function_name() 
     local message = string.format("unsigned char %s[%d];\n",build_status["column_flags"],#column_list)
     write_output(message)
@@ -124,7 +140,7 @@ typedef struct Column_ROM_CFL_t
   unsigned short start;
   short start_state;
   short end_state;
-  short watch_dog_id;
+  
 } Column_ROM_CFL_t;
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -141,15 +157,14 @@ function output_column_ROM_data_structures()
        queue_number = column_names[v]["data"]["queue_number"]
       
        local column_data = column_names[v]["data"]
-       message = string.format("  { %d,%s, %d, %d, %d, %d, %d,%d },\n",
+       message = string.format("  { %d,%s, %d, %d, %d, %d, %d },\n",
                             queue_number,
                             column_data["startup_flag"],
                             i-1,
                             column_data["number"],
                             column_data["start"],
                             column_data["start_state"],
-                            column_data["end_state"],
-                            column_data["watch_dog_number"])
+                            column_data["end_state"])
        write_output(message)
        
     end

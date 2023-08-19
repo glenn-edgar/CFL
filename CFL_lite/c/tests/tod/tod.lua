@@ -17,7 +17,7 @@ static const char failure_verify_28[] = "failure for verify 28";
 
 local tod_verify_reset_fn_header = [[
 
-void tod_verify_reset(void *input,void *params,Event_data_CFL_t *eventdata);
+void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata);
 
 
 ]]
@@ -33,7 +33,7 @@ void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata
 }
 ]]
 
-Store_one_shot_function("TOD_VERIFY_RESET",'tod_verify_reset',tod_verify_reset_fn_code,wait_event_reset_fn_header)
+Store_one_shot_function("TOD_VERIFY_RESET",'tod_verify_reset',tod_verify_reset_fn_code,tod_verify_reset_fn_header)
 
 
 local lt_10 = generate_tod_dictionary()
@@ -57,7 +57,7 @@ local column_list = {"engine_time_out","test_wait_tod_second","test_verify_tod_s
 define_columns(column_list)
 
 define_column("engine_time_out",true,nill)
-  Wait_delay(120000)
+  Wait_delay(180000)
   terminate_engine()
 end_column()
   
@@ -84,9 +84,11 @@ define_column("test_wait_tod_second",true,nil)
    reset_column()
 end_column()
 
+local lt_1 = generate_tod_dictionary()
+add_second(lt_1,1)
 
-local ge_27 = generate_tod_dictionary()
-add_second(ge_27,27)
+local ge_17 = generate_tod_dictionary()
+add_second(ge_17,17)
 
 local ge_28 = generate_tod_dictionary()
 add_second(ge_28,28)
@@ -102,17 +104,20 @@ add_second(le_49,49)
 define_column("test_verify_tod_second",true,nil)
    Log_msg("verify tod column start")
  
-   Log_msg("made it past 20 seconds")
-   Log_msg("at reset at 28")
-   Wait_tod_ge(ge_27)
+   
+  
+   Wait_tod_lt(lt_1)
+   Log_msg("made it pass 0")
+   Wait_tod_ge(ge_17)
+   Log_msg("made it past 17 seconds")
   
    Verify_tod_lt(true,"TOD_VERIFY_RESET",'failure_verify_50',lt_50)
    Verify_tod_le(true,"TOD_VERIFY_RESET",'failure_verify_49',le_49)
 
    -- this verification fails with a reset
    Verify_tod_ge(false,"TOD_VERIFY_RESET",'failure_verify_28',ge_28)
-  
-   terminate_column()
+  halt_column()
+   
 end_column()
 
 

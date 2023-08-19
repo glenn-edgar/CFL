@@ -43,17 +43,17 @@ typedef struct Column_element_CFL_t
 
 #define COLUMN_ACTIVE 0x01
 #define COLUMN_SUCCESS 0x02
+#define WATCH_DOG_ACTIVE 0x04
+
 
 #define COLUMN_ELEMENT_ACTIVE 0x1
 #define COLUMN_ELEMENT_INITIALIZED 0x2
 
 typedef struct Column_watch_dog_ROM_CFL_t
 {
-  bool termination_flag;
-  unsigned short column_index;
-  unsigned short trigger_count;
-  void *user_data;
-  One_shot_function_CFL_t trigger_function;
+   const void *user_data;
+   bool termination_flag;
+   One_shot_function_CFL_t trigger_function;
 
 } Column_watch_dog_ROM_CFL_t;
 
@@ -66,7 +66,7 @@ typedef struct Column_ROM_CFL_t
   unsigned short start;
   short start_state;
   short end_state;
-  short watch_dog_id;
+
 } Column_ROM_CFL_t;
 
 typedef struct Engine_control_CFL_t
@@ -112,11 +112,12 @@ typedef struct Handle_CFL_t
   const unsigned short number_of_columns;
   const Column_ROM_CFL_t *column_rom_data;
 
-  const unsigned short number_of_watch_dogs;
-  bool *watch_dog_active;
-  unsigned *watch_dog_count;
   unsigned *watch_dog_trigger_count;
-  const Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
+  unsigned *watch_dog_count;
+  unsigned short *watch_dog_id;
+  unsigned short watch_dog_number;
+
+  const  Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
   Time_control_CFL_t *time_control;
   Engine_control_CFL_t *engine_control;
   Debug_out_CFL_t debug_function;
@@ -164,11 +165,6 @@ unsigned get_current_column_element_index_CFL(const void *input);
 
 unsigned short get_current_column_index_CFL(const void *input);
 
-void set_column_watch_dog_CFL(const void *input, void *params,
-                              Event_data_CFL_t *event_data);
-
-void clear_column_watch_dog_CFL(const void *input, void *params,
-                                Event_data_CFL_t *event_data);
 
 void change_local_column_state_CFL(const void *input, unsigned char new_state);
 
@@ -177,6 +173,10 @@ Time_control_CFL_t *Get_time_control_CFL(const void *input);
 void free_event_CFL(const void *input, Event_data_CFL_t * event_data);
 
 void reset_all_queues(const void *input);
+
+void attach_watch_dog_handler_CFL(void *input, unsigned short watch_dog_id, unsigned watch_dog_count);
+
+void detach_watch_dog_handler_CFL(void *input);
 
 void Initialize_engine_CFL(const void *input);
 

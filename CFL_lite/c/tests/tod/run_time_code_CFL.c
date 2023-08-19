@@ -129,13 +129,6 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     return *return_code;
 }
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -156,6 +149,13 @@ void log_message_CFL(const void *input, void *params,
               column_index, column_element_number, *message);
 }
 
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
 
 void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata){
    (void)input;
@@ -164,9 +164,37 @@ void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata
    Printf_CFL("terminate flag %d \n",wait_tod->terminate_flag);
    Printf_CFL(" %s \n",(const char *)wait_tod->user_data);
 }
+ 
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
+                            Event_data_CFL_t *event_data)
+{
+  
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
+  
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    
+    *while_time_control->start_time = handle->time_control->current_millis;
+    
+    return false;
+  }
+  if (event_data->event_index == TIMER_TICK_CFL)
+  {
+    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
+    if (timeElasped >= while_time_control->time_delay)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 static bool test_while_tod_operations(unsigned short op_type, short ref, short compare ){
-    printf("op_type: %d, ref %d, compare %d \n",op_type,ref,compare);
+    
     switch(op_type){
        
         case OP_LT_CFL:
@@ -204,7 +232,7 @@ static bool test_while_tod_operations(unsigned short op_type, short ref, short c
         default:
         ASSERT_PRINT_INT("Invalid operator type",op_type);
     }
-    printf("returning false \n");
+   
     return false;
 
 
@@ -266,32 +294,4 @@ bool test_tod_condition(const void *input, void *user_data, Event_data_CFL_t *ev
     }
 
     return false;
-}
- 
-
-
-bool wait_time_delay_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data)
-{
-  
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
-  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
-  
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    
-    *while_time_control->start_time = handle->time_control->current_millis;
-    
-    return false;
-  }
-  if (event_data->event_index == TIMER_TICK_CFL)
-  {
-    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
-    if (timeElasped >= while_time_control->time_delay)
-    {
-      return true;
-    }
-  }
-
-  return false;
 }

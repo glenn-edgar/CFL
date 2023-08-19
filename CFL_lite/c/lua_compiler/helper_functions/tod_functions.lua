@@ -31,7 +31,7 @@ bool test_tod_condition(const void *input, void *user_data, Event_data_CFL_t *ev
 local tod_test_code = [[
 
 static bool test_while_tod_operations(unsigned short op_type, short ref, short compare ){
-    printf("op_type: %d, ref %d, compare %d \n",op_type,ref,compare);
+    
     switch(op_type){
        
         case OP_LT_CFL:
@@ -69,7 +69,7 @@ static bool test_while_tod_operations(unsigned short op_type, short ref, short c
         default:
         ASSERT_PRINT_INT("Invalid operator type",op_type);
     }
-    printf("returning false \n");
+   
     return false;
 
 
@@ -242,7 +242,7 @@ function Wait_tod_le(dictionary)
 end
 
 local verify_event_rom = [[
-   const Wait_tod_ROM_CFL_t %s_rom = { %s,%s,%s,%s,%s,%s,%s,%s,%s,%s }; 
+   const Wait_tod_ROM_CFL_t %s = { %s,%s,%s,%s,%s,%s,%s,%s,%s,%s }; 
 ]]
 
 function Verify_tod(op_type,terminate_flag,failure_function,user_data,dictionary)
@@ -262,7 +262,7 @@ function Verify_tod(op_type,terminate_flag,failure_function,user_data,dictionary
     
   
    
-    Verify("TOD_TEST", terminate_flag,failure_function,"(const void *)&"..unique_name..'_rom')    
+    Verify("TOD_TEST", terminate_flag,failure_function,"(void *)&"..unique_name)    
 end
 
 
