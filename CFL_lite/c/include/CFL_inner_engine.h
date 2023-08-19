@@ -49,13 +49,7 @@ typedef struct Column_element_CFL_t
 #define COLUMN_ELEMENT_ACTIVE 0x1
 #define COLUMN_ELEMENT_INITIALIZED 0x2
 
-typedef struct Column_watch_dog_ROM_CFL_t
-{
-   const void *user_data;
-   bool termination_flag;
-   One_shot_function_CFL_t trigger_function;
 
-} Column_watch_dog_ROM_CFL_t;
 
 typedef struct Column_ROM_CFL_t
 {
@@ -114,10 +108,11 @@ typedef struct Handle_CFL_t
 
   unsigned *watch_dog_trigger_count;
   unsigned *watch_dog_count;
-  unsigned short *watch_dog_id;
-  unsigned short watch_dog_number;
-
-  const  Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
+ 
+  One_shot_function_CFL_t *watch_dog_trigger_function;
+  bool *watch_dog_termination_flag;
+  void **watch_dog_user_data;
+  
   Time_control_CFL_t *time_control;
   Engine_control_CFL_t *engine_control;
   Debug_out_CFL_t debug_function;
@@ -174,9 +169,13 @@ void free_event_CFL(const void *input, Event_data_CFL_t * event_data);
 
 void reset_all_queues(const void *input);
 
-void attach_watch_dog_handler_CFL(void *input, unsigned short watch_dog_id, unsigned watch_dog_count);
+void attach_watch_dog_handler_CFL(const void *input,
+                                  One_shot_function_CFL_t one_shot,
+                                  void *user_data,
+                                  bool termination_flag,
+                                  unsigned watch_dog_count);
 
-void detach_watch_dog_handler_CFL(void *input);
+void detach_watch_dog_handler_CFL(const void *input);
 
 void Initialize_engine_CFL(const void *input);
 

@@ -95,48 +95,49 @@ function dump_header()
 
 
     typedef struct Handle_CFL_t
-{
-
-  const Named_event_queue_control_CFL_t *queue_rom;
-  Event_control_RAM_CFL_t *queue_ram;
-  Event_data_CFL_t *event_data;
-
-  unsigned char *column_elements_flags;
-  const Column_element_CFL_t *column_elements_ROM;
-
-  unsigned char *column_flags;
-  void **column_local_data;
-  unsigned char *column_state;
-  const unsigned short number_of_columns;
-  const Column_ROM_CFL_t *column_rom_data;
-
-  unsigned *watch_dog_trigger_count;
-  unsigned *watch_dog_count;
-  unsigned short *watch_dog_id;
-  unsigned short 0; //watch_dog_number;
-
-  const  Column_watch_dog_ROM_CFL_t *watch_dog_rom_data;
-  Time_control_CFL_t *time_control;
-  Engine_control_CFL_t *engine_control;
-  Debug_out_CFL_t debug_function;
-  private_heap_malloc_fn malloc;
-  private_heap_free_fn free;
-  allocate_once_fn allocate_once;
-  char **master_heap_starting_location; 
-  const unsigned master_heap_size;             
-  unsigned *remaining_heap_size;  // set by c runtime
-  char **current_heap_location;  // set by c runtime
-  CS_MEMORY_CONTROL *private_heap;      
-  
-  unsigned private_heap_size;
-
-} Handle_CFL_t;
+    {
+    
+      const Named_event_queue_control_CFL_t *queue_rom;
+      Event_control_RAM_CFL_t *queue_ram;
+      Event_data_CFL_t *event_data;
+    
+      unsigned char *column_elements_flags;
+      const Column_element_CFL_t *column_elements_ROM;
+    
+      unsigned char *column_flags;
+      void **column_local_data;
+      unsigned char *column_state;
+      const unsigned short number_of_columns;
+      const Column_ROM_CFL_t *column_rom_data;
+    
+      unsigned *watch_dog_trigger_count;
+      unsigned *watch_dog_count;
+     
+      One_shot_function_CFL_t *watch_dog_trigger_function;
+      bool *watch_dog_termination_flag;
+      void **watch_dog_user_data;
+      
+      Time_control_CFL_t *time_control;
+      Engine_control_CFL_t *engine_control;
+      Debug_out_CFL_t debug_function;
+      private_heap_malloc_fn malloc;
+      private_heap_free_fn free;
+      allocate_once_fn allocate_once;
+      char **master_heap_starting_location; 
+      const unsigned master_heap_size;             
+      unsigned *remaining_heap_size;  // set by c runtime
+      char **current_heap_location;  // set by c runtime
+      CS_MEMORY_CONTROL *private_heap;      
+      
+      unsigned private_heap_size;
+    
+    } Handle_CFL_t;
 
     
 
     ]]
     local header_code = [[
-      const Column_watch_dog_ROM_CFL_t watch_dog_control[0];
+      
      
  /*
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -150,13 +151,14 @@ const struct Handle_CFL_t %s =
 
   .column_elements_flags =%s,
   .column_elements_ROM = %s,
-  
+
   .watch_dog_trigger_count = %s,
   .watch_dog_count       =  %s,  
-  .watch_dog_id          =  %s,
-  .watch_dog_number    =    0,
-
-   .watch_dog_rom_data = watch_dog_control,
+  .watch_dog_trigger_function = %s,
+  .watch_dog_termination_flag = %s,
+  .watch_dog_user_data = %s,
+   
+   
   .column_flags = %s,
   .column_local_data = %s,
   .column_state = %s,
@@ -194,9 +196,11 @@ local message = string.format(header_code,
                               build_status["column_element_rom"],
 
                               build_status["watch_dog_trigger_count"],
-                              build_status["watch_dog_count"],
-                              build_status["watch_dog_id"],
-
+                              build_status["watch_dog_count"],                    
+                              build_status["trigger_function"],
+                              build_status["termination_flag"],
+                              build_status["user_data"],
+                              
                               build_status["column_flags"],
                               build_status["local_data"],
                               build_status["new_state"],

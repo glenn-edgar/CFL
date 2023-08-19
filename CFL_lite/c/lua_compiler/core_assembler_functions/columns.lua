@@ -47,7 +47,7 @@ function define_column(name, startup_flag,queue_name)
    column_data["start"] = #column_element_table -- zero based index
    build_status["number"] = 0 
    column_data["startup_flag"] = startup_flag   
-   column_data["start_state"] = -1
+   column_data["start_state"] =-1
    column_data["end_state"] = -1
   
 
@@ -83,6 +83,34 @@ function end_column()
    build_status["column_status"] = false
    build_status["column_name"] = nil
    
+   if column_data["start_state"] == -1 then
+     
+      return
+   end
+   if column_data["end_state"] == -1 then
+      print("Column "..column_name.." has start state but no end state")
+      os.exit(1)
+   end
+   if type(column_data["start_state"]) ~= "number" then
+      print("Column "..column_name.." has invalid start state")
+      os.exit(1)
+   end
+   if type(column_data["end_state"]) ~= "number" then
+      print("Column "..column_name.." has invalid end state")
+      os.exit(1)
+   end   
+   if column_data["end_state"] < column_data["start_state"] then
+      print("Column "..column_name.." has end state less than start state")
+      os.exit(1)
+   end
+   if column_data["end_state"] >= column_data["number"] then
+      print("Column "..column_name.." has end state greater than number of elements")
+      os.exit(1)
+   end
+   if column_data["start_state"] >= column_data["number"] then
+      print("Column "..column_name.." has start state greater than number of elements")
+      os.exit(1)
+   end
    
 end
 
@@ -97,7 +125,7 @@ function check_for_undefined_columns()
    end
 end
 
-
+   
 
 function output_column_RAM_data_structures()
     write_output("\n\n//----------RAM data structures for columns ----\n\n")
@@ -110,8 +138,16 @@ function output_column_RAM_data_structures()
     local message = string.format("unsigned %s[%d];\n",build_status["watch_dog_count"],#column_list)
     write_output(message)
     
-    build_status["watch_dog_id"] = generate_unique_function_name()
-    local message = string.format("unsigned short %s[%d];\n",build_status["watch_dog_id"],#column_list)
+    build_status["trigger_function"] = generate_unique_function_name()
+    local message = string.format("One_shot_function_CFL_t  %s[%d];\n",build_status["trigger_function"],#column_list)
+    write_output(message)
+    
+    build_status["termination_flag"] = generate_unique_function_name()
+    local message = string.format("bool  %s[%d];\n",build_status["termination_flag"],#column_list)
+    write_output(message)
+    
+    build_status["user_data"] = generate_unique_function_name()
+    local message = string.format("void *  %s[%d];\n",build_status["user_data"],#column_list)
     write_output(message)
     
     

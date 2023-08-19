@@ -125,7 +125,10 @@ static inline bool process_column_watch_dog(const void *input,
                                             Event_data_CFL_t *event_data)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  
+  static unsigned current_column_index = 0;
+
+  current_column_index = column_index;
+
   if(event_data->event_index != TIMER_TICK_CFL)
   {
     return false;
@@ -147,15 +150,16 @@ static inline bool process_column_watch_dog(const void *input,
     return false;
   }
   
-
-
-  // watch dog has expired at this point
-   const Column_watch_dog_ROM_CFL_t *watch_dog = handle->watch_dog_rom_data + handle->watch_dog_id[column_index];
+  One_shot_function_CFL_t watch_dog_triger = handle->watch_dog_trigger_function[column_index];
 
   
+  if(watch_dog_triger != NULL)
+  {
+   watch_dog_triger(handle,&current_column_index, event_data);
+  }
+  
 
-   watch_dog->trigger_function(handle,(void *) watch_dog->user_data, event_data);
-   if(watch_dog->termination_flag == true)
+   if(handle->watch_dog_termination_flag[column_index] == true)
    {
      disable_column_CFL(handle, column_index);
    }
@@ -598,7 +602,11 @@ void reset_all_queues(const void *input)
   }
 }
 
-void attach_watch_dog_handler_CFL(void *input, unsigned short watch_dog_id, unsigned watch_dog_count)
+void attach_watch_dog_handler_CFL(const void *input,
+                                  One_shot_function_CFL_t one_shot,
+                                  void *user_data,
+                                  bool termination_flag,
+                                  unsigned watch_dog_count)
 {
   Handle_CFL_t *handle = (Handle_CFL_t *)input;
   // find current column
@@ -610,23 +618,22 @@ void attach_watch_dog_handler_CFL(void *input, unsigned short watch_dog_id, unsi
     ASSERT_PRINT_INT("column has watch dog active", column_index);
   }
   handle->column_flags[column_index] = handle->column_flags[column_index] | WATCH_DOG_ACTIVE;
-  if (watch_dog_id >= handle->watch_dog_number)
-  {
-    ASSERT_PRINT_INT("invalid watch dog id", watch_dog_id);
-  }
-  handle->watch_dog_id[watch_dog_id] = watch_dog_id;
-  handle->watch_dog_trigger_count[watch_dog_id] = watch_dog_count;
-  handle->watch_dog_count[watch_dog_id] = 0;
+  
+  handle->watch_dog_trigger_function[column_index] = one_shot;
+  handle->watch_dog_user_data[column_index] = user_data;
+  handle->watch_dog_termination_flag[column_index] = termination_flag;
+  handle->watch_dog_trigger_count[column_index] = watch_dog_count;
+  handle->watch_dog_count[column_index] = 0;
 }
 
-void detach_watch_dog_handler_CFL(void *input)
+void detach_watch_dog_handler_CFL(const void *input)
 {
   Handle_CFL_t *handle = (Handle_CFL_t *)input;
   Engine_control_CFL_t *engine_control = handle->engine_control;
   unsigned column_index = engine_control->current_column_index;
   handle->column_flags[column_index] = handle->column_flags[column_index] & ~WATCH_DOG_ACTIVE;
-  unsigned short watch_dog_id = handle->watch_dog_id[column_index];
   
-  handle->watch_dog_trigger_count[watch_dog_id] = 0;
-  handle->watch_dog_count[watch_dog_id] = 0;
+  
+  handle->watch_dog_trigger_count[column_index] = 0;
+  handle->watch_dog_count[column_index] = 0;
 }
