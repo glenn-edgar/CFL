@@ -38,7 +38,7 @@ function define_column(name, startup_flag,queue_name)
       print("Column name "..name.." already defined")
       os.exit(1)
    end
-   
+   build_status["column_state_changes"] = {} -- list of column state changes
    build_status["column_status"] = true
    build_status["column_name"] = name
    local column_data = {}
@@ -103,15 +103,26 @@ function end_column()
       print("Column "..column_name.." has end state less than start state")
       os.exit(1)
    end
-   if column_data["end_state"] >= column_data["number"] then
+   if(column_data["end_state"] < column_data["start_state"]) then
+      print("Column "..column_name.." has end state less than start state")
+      os.exit(1)
+   end
+   if column_data["end_state"] > column_data["number"] then
       print("Column "..column_name.." has end state greater than number of elements")
       os.exit(1)
    end
-   if column_data["start_state"] >= column_data["number"] then
+   if column_data["start_state"] > column_data["number"] then
       print("Column "..column_name.." has start state greater than number of elements")
       os.exit(1)
    end
-   
+   -- check column state changes
+   for i,state_change in ipairs(build_status["column_state_changes"]) do
+       
+       if state_change > column_data["end_state"]-column_data["start_state"] then
+          print("Column "..column_name.." has state change greater than end state")
+          os.exit(1)
+       end
+      end
 end
 
 

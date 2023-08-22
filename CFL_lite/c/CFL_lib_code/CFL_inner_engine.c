@@ -48,8 +48,9 @@ static inline void disable_selected_column_elements(const void *input, unsigned 
   unsigned column_element_number;
   char column_element_flag;
 
-  for (int i = end_state; i > start_state; i--)
-  {
+  for (int i = end_state; i >= start_state; i--)
+  { 
+    
     column_element_number = column->start + i;
     column_element_flag = flags[column_element_number];
     if (((column_element_flag % COLUMN_ELEMENT_ACTIVE) != 0) &&
@@ -87,10 +88,11 @@ static inline void enable_column_element(const void *input, unsigned short colum
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
 
   unsigned char *flags = handle->column_elements_flags;
-
+  
   unsigned short column_element_number = column->start + column_element_index;
   flags[column_element_number] = flags[column_element_number] & ~COLUMN_ELEMENT_INITIALIZED;
   flags[column_element_number] = flags[column_element_number] | COLUMN_ELEMENT_ACTIVE;
+  
 }
 
 static inline void change_column_state(const void *input, unsigned column_index)
@@ -109,15 +111,9 @@ static inline void change_column_state(const void *input, unsigned column_index)
     ASSERT_PRINT_INT("invalid column state machine end state", end_state);
   }
   int new_state = handle->column_state[column_index];
-
-  if (new_state >= end_state - start_state)
-  {
-    ASSERT_PRINT_INT("invalid column state machine new state", new_state);
-  }
-  new_state += start_state;
-
   disable_selected_column_elements(handle, column_index, start_state, end_state);
   enable_column_element(handle, column_index, new_state);
+ 
 }
 
 static inline bool process_column_watch_dog(const void *input,
@@ -241,12 +237,12 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
 
   for (unsigned i = 0; i < column->number; i++)
   {
-
+   
     if ((handle->column_elements_flags[column->start + i] & COLUMN_ELEMENT_ACTIVE) == 0)
     {
       continue;
     }
-
+  
     column_element_count += 1;
     handle->engine_control->current_column_element_index = i;
 
@@ -256,8 +252,8 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
 
     if (return_code == COLUMN_STATE_CHANGE_CFL)
     {
-      ASSERT_PRINT_INT("column state change not supportedd \n", column->id);
-      // change_column_state(handle, column_index);
+      handle->column_elements_flags[column->start + i] &= ~(COLUMN_ELEMENT_ACTIVE);
+      change_column_state(handle, column_index);
       return true; // terminates column processing
     }
 
@@ -565,8 +561,9 @@ void change_local_column_state_CFL(const void *input, unsigned char new_state)
     ASSERT_PRINT("Column is not a column state machine", "");
   }
   unsigned state_number = column_ROM->end_state - column_ROM->start_state;
-  if (new_state >= state_number)
+  if (new_state > state_number)
   {
+    
     ASSERT_PRINT_INT("New state is out of range", new_state);
   }
   else

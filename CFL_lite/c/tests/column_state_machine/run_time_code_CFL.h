@@ -12,74 +12,17 @@ extern "C" {
 //----------Ref function header code ----
 
 
-
-typedef struct While_control_RAM_CFL_t{
-    int current_count;
-} While_control_RAM_CFL_t;
-
-
-typedef struct While_control_ROM_t
-{
-    const int time_out_ms;
-    const bool terminate_flag;
-    const void* user_data;
-    While_control_RAM_CFL_t *while_control_ram;
-    One_shot_function_CFL_t user_time_out_fn;
-    
-} While_control_ROM_CFL_t;
-
-int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
-
-
 int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
                             Event_data_CFL_t *event_data);
 
 
-extern const int reset_buffer[1];
-extern const int halt_buffer[1];
-extern const int terminate_buffer[1];
-extern const int terminate_engine_buffer[1];
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data);
-
-    void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-typedef struct Attach_watch_dog_CFL_t{
-   One_shot_function_CFL_t    watch_dog_trigger_function;
-    bool                      watch_dog_termination_flag;
-    void *                    watch_dog_user_data;
-    unsigned                  watch_dog_trigger_count;
-}Attach_watch_dog_CFL_t;
-
-
-int Start_watch_dog_CFL(const void *handle, void *params,
-                            Event_data_CFL_t *event_data);
+int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data);
 
-extern const char *clear_watch_dog_placeholder;
-int Clear_watch_dog_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data);
-
-
-void test_wd_handler(const void *input,void *params,Event_data_CFL_t *eventdata);
-
-
-
-     
-typedef struct While_time_control_ROM_t
-{
-   unsigned  time_delay;
-   unsigned  *start_time;
-} While_time_control_ROM_CFL_t;
-
-
-bool wait_time_delay_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data);
    
 
 #ifdef __cplusplus
