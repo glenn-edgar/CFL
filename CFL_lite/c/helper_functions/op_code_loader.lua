@@ -1,7 +1,0 @@
-print("made it heere")
-dofile("return_codes.lua")
-dofile("basic_functions.lua")
-dofile("wait_verify.lua")
-print("made it here")
-os.exit(1)
-dofile("tod_functions.lua")

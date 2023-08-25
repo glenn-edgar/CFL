@@ -16,59 +16,62 @@ extern "C" {
 
 //----------RAM data structures for event queues ----
 
-static Event_data_CFL_t qmeotyozox[10];
-static Event_control_RAM_CFL_t zopeutwruh[1];
+static Event_control_RAM_CFL_t helzvyvbwv[1];
+static Event_data_CFL_t vtoluetrvz[10];
 
 
 //------  ROM data structures for event queues ----
 
-static const Event_control_ROM_CFL_t kpquvzarzv_default = { 10, 0 };
-static const Event_control_ROM_CFL_t *kpquvzarzv[] = {
-     &kpquvzarzv_default,
+static const Event_control_ROM_CFL_t cruwbiubox[] = { 
+     {  10, vtoluetrvz },
 };
-static const Named_event_queue_control_CFL_t gqzkobqofh = { 1,10,kpquvzarzv };
-static const char *pwmswruhms = "this column will terminate the engine after 10 seconds";
+static const char *zodjwnuytz = "this column will terminate the engine after 10 seconds";
 
 
-unsigned  twuocxsesa;
-const While_time_control_ROM_CFL_t bkifbpgnzh = { 10000,&twuocxsesa };
-
-
-
-static While_control_RAM_CFL_t oefhqtoopk_ram = { 0 };  // current count 
-
-
-  
-
-static const While_control_ROM_CFL_t pskithztho_rom = { 0 ,true, &bkifbpgnzh,&oefhqtoopk_ram,null_function};
-
-    
-static const char *tczimyjmlf = "time delay done";
-static const char *fzcculowuw = "stop engine";
-static const char *ngxxllqful = "this column will reset the engine every 2 seconds";
-
-
-unsigned  yyxsdbgshz;
-const While_time_control_ROM_CFL_t wxneerfoej = { 2000,&yyxsdbgshz };
+unsigned  snrrrbsgfw;
+const While_time_control_ROM_CFL_t uubyjpgigy = { 10000,&snrrrbsgfw };
 
 
 
-static While_control_RAM_CFL_t ifolrqmxmb_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t gigjevtbtq_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t tiubqxsqjc_rom = { 0 ,true, &wxneerfoej,&ifolrqmxmb_ram,null_function};
+static const While_control_ROM_CFL_t yrjxcactka_rom = { 0 ,true, &uubyjpgigy,&gigjevtbtq_ram,null_function};
 
     
-static const char *iokqnsulij = "two seconds past-- reset column";
+static const char *olklkbuijn = "time delay done";
+static const char *fuqvfyjfll = "stop engine";
+static const char *mdwtukvkxj = "this column will reset the engine every 2 seconds";
+
+
+unsigned  evxzcjsbpr;
+const While_time_control_ROM_CFL_t xxjdiuoygb = { 2000,&evxzcjsbpr };
+
+
+
+static While_control_RAM_CFL_t oppxqhknmf_ram = { 0 };  // current count 
+
+
+  
+
+static const While_control_ROM_CFL_t toevjrdbms_rom = { 0 ,true, &xxjdiuoygb,&oppxqhknmf_ram,null_function};
+
+    
+static const char *gvmipcjtwl = "two seconds past-- reset column";
 
 
 //----------RAM data structures for columns ----
 
-unsigned char txvnwfxwcm[2];
-unsigned char vtninhblqs[2];
-void* gjnqzreepc[2];
+unsigned ymsnrvdhzl[2];
+unsigned yhjplfroaq[2];
+One_shot_function_CFL_t  nztpfdekpw[2];
+unsigned char sgfafwpqdw[2];
+void *  piueyfsrwa[2];
+unsigned char kmdsgwxfom[2];
+unsigned char bnpelqxsgn[2];
+void* faxkugfujo[2];
 /*
 ------------------------ ROM data structures for columns --------------------------
 typedef struct Column_ROM_CFL_t
@@ -80,7 +83,7 @@ typedef struct Column_ROM_CFL_t
   unsigned short start;
   short start_state;
   short end_state;
-  short watch_dog_id;
+  
 } Column_ROM_CFL_t;
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -89,9 +92,9 @@ typedef struct Column_ROM_CFL_t
 
 //----------ROM data structures for columns ----
 
-static const Column_ROM_CFL_t smoclgggsr[] = {
-  { -1,true, 0, 5, 0, -1, -1,-1 },
-  { -1,true, 1, 4, 5, -1, -1,-1 },
+static const Column_ROM_CFL_t fnqmeffbgw[] = {
+  { -1,true, 0, 5, 0, -1, -1 },
+  { -1,true, 1, 4, 5, -1, -1 },
 };
 
 
@@ -99,7 +102,7 @@ static const Column_ROM_CFL_t smoclgggsr[] = {
 
 
 
-static unsigned char coxetsuwsb[9];
+static unsigned char rwhaerzzmv[9];
 
 
   /* 
@@ -118,84 +121,137 @@ static unsigned char coxetsuwsb[9];
 
 //----------Column elements Flash structures----
 
-static const Column_element_CFL_t ldksfzjbfx[] = {
-    {one_shot_handler_CFL,log_message_CFL,(void *)&pwmswruhms},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&pskithztho_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&tczimyjmlf},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&fzcculowuw},
+static const Column_element_CFL_t detgtzouyq[] = {
+    {one_shot_handler_CFL,log_message_CFL,(void *)&zodjwnuytz},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&yrjxcactka_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&olklkbuijn},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&fuqvfyjfll},
     {return_condition_code_CFL,NULL,(void *)terminate_engine_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ngxxllqful},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&tiubqxsqjc_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&iokqnsulij},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&mdwtukvkxj},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&toevjrdbms_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&gvmipcjtwl},
     {return_condition_code_CFL,NULL,(void *)reset_buffer},
 };
 
 
-static Time_control_CFL_t ruekdajtfa;
+static Time_control_CFL_t jzxtlvwzdy;
 
 
 
 
-static Engine_control_CFL_t cfmzieczra;
+static Engine_control_CFL_t qlmdgprexg;
 
 
 /* remaining allocate heap size */
 
-static unsigned omdtsetewu;
+static unsigned wxqkjqoysa;
 
 
 /* current heap pointer */
 
-static char* ulsbuopkuw;
+static char* ccqeukqdpb;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL igzbqnemzl;
+static CS_MEMORY_CONTROL pckescueng;
 
 
+    
+    /*
+    --------------------------- Handle definition ------------------------------
+   
 
- /*
+  
+
+
+    typedef struct Handle_CFL_t
+{
+  const unsigned queue_number;
+  const Event_control_ROM_CFL_t *queue_rom;
+  Event_control_RAM_CFL_t *queue_ram;
+  
+
+  unsigned char *column_elements_flags;
+  const Column_element_CFL_t *column_elements_ROM;
+
+  unsigned char *column_flags;
+  void **column_local_data;
+  unsigned char *column_state;
+  const unsigned short number_of_columns;
+  const Column_ROM_CFL_t *column_rom_data;
+
+  unsigned *watch_dog_trigger_count;
+  unsigned *watch_dog_count;
+ 
+  One_shot_function_CFL_t *watch_dog_trigger_function;
+  unsigned char *watch_dog_termination_flag;
+  void **watch_dog_user_data;
+  
+  Time_control_CFL_t *time_control;
+  Engine_control_CFL_t *engine_control;
+  Debug_out_CFL_t debug_function;
+  private_heap_malloc_fn malloc;
+  private_heap_free_fn free;
+  allocate_once_fn allocate_once;
+  char **master_heap_starting_location; 
+  const unsigned master_heap_size;             
+  unsigned *remaining_heap_size;  // set by c runtime
+  char **current_heap_location;  // set by c runtime
+  CS_MEMORY_CONTROL *private_heap;      
+  
+  unsigned private_heap_size;
+
+} Handle_CFL_t;
+    local header_code = [[
+      
+     
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
-const struct Handle_CFL_t zwncalykbg =
+const struct Handle_CFL_t cvjbberpxx =
 {
 
-  .queue_rom    = &gqzkobqofh,
-  .queue_ram =  zopeutwruh,
-  .event_data = qmeotyozox,
+  .queue_number = 1,
+  .queue_rom = cruwbiubox,
+  .queue_ram = helzvyvbwv,
 
-  .column_elements_flags =coxetsuwsb,
-  .column_elements_ROM = ldksfzjbfx,
+  .column_elements_flags =rwhaerzzmv,
+  .column_elements_ROM = detgtzouyq,
 
-  .column_flags = txvnwfxwcm,
-  .column_local_data = gjnqzreepc,
-  .column_state = vtninhblqs,
+  .watch_dog_trigger_count = ymsnrvdhzl,
+  .watch_dog_count       =  yhjplfroaq,  
+  .watch_dog_trigger_function = nztpfdekpw,
+  .watch_dog_termination_flag = sgfafwpqdw,
+  .watch_dog_user_data = piueyfsrwa,
+   
+   
+  .column_flags = kmdsgwxfom,
+  .column_local_data = faxkugfujo,
+  .column_state = bnpelqxsgn,
   .number_of_columns = 2,
-  .column_rom_data = smoclgggsr,
+  .column_rom_data = fnqmeffbgw,
 
-  .number_of_watch_dogs = 0,
-  .watch_dog_active = NULL,
-  .watch_dog_count = NULL,
-  .watch_dog_trigger_count = NULL,
-  .watch_dog_rom_data = NULL,
-  .time_control = &ruekdajtfa,
-  .engine_control =&cfmzieczra,
+  
+  
+  
+  .time_control = &jzxtlvwzdy,
+  .engine_control =&qlmdgprexg,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
   .master_heap_starting_location = &allocate_once_memory,
   .master_heap_size = 2000,
-  .remaining_heap_size = &omdtsetewu,
-  .current_heap_location = &ulsbuopkuw,
-  .private_heap   = &igzbqnemzl,
+  .remaining_heap_size = &wxqkjqoysa,
+  .current_heap_location = &ccqeukqdpb,
+  .private_heap   = &pckescueng,
   .private_heap_size =   1000,
 } ;
 
 
 const Handle_CFL_t*  delay_wait_handle(){
-    return &zwncalykbg;
+    return &cvjbberpxx;
 }
    
 

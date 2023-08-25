@@ -47,7 +47,7 @@ typedef struct Event_data_CFL_t
 #define RESET_CFL 4
 #define TERMINATE_CFL 5
 #define ENGINE_TERMINATE_CFL 6
-#define COLUMN_STATE_CHANGE_CFL 7
+
 
 typedef void (*One_shot_function_CFL_t)(const void* input, void* params, Event_data_CFL_t* event_data);
 

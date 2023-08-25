@@ -22,13 +22,13 @@ int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event
     unsigned short *new_state = (unsigned short *)params;
        
     change_local_column_state_CFL(input, *new_state);
-    return COLUMN_STATE_CHANGE_CFL;
+    return DISABLE_CFL;
  }
 
 ]]
 Store_column_function("COLUMN_STATE_CHANGE", 'change_column_state_CFL', change_column_state_code,change_column_state_header)
 
-local new_state_format = "const unsigned short %s = %d;\n"
+local new_state_format = "unsigned short %s = %d;\n"
 
 function Change_column_state(new_state)
     

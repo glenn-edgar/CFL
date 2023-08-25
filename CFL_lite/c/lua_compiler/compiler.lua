@@ -89,17 +89,13 @@ function dump_header()
     
     /*
     --------------------------- Handle definition ------------------------------
-    */
-
-  
-
-
+   
     typedef struct Handle_CFL_t
     {
-    
-      const Named_event_queue_control_CFL_t *queue_rom;
+      const unsigned queue_number;
+      const Event_control_ROM_CFL_t *queue_rom;
       Event_control_RAM_CFL_t *queue_ram;
-      Event_data_CFL_t *event_data;
+      
     
       unsigned char *column_elements_flags;
       const Column_element_CFL_t *column_elements_ROM;
@@ -110,12 +106,10 @@ function dump_header()
       const unsigned short number_of_columns;
       const Column_ROM_CFL_t *column_rom_data;
     
-      unsigned *watch_dog_trigger_count;
+      
+      Watch_dog_struct_CFL_t **watch_dog_struct;
       unsigned *watch_dog_count;
      
-      One_shot_function_CFL_t *watch_dog_trigger_function;
-      bool *watch_dog_termination_flag;
-      void **watch_dog_user_data;
       
       Time_control_CFL_t *time_control;
       Engine_control_CFL_t *engine_control;
@@ -134,29 +128,25 @@ function dump_header()
     } Handle_CFL_t;
 
     
-
-    ]]
-    local header_code = [[
       
      
- /*
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
+
+
 const struct Handle_CFL_t %s =
 {
 
-  .queue_rom    = &%s,
-  .queue_ram =  %s,
-  .event_data = %s,
+  .queue_number = %s,
+  .queue_rom = %s,
+  .queue_ram = %s,
 
   .column_elements_flags =%s,
   .column_elements_ROM = %s,
 
-  .watch_dog_trigger_count = %s,
-  .watch_dog_count       =  %s,  
-  .watch_dog_trigger_function = %s,
-  .watch_dog_termination_flag = %s,
-  .watch_dog_user_data = %s,
+  .watch_dog_struct = %s,
+  .watch_dog_count  = %s,
    
    
   .column_flags = %s,
@@ -186,20 +176,19 @@ const struct Handle_CFL_t %s =
 ]]
 
 
-local message = string.format(header_code,
+local message = string.format(header_def,
                               handle_name,
-                              build_status["event_queue_control"],
+                              build_status["event_queue_number"],
+                              
+                              
+                              build_status["event_queue_rom"],
                               build_status["event_queue_ram"],
-                              build_status["event_data"],
 
                               build_status["column_element_ram"],
                               build_status["column_element_rom"],
-
-                              build_status["watch_dog_trigger_count"],
-                              build_status["watch_dog_count"],                    
-                              build_status["trigger_function"],
-                              build_status["termination_flag"],
-                              build_status["user_data"],
+                              
+                              build_status["watch_dog_struct"],
+                              build_status["watch_dog_count"],
                               
                               build_status["column_flags"],
                               build_status["local_data"],

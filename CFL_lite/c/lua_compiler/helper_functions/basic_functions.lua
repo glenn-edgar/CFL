@@ -82,6 +82,36 @@ void log_message_CFL(const void *input, void *params,
 
 ]]
 
+local send_queue_event_header = [[
+
+typedef struct Queue_event_CFL_t
+{
+  unsigned         event_queue_index;
+  const Event_data_CFL_t *event_data;
+}Queue_event_CFL_t;
+
+
+void send_queue_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
+
+
+]]
+
+local send_queue_event_code = [[
+
+void send_queue_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+  Queue_event_CFL_t *queue_event = (Queue_event_CFL_t *)params;
+  Event_data_CFL_t *event_data_to_send = ( Event_data_CFL_t *)queue_event->event_data;
+  printf("Sending event to queue %d %d\n",queue_event->event_queue_index,queue_event->event_data->event_index);
+  unsigned event_queue_index = queue_event->event_queue_index;
+  enqueue_event_CFL(input,event_queue_index,event_data_to_send); 
+
+}
+
+]]
+
 local send_event_header = [[
 
 void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
@@ -103,14 +133,13 @@ void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 ]]
 
 
-
-
 Store_column_function("ONE_SHOT",'one_shot_handler_CFL',one_shot_handler,one_shot_header)
 Store_column_function("BID_ONE_SHOT",'bidirectional_one_shot_handler_CFL',bidirectional_one_shot_handler,bidirectional_one_shot_header)
 
 Store_one_shot_function("Send_event",'send_event_CFL',send_event_code,send_event_header)
-Store_one_shot_function("Log_msg",'log_message_CFL',log_msg_handler,log_msg_header)  
+Store_one_shot_function("Log_msg",'log_message_CFL',log_msg_handler,log_msg_header) 
 
+Store_one_shot_function("Send_queue_event",'send_queue_event_CFL',send_queue_event_code,send_queue_event_header)
 
 function Log_msg(message)
   Activate_column_function("ONE_SHOT")
@@ -129,7 +158,11 @@ function One_shot(fn_string, user_data)
   Activate_one_shot_function(fn_string)
   local one_shot_fn_name = Get_one_shot_function(fn_string)
   local column_fn_name = Get_column_function("ONE_SHOT")
-  store_column_element(column_fn_name,one_shot_fn_name,'(void *)&'..user_data)
+  if user_data ~= "NULL" then
+      store_column_element(column_fn_name,one_shot_fn_name,'(void *)&'..user_data)
+  else
+      store_column_element(column_fn_name,one_shot_fn_name,'NULL')
+  end
 end  
 
 function One_shot_terminate(fn_string, user_data)
@@ -141,7 +174,7 @@ function One_shot_terminate(fn_string, user_data)
 end  
 
 local generate_event_string = [[
-const Event_data_CFL_t %s = { %s, %s, %s, };
+const Event_data_CFL_t %s = { %s, %s, %s };
 ]]
 
 function generate_event(event_index, malloc_flag, params)
@@ -157,6 +190,20 @@ function send_global_event(event_data)
   local one_shot_fn_name = Get_one_shot_function("Send_event")
   local column_fn_name = Get_column_function("ONE_SHOT")
   store_column_element(column_fn_name,one_shot_fn_name,'(void *)&'..event_data)
+end
+
+local queue_format_string = "const Queue_event_CFL_t %s = { %s, &%s };\n"
+
+function send_queue_event(event_queue_name,event_data)
+  event_queue_id = lookup_named_queue(event_queue_name)
+  Activate_column_function("ONE_SHOT")
+  Activate_one_shot_function("Send_queue_event")
+  local one_shot_fn_name = Get_one_shot_function("Send_queue_event")
+  local column_fn_name = Get_column_function("ONE_SHOT")
+  local queue_structure = generate_unique_function_name()
+  Store_user_code(string.format(queue_format_string,queue_structure,event_queue_id,event_data))
+
+  store_column_element(column_fn_name,one_shot_fn_name,'(void *)&'..queue_structure)
 end
 
 ---

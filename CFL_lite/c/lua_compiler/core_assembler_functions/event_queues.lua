@@ -112,102 +112,71 @@ function lookup_named_queue(queue_name)
     
     return queue_names[queue_name][3]
 end
-
-local function dump_ram_data_structures()
-   local number = 0
-   local count  = 0
-   build_status["event_queue_ram"] = generate_unique_function_name()
-   for i,queue_name in ipairs(queue_list) do
-      queue_data = queue_names[queue_name]
-     
-      count = count + 1
-      number = number + queue_data[2]
-   end
-   build_status["event_data"] = generate_unique_function_name()
-   write_output("\n\n//----------RAM data structures for event queues ----\n\n")
-   format_string = "static Event_data_CFL_t %s[%d];\n"
-   local message = string.format(format_string, build_status["event_data"],number)
-   
-   write_output(message)
-   format_string = "static Event_control_RAM_CFL_t %s[%d];\n"
-   message = string.format(format_string,build_status["event_queue_ram"],count)
-   write_output(message)
-end
-
-local function dump_rom_data_structures()
-    number = 0;
-    build_status["event_queue_rom"] = generate_unique_function_name()
-    write_output("\n\n//------  ROM data structures for event queues ----\n\n")
-    for i,queue_name in ipairs(queue_list) do
-        queue_data = queue_names[queue_name]
-        format_string = "static const Event_control_ROM_CFL_t %s_%s = { %d, %d };\n"
-        size = queue_data[2]
-       
-        local message = string.format(format_string,build_status["event_queue_rom"],queue_name,size, number)
-        number = number + size
-        write_output(message)
-    end
-    format_string ="static const Event_control_ROM_CFL_t *%s[] = {\n"
-    local message = string.format(format_string,build_status["event_queue_rom"])
-    write_output(message)
-    
-    for i,queue_name in ipairs(queue_list) do
-
-        format_string = "     &%s_%s,\n"
-        local message = string.format(format_string,build_status["event_queue_rom"],queue_name)
-        write_output(message)
-    end
-    write_output("};\n")
-
-    build_status["event_queue_control"] = generate_unique_function_name()
-    format_string ="static const Named_event_queue_control_CFL_t %s = { %d,%d,%s };\n"
-    local message = string.format(format_string,build_status["event_queue_control"],#queue_list,number,build_status["event_queue_rom"])
-    write_output(message)
-    
-  
-
-
-end
-
-local header_documentation = [[
-/*
-
------------------------------------------- Event queue documentation ---------------------------------------------
-typedef struct Event_data_CFL_t
-{
-  short event_index;
-  bool  malloc_flag;
-  void* params;
-
-} Event_data_CFL_t;
-
-
+--[[
 typedef struct Event_control_RAM_CFL_t
 {
   unsigned short rx_index;
   unsigned short tx_index;
   unsigned short current_queued_number;
-} Event_data_RAM_t;
+  
+} Event_control_RAM_CFL_t;
 
 typedef struct Event_control_ROM_CFL_t{ 
-  unsigned                 number;
-  unsigned                start_index;
-  Event_control_RAM_CFL_t *event_control_ram;
-} Event_control_ROM_t;
-
-
-
-typedef struct Named_event_queue_control_CFL_t
-{
  
-  unsigned number;
-  Event_control_CFL_t *event_queues;
-} Named_event_queue_control_CFL_t;
+  const unsigned             queue_size;
+  Event_data_CFL_t           *event_data_array;
+} Event_control_ROM_CFL_t;
+]]--
+local event_data_queue_names = {}
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+local function dump_ram_data_structures()
+  event_data_queue_names = {}
+   
+   queue_ram_name = generate_unique_function_name()
+   build_status["event_queue_ram"] = queue_ram_name
+   write_output("\n\n//----------RAM data structures for event queues ----\n\n")
+   format_string = "static Event_control_RAM_CFL_t %s[%d];\n"
+  local message = string.format(format_string, queue_ram_name,#queue_list)
+  write_output(message)
 
-*/
-]]
+  for i,queue_name in ipairs(queue_list) do
+    queue_data = queue_names[queue_name]
+    local event_queue_name = generate_unique_function_name()
+    table.insert(event_data_queue_names,event_queue_name)
+    format_string = "static Event_data_CFL_t %s[%d];\n"
+    size = queue_data[2]
+    local message = string.format(format_string,event_queue_name,size)
+    write_output(message)
+  end
+   
+
+
+   
+end
+
+function dump_rom_array_structures()
+  build_status["event_queue_number"] = #queue_list
+  for i,queue_name in ipairs(queue_list) do
+    queue_data = queue_names[queue_name]
+    format_string = "     {  %d, %s },\n"
+    message = string.format(format_string,queue_data[2],event_data_queue_names[i])
+    write_output(message)
+  end
+end
+
+
+local function dump_rom_data_structures()
+  write_output("\n\n//------  ROM data structures for event queues ----\n\n")
+  event_rom_name = generate_unique_function_name()
+  build_status["event_queue_rom"] = event_rom_name
+  format_string = "static const Event_control_ROM_CFL_t %s[] = { \n"
+  local message = string.format(format_string,event_rom_name)
+  write_output(message)
+  dump_rom_array_structures()
+  write_output("};\n")
+end
+
+
 
 
 function dump_event_queues()

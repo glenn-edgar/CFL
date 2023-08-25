@@ -12,6 +12,19 @@ extern "C" {
 //----------Ref function header code ----
 
 
+extern const int reset_buffer[1];
+extern const int halt_buffer[1];
+extern const int terminate_buffer[1];
+extern const int terminate_engine_buffer[1];
+
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data);
+
+    
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
+
+
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -31,15 +44,6 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-extern const int reset_buffer[1];
-extern const int halt_buffer[1];
-extern const int terminate_buffer[1];
-extern const int terminate_engine_buffer[1];
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data);
-
-    
 
 typedef struct Verify_control_ROM_CFL_t
 {
@@ -53,12 +57,6 @@ typedef struct Verify_control_ROM_CFL_t
 int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data);
@@ -67,6 +65,19 @@ void log_message_CFL(const void *input, void *params,
 void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata);
 
 
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
+
+     
+typedef struct While_time_control_ROM_t
+{
+   unsigned  time_delay;
+   unsigned  *start_time;
+} While_time_control_ROM_CFL_t;
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
+                            Event_data_CFL_t *event_data);
 
 #define OP_LT_CFL 0
 #define OP_LE_CFL 1
@@ -93,17 +104,6 @@ typedef struct Wait_tod_ROM_CFL_t
 bool test_tod_condition(const void *input, void *user_data, Event_data_CFL_t *event_data);
 
 
-
-     
-typedef struct While_time_control_ROM_t
-{
-   unsigned  time_delay;
-   unsigned  *start_time;
-} While_time_control_ROM_CFL_t;
-
-
-bool wait_time_delay_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data);
    
 
 #ifdef __cplusplus

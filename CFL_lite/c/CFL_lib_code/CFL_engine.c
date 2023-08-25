@@ -118,7 +118,7 @@ static bool process_single_loop(const Handle_CFL_t *handle)
   Event_data_CFL_t *current_event;
  
   
-  current_event = dequeue_event_CFL(handle,0);
+  current_event = peak_event_CFL(handle,0);
   
   if (current_event == NULL)
   {
@@ -134,7 +134,7 @@ static bool process_single_loop(const Handle_CFL_t *handle)
   {
     return false; // Engine terminate event
   }
-  free_event_CFL(handle, current_event);
+  dequeue_event_CFL(handle,0);
    
     
   return true;

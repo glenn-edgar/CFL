@@ -1,6 +1,6 @@
-set_h_file("column_state_machine.h")
+set_h_file("named_queues.h")
 
-local entry_point = "column_state_machine_handle"
+local entry_point = "named_queue_handle"
 
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
@@ -18,61 +18,10 @@ filter_event = generate_event(get_event("filter_event"),false, 'NULL')
 state_change_event_id = add_user_event("state_change_event")
 state_change_event = generate_event(get_event("state_change_event"),false, 'NULL')
 
-local column_list = {"test_start","test_middle","test_end","terminate_column","event_generator","test_sm_structure"}
+define_named_queue("queue1",10) 
+
+local column_list = {"terminate_column","event_generator","test_sm_structure"}
 define_columns(column_list)
-
-
-
-define_column("test_start",true,nil)
-  Log_msg("test_start")
-  Log_msg("step 0")
-  Log_msg("step 1")
-  Log_msg("step 2")
-  Log_msg("step 3")
-  Change_column_state(0) -- step 4
-  Log_msg("test_start")
-  Set_column_state_machine_start()
-  Log_msg("step 6")
-  Log_msg("step 7")
-  Log_msg("step 8")
-  Log_msg("step 9")
-  Log_msg("step 10")
-  Set_column_state_machine_end()
-end_column()
-
-define_column("test_end",true,nil)
-  Log_msg("test_end")
-  Log_msg("step 0")
-  Log_msg("step 1")
-  Log_msg("step 2")
-  Log_msg("step 3")
-  Change_column_state(5) -- step 4
-  Log_msg("step 5")
-  Set_column_state_machine_start()
-  Log_msg("step 6")
-  Log_msg("step 7")
-  Log_msg("step 8")
-  Log_msg("step 9")
-  Log_msg("test_end")
-  Set_column_state_machine_end()
-end_column()
-
-define_column("test_middle",true,nil)
-  Log_msg("test_middle")
-  Log_msg("step 0")
-  Log_msg("step 1")
-  Log_msg("step 2")
-  Log_msg("step 3")
-  Change_column_state(3) -- step 4
-  Log_msg("step 5")
-  Set_column_state_machine_start()
-  Log_msg("step 6")
-  Log_msg("step 7")
-  Log_msg("test_middle")
-  Log_msg("step 9")
-  Log_msg("step 10")
-  Set_column_state_machine_end()
-end_column()
 
 define_column("terminate_column",true,nil)
   Wait_delay(120000)
@@ -82,9 +31,9 @@ end_column()
 
 define_column("event_generator",true,nil)
  Log_msg("event generator start")
- Wait_delay(30000)
- send_global_event(filter_event)
- send_global_event(state_change_event)
+ Wait_delay(15000)
+ send_queue_event("queue1",filter_event)
+ send_queue_event("queue1",state_change_event)
  reset_column()
 end_column()
 
@@ -93,7 +42,7 @@ end_column()
 
 
 
-define_column("test_sm_structure",true,nil)
+define_column("test_sm_structure",true,"queue1")
  Log_msg("executing a sequence of actions first")
  Log_msg("action 1")
  Wait_delay(1000)
@@ -139,7 +88,7 @@ static int filter_event_1(const void *input,void *aux_fn,void *param,Event_data_
   }
   if( event->event_index == EVENT_TERMINATION_CFL){
     
-    Printf_CFL("filter_event_1 initialization event \n");
+    Printf_CFL("filter_event_1 termination event \n");
     return CONTINUE_CFL;
   
   }
@@ -193,7 +142,7 @@ local sm_template_code = [[
     
     *count = *count + 1;
    
-    if(*count >=  5){
+    if(*count >=  3){
       change_local_column_state_CFL(input, <<p,state>>);
        return HALT_CFL;
     }

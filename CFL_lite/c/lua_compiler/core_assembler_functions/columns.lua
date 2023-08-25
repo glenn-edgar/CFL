@@ -141,25 +141,20 @@ end
 function output_column_RAM_data_structures()
     write_output("\n\n//----------RAM data structures for columns ----\n\n")
 
-    build_status["watch_dog_trigger_count"] = generate_unique_function_name()
-    local message = string.format("unsigned %s[%d];\n",build_status["watch_dog_trigger_count"],#column_list)
-    write_output(message)
+    
     
     build_status["watch_dog_count"] = generate_unique_function_name()
     local message = string.format("unsigned %s[%d];\n",build_status["watch_dog_count"],#column_list)
     write_output(message)
     
-    build_status["trigger_function"] = generate_unique_function_name()
-    local message = string.format("One_shot_function_CFL_t  %s[%d];\n",build_status["trigger_function"],#column_list)
+    build_status["watch_dog_struct"] = generate_unique_function_name()
+    local message = string.format("Watch_dog_struct_CFL_t * %s[%d];\n",build_status["watch_dog_struct"],#column_list)
     write_output(message)
     
-    build_status["termination_flag"] = generate_unique_function_name()
-    local message = string.format("bool  %s[%d];\n",build_status["termination_flag"],#column_list)
-    write_output(message)
     
-    build_status["user_data"] = generate_unique_function_name()
-    local message = string.format("void *  %s[%d];\n",build_status["user_data"],#column_list)
-    write_output(message)
+    
+    
+    
     
     
     

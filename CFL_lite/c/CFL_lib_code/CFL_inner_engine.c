@@ -121,6 +121,7 @@ static inline bool process_column_watch_dog(const void *input,
                                             Event_data_CFL_t *event_data)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+  Watch_dog_struct_CFL_t *watch_dog_struct = handle->watch_dog_struct[column_index];
   static unsigned current_column_index = 0;
 
   current_column_index = column_index;
@@ -141,12 +142,12 @@ static inline bool process_column_watch_dog(const void *input,
     unsigned timer_tick = *((unsigned *)event_data->params);
   
   handle->watch_dog_count[column_index] += timer_tick;
-  if(handle->watch_dog_count[column_index] <= handle->watch_dog_trigger_count[column_index])
-  {
+  if(handle->watch_dog_count[column_index] <= watch_dog_struct->watch_dog_trigger_count)
+{
     return false;
   }
   
-  One_shot_function_CFL_t watch_dog_triger = handle->watch_dog_trigger_function[column_index];
+  One_shot_function_CFL_t watch_dog_triger = watch_dog_struct->watch_dog_trigger_function;
 
   
   if(watch_dog_triger != NULL)
@@ -155,7 +156,7 @@ static inline bool process_column_watch_dog(const void *input,
   }
   
 
-   if(handle->watch_dog_termination_flag[column_index] == true)
+   if(watch_dog_struct->watch_dog_termination_flag == true)
    {
      disable_column_CFL(handle, column_index);
    }
@@ -168,7 +169,7 @@ static inline bool process_column_watch_dog(const void *input,
   
 
   handle->watch_dog_count[column_index] = 0;
-  handle->watch_dog_trigger_count[column_index] = 0;
+
 
   return true;
 }
@@ -184,9 +185,7 @@ static inline void validate_return_code(int return_code)
   case RESET_CFL:
   case TERMINATE_CFL:
   case ENGINE_TERMINATE_CFL:
-  case COLUMN_STATE_CHANGE_CFL:
-
-    return;
+       return;
   default:
 
     ASSERT_PRINT_INT("invalid return code", return_code);
@@ -250,12 +249,7 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
 
     validate_return_code(return_code);
 
-    if (return_code == COLUMN_STATE_CHANGE_CFL)
-    {
-      handle->column_elements_flags[column->start + i] &= ~(COLUMN_ELEMENT_ACTIVE);
-      change_column_state(handle, column_index);
-      return true; // terminates column processing
-    }
+    
 
     if (return_code == ENGINE_TERMINATE_CFL)
     {
@@ -299,7 +293,7 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
                                                unsigned short column_index,
                                                Event_data_CFL_t *event_data)
 {
-
+  (void)event_data;
   bool result;
   Event_data_CFL_t *temp;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
@@ -317,33 +311,31 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
 
   while (true)
   {
-
+     
     if (is_queue_empty_CFL(handle, column->queue_number) == true)
     {
-
+     
       return true;
     }
-
-    temp = dequeue_event_CFL(handle, column->queue_number);
-
-    handle->engine_control->ref_event_data.event_index = event_data->event_index;
-    handle->engine_control->ref_event_data.params = event_data->params;
-    handle->engine_control->ref_event_data.malloc_flag = event_data->malloc_flag;
-
-    event_data->event_index = temp->event_index;
-    event_data->malloc_flag = temp->malloc_flag;
-    event_data->params = temp->params;
-
-    result = inner_process_column(handle, column_index, event_data);
+    
+    
+     temp = peak_event_CFL(handle, column->queue_number);
+    
+   
+    result = inner_process_column(handle, column_index, temp);
+    
     if (result == false)
     {
       return false; // engine shut down
     }
-    free_event_CFL(handle, event_data);
+    
+    dequeue_event_CFL(handle, column->queue_number);
+  
+    
 
-    event_data->event_index = handle->engine_control->ref_event_data.event_index;
-    event_data->malloc_flag = handle->engine_control->ref_event_data.malloc_flag;
-    event_data->params = handle->engine_control->ref_event_data.params;
+    
+  
+    
   }
   return true; // should never get here
 }
@@ -381,8 +373,15 @@ bool process_single_sweep_CFL(const void *input,
     }
     if (result == true)
     {
-
+      
+      handle->engine_control->ref_event_data.event_index = event_data->event_index;
+      handle->engine_control->ref_event_data.params = event_data->params;
+      handle->engine_control->ref_event_data.malloc_flag = event_data->malloc_flag;
       result = inner_process_column(handle, i, event_data);
+      event_data->event_index = handle->engine_control->ref_event_data.event_index;
+      event_data->malloc_flag = handle->engine_control->ref_event_data.malloc_flag;
+      event_data->params = handle->engine_control->ref_event_data.params;
+     
     }
     if (result == false)
     {
@@ -432,6 +431,11 @@ void disable_column_CFL(const void *input, unsigned column_index)
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   disable_all_column_elements(input, column_index);
   handle->column_flags[column_index] = 0;
+  const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
+  if(column->queue_number >= 0)
+  {
+    reset_event_queue_CFL(handle,column->queue_number);
+  }
 }
 bool column_state_CFL(const void *input, unsigned column_index)
 {
@@ -570,40 +574,15 @@ void change_local_column_state_CFL(const void *input, unsigned char new_state)
   {
 
     handle->column_state[column_index] = column_ROM->start_state + new_state;
+    change_column_state(handle, column_index);
   }
 }
 
-void free_event_CFL(const void *input, Event_data_CFL_t *event_data)
-{
-  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  if (event_data->malloc_flag == true)
-  {
 
-    handle->free(handle, event_data->params);
-    event_data->malloc_flag = false;
-  }
-}
 
-void reset_all_queues(const void *input)
-{
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
-  const Named_event_queue_control_CFL_t *queue_rom = handle->queue_rom;
-  const unsigned number = queue_rom->number;
 
-  Event_control_RAM_CFL_t *event_control = handle->queue_ram;
-  for (unsigned i = 0; i < number; i++)
-  {
-    event_control[i].rx_index = 0;
-    event_control[i].tx_index = 0;
-    event_control[i].current_queued_number = 0;
-  }
-}
 
-void attach_watch_dog_handler_CFL(const void *input,
-                                  One_shot_function_CFL_t one_shot,
-                                  void *user_data,
-                                  bool termination_flag,
-                                  unsigned watch_dog_count)
+void attach_watch_dog_handler_CFL(const void *input,const Watch_dog_struct_CFL_t *watch_dog_struct)
 {
   Handle_CFL_t *handle = (Handle_CFL_t *)input;
   // find current column
@@ -614,13 +593,10 @@ void attach_watch_dog_handler_CFL(const void *input,
   {
     ASSERT_PRINT_INT("column has watch dog active", column_index);
   }
-  handle->column_flags[column_index] = handle->column_flags[column_index] | WATCH_DOG_ACTIVE;
+  handle->column_flags[column_index] =handle->column_flags[column_index] | WATCH_DOG_ACTIVE;
   
-  handle->watch_dog_trigger_function[column_index] = one_shot;
-  handle->watch_dog_user_data[column_index] = user_data;
-  handle->watch_dog_termination_flag[column_index] = termination_flag;
-  handle->watch_dog_trigger_count[column_index] = watch_dog_count;
-  handle->watch_dog_count[column_index] = 0;
+  handle->watch_dog_struct[column_index] = (Watch_dog_struct_CFL_t *) watch_dog_struct;
+  
 }
 
 void detach_watch_dog_handler_CFL(const void *input)
@@ -631,6 +607,6 @@ void detach_watch_dog_handler_CFL(const void *input)
   handle->column_flags[column_index] = handle->column_flags[column_index] & ~WATCH_DOG_ACTIVE;
   
   
-  handle->watch_dog_trigger_count[column_index] = 0;
+  handle->watch_dog_struct[column_index] = NULL;
   handle->watch_dog_count[column_index] = 0;
 }

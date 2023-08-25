@@ -44,7 +44,7 @@ typedef struct Column_element_CFL_t
 #define COLUMN_ACTIVE 0x01
 #define COLUMN_SUCCESS 0x02
 #define WATCH_DOG_ACTIVE 0x04
-
+#define WATCH_DOG_TERMINATION 0x08
 
 #define COLUMN_ELEMENT_ACTIVE 0x1
 #define COLUMN_ELEMENT_INITIALIZED 0x2
@@ -84,6 +84,13 @@ typedef void *(*private_heap_malloc_fn)(const void *input, unsigned size );
 typedef void (*private_heap_free_fn)(const void *input, void *ptr);
 typedef void *(*allocate_once_fn)(const void *input, unsigned size);
 
+
+typedef struct Watch_dog_struct_CFL_t{ 
+  unsigned watch_dog_trigger_count;
+  One_shot_function_CFL_t watch_dog_trigger_function;
+  unsigned char watch_dog_termination_flag;
+  void *watch_dog_user_data;
+} Watch_dog_struct_CFL_t;
 /*
   Structure set by lua preprocessor unless noted
 
@@ -92,10 +99,10 @@ typedef void *(*allocate_once_fn)(const void *input, unsigned size);
 */
 typedef struct Handle_CFL_t
 {
-
-  const Named_event_queue_control_CFL_t *queue_rom;
+  const unsigned queue_number;
+  const Event_control_ROM_CFL_t *queue_rom;
   Event_control_RAM_CFL_t *queue_ram;
-  Event_data_CFL_t *event_data;
+  
 
   unsigned char *column_elements_flags;
   const Column_element_CFL_t *column_elements_ROM;
@@ -106,12 +113,10 @@ typedef struct Handle_CFL_t
   const unsigned short number_of_columns;
   const Column_ROM_CFL_t *column_rom_data;
 
-  unsigned *watch_dog_trigger_count;
+  
+  Watch_dog_struct_CFL_t **watch_dog_struct;
   unsigned *watch_dog_count;
  
-  One_shot_function_CFL_t *watch_dog_trigger_function;
-  bool *watch_dog_termination_flag;
-  void **watch_dog_user_data;
   
   Time_control_CFL_t *time_control;
   Engine_control_CFL_t *engine_control;
@@ -165,15 +170,14 @@ void change_local_column_state_CFL(const void *input, unsigned char new_state);
 
 Time_control_CFL_t *Get_time_control_CFL(const void *input);
 
-void free_event_CFL(const void *input, Event_data_CFL_t * event_data);
 
-void reset_all_queues(const void *input);
 
-void attach_watch_dog_handler_CFL(const void *input,
-                                  One_shot_function_CFL_t one_shot,
-                                  void *user_data,
-                                  bool termination_flag,
-                                  unsigned watch_dog_count);
+
+
+void attach_watch_dog_handler_CFL(const void *input,const Watch_dog_struct_CFL_t *watch_dog_struct);
+                                  
+
+
 
 void detach_watch_dog_handler_CFL(const void *input);
 
