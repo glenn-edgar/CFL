@@ -69,6 +69,7 @@ static inline void enable_all_column_elements(const void *input, unsigned column
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
+  handle->column_local_data[column_index] = NULL;
 
   unsigned char *flags = handle->column_elements_flags;
 
@@ -79,6 +80,7 @@ static inline void enable_all_column_elements(const void *input, unsigned column
     column_element_number = column->start + i;
     flags[column_element_number] = flags[column_element_number] & ~COLUMN_ELEMENT_INITIALIZED;
     flags[column_element_number] = flags[column_element_number] | COLUMN_ELEMENT_ACTIVE;
+    
   }
 }
 
@@ -495,21 +497,7 @@ void initialize_columns_CFL(const void *input)
   }
 }
 
-void set_local_data_CFL(const void *input, unsigned column_index,
-                        void *data)
-{
 
-  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-
-  handle->column_local_data[column_index] = data;
-}
-
-void *get_local_data_CFL(const void *input, unsigned column_index)
-{
-  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-
-  return handle->column_local_data + column_index;
-}
 
 void set_current_column_return_code_CFL(const void *input, bool state)
 {
@@ -609,4 +597,24 @@ void detach_watch_dog_handler_CFL(const void *input)
   
   handle->watch_dog_struct[column_index] = NULL;
   handle->watch_dog_count[column_index] = 0;
+}
+
+void store_local_column_data(const void *input, unsigned short column_id, void *column_data){
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  if(column_id >= handle->number_of_columns)
+  {
+    ASSERT_PRINT_INT("invalid column id", column_id);
+  }
+ 
+  handle->column_local_data[column_id] = column_data;
+ 
+}
+
+// current column id is used to retrieve the data
+void *retrieve_local_column_data(const void *input){
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  Engine_control_CFL_t *engine_control = handle->engine_control;
+  unsigned column_index = engine_control->current_column_index;
+  
+  return handle->column_local_data[column_index];
 }

@@ -10,18 +10,26 @@ function initialize_columns()
 end
     
 function define_columns(columns)
+   
     for i,v in ipairs(columns) do
-       
+      
        column_names[v] = {}
        column_names[v]["defined"] = false
        column_names[v]["number"] = column_number
+      
        column_number = column_number + 1
        table.insert(column_list,v)      
     end
     
 end
 
-
+function get_column_number(name)
+   if column_names[name] == nil then
+      print("Column name "..name.." not specified in column list")
+      os.exit(1)
+   end
+   return column_names[name]["number"]
+end
 
 
 function define_column(name, startup_flag,queue_name)

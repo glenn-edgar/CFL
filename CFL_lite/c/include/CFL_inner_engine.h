@@ -44,7 +44,7 @@ typedef struct Column_element_CFL_t
 #define COLUMN_ACTIVE 0x01
 #define COLUMN_SUCCESS 0x02
 #define WATCH_DOG_ACTIVE 0x04
-#define WATCH_DOG_TERMINATION 0x08
+
 
 #define COLUMN_ELEMENT_ACTIVE 0x1
 #define COLUMN_ELEMENT_INITIALIZED 0x2
@@ -152,10 +152,7 @@ bool join_columns_CFL(const void *input, unsigned short number_of_columns, unsig
 
 void initialize_columns_CFL(const void *input);
 
-void set_local_data_CFL(const void *input, unsigned column_index,
-                        void *data);
 
-void *get_local_data_CFL(const void *input, unsigned column_index);
 
 void set_current_column_return_code_CFL(const void *input, bool state);
 
@@ -176,10 +173,12 @@ Time_control_CFL_t *Get_time_control_CFL(const void *input);
 
 void attach_watch_dog_handler_CFL(const void *input,const Watch_dog_struct_CFL_t *watch_dog_struct);
                                   
-
-
-
 void detach_watch_dog_handler_CFL(const void *input);
+
+void store_local_column_data(const void *input, unsigned short column_id, void *column_data);
+
+// current column id is used to retrieve the data
+void *retrieve_local_column_data(const void *input);
 
 void Initialize_engine_CFL(const void *input);
 
