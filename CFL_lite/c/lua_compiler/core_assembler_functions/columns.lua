@@ -136,7 +136,7 @@ end
 
 function check_for_undefined_columns()
    for i,v in ipairs(column_list) do
-
+      
       if column_names[v]["defined"] == false then
          print("Column "..v.." not defined")
          os.exit(1)
@@ -225,7 +225,9 @@ end
 
 
 function dump_columns()
+   
     check_for_undefined_columns()
+    
     output_column_RAM_data_structures()
     output_column_ROM_data_structures()
   end

@@ -53,8 +53,6 @@ typedef void (*One_shot_function_CFL_t)(const void* input, void* params, Event_d
 
 typedef struct If_control_CFL_t
 {
-  bool termination_flag;
-  bool init_flag;
   unsigned short column_number;
   unsigned short* column_indexes;
   bool* return_indexes;

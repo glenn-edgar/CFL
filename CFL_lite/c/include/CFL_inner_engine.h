@@ -146,9 +146,10 @@ void reset_column_CFL(const void *input, unsigned column_index);
 
 void disable_column_CFL(const void *input, unsigned column_index);
 
+
 bool column_state_CFL(const void *input, unsigned column_index);
 
-bool join_columns_CFL(const void *input, unsigned short number_of_columns, unsigned short *column_list);
+bool join_columns_CFL(const void *input, const unsigned short number_of_columns, const unsigned short *column_list);
 
 void initialize_columns_CFL(const void *input);
 
