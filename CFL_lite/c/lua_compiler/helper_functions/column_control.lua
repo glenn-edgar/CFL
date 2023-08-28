@@ -68,9 +68,11 @@ local enable_format_string = "const Enable_column_CFL_t %s = { %s, %s, %s };\n"
 
 
 
-
-
 function Enable_columns(column_list,terminate_flag)
+    if terminate_flag == nil then
+        terminate_flag = true
+    end
+
     local column_array = generate_column_array(column_list)
     local enable_name = generate_unique_function_name()
     local message = string.format(enable_format_string,enable_name,terminate_flag,#column_list,column_array)
@@ -79,7 +81,13 @@ function Enable_columns(column_list,terminate_flag)
 
 end
 
+function Reset_columns(column_list,terminate_flag)
+    Enable_columns(column_list,terminate_flag)
+end
 
+function Chain(column_list)
+    Enable_columns(column_list,false)
+end
 
 
 
@@ -205,6 +213,9 @@ local join_format_string = "const Join_column_CFL_t %s = { %s, %s, %s };\n"
 
 
 function Join_columns(column_list,terminate_flag)
+     if terminate_flag == nil then
+        terminate_flag = true
+     end
      local column_array = generate_column_array(column_list)
      local join_name = generate_unique_function_name()
      local message = string.format(join_format_string,join_name,terminate_flag,#column_list,column_array)
@@ -216,205 +227,207 @@ function Join_columns(column_list,terminate_flag)
 
 end
 
+local if_then_else_header = [[
+typedef struct If_then_else_CFL_t {
+    const bool    terminate_flag;
+    const bool    join_flag;
+    const unsigned short number_of_then_columns;
+    const unsigned short *then_column_list;
+    const unsigned short number_of_else_columns;
+    const unsigned short *else_column_list;
+    void *user_data;
+} If_then_else_CFL_t;
 
-local if_function_header = [[
-int if_column_handler(void *input, void *aux_fn, void *params,
-                             Event_data_CFL_t *event_data);
+int if_then_else_function_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
 ]]
 
+local if_then_else_code = [[
 
+int if_then_else_function_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t )aux_fn;
+    If_then_else_CFL_t *if_then_else = (If_then_else_CFL_t *)params;
+    if(event_data->event_index == EVENT_INIT_CFL ){
+        if(bool_fn(input,if_then_else->user_data,event_data)==true){
+            for(unsigned i=0;i<if_then_else->number_of_then_columns;i++){
+          
+                enable_column_CFL(input,if_then_else->then_column_list[i]);
+            }
+            
+        }
+        else{
+            for(unsigned i=0;i<if_then_else->number_of_else_columns;i++){
+          
+                enable_column_CFL(input,if_then_else->else_column_list[i]);
+            }
 
-typedef struct If_control_CFL_t
-{
-
-
-  unsigned short column_number;
-  unsigned short* column_indexes;
-  bool* return_indexes;
-  One_shot_function_CFL_t termination_fn;
-  void* user_data;
-} If_control_CFL_t;
-
-
-local if_function_code = [[
-int if_column_handler(void *input, void *aux_fn, void *params,
-                             Event_data_CFL_t *event_data)
-{
-
-  If_function_CFL_t fn = (If_function_CFL_t)aux_fn;
-  
-
-  If_control_CFL_t *if_control = (If_control_CFL_t *)params;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    for(unsigned short i=0;i<if_control->column_number;i++){
-        if_control->return_indexes[i] = disable_column_CFL(input,if_control->column_indexes[i]);
+        }
+        return CONTINUE_CFL;
     }
-    fn(input, if_control);
-    for(unsigned short i=0;i<if_control->column_number;i++){
-        if(if_control->return_indexes[i]==true){
-            enable_column_CFL(input,if_control->column_indexes[i]);
+    if(event_data->event_index == EVENT_TERMINATION_CFL ){
+        if(if_then_else->terminate_flag==false){
+            return CONTINUE_CFL;
+        }
+        if(bool_fn(input,if_then_else->user_data,event_data)==true){
+            for(unsigned i=0;i<if_then_else->number_of_then_columns;i++){
+                 disable_column_CFL(input,if_then_else->then_column_list[i]);
+             }
+        }
+         else{
+            for(unsigned i=0;i<if_then_else->number_of_else_columns;i++){
+                disable_column_CFL(input,if_then_else->else_column_list[i]);
+            }
+        }
+        return CONTINUE_CFL;
+    }
+    if(if_then_else->join_flag==false){
+        return DISABLE_CFL;
+    }
+    if(event_data->event_index == TIMER_TICK_CFL ){
+        if(bool_fn(input,if_then_else->user_data,event_data)==true){
+            if(join_columns_CFL(input,if_then_else->number_of_then_columns,if_then_else->then_column_list) == true){
+                return CONTINUE_CFL;
+            }
+        }else{
+            if(join_columns_CFL(input,if_then_else->number_of_else_columns,if_then_else->else_column_list) == true){
+                return CONTINUE_CFL;
+            }
         }
     }
-    return CONTINUE_CFL;
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-
+    return HALT_CFL;
     
-
-    for(unsigned short i=0;i<if_control->column_number;i++){
-        if_control->return_indexes[i] = disable_column_CFL(input,if_control->column_indexes[i]);
-    }
-    return CONTINUE_CFL;
-   
-  }
-
-  
-  if (number_Of_active_columns(input, if_control->column_number,
-                               if_control->column_indexes) == 0)
-  {
-    if( if_control->termination_fn != NULL){
-        if_control->termination_fn(input, if_control, event_data);
-        
-    }
-    return DISABLE_CFL;
-  }
-  return HALT_CFL;
 }
+
 ]]
 
-Store_column_function('IF_COLUMN', 'if_column_handler',if_function_code, if_function_header)
+Store_column_function('IF_THEN_ELSE', 'if_then_else_function_CFL',if_then_else_code, if_then_else_header)
 
-local if_format_string = "const If_control_CFL_t %s = { %s, %s, %s, %s, %s };\n"
 
-function if_column_control(if_fn,column_list,termination_fn,user_data)
-    one_shot = Get_one_shot_function(termination_fn)
-    Activate_one_shot_function(termination_function)
-    local column_array = generate_column_array(column_list)
-    local if_name = generate_unique_function_name()
-    local message = string.format(if_format_string,if_name,#column_list,column_array,one_shot,'(void *)'..user_data)
+
+local if_then_format_string = "const If_then_else_CFL_t %s = { %s, %s, %s, %s, %s, %s,%s };\n"
+
+function If_then_else_columns(bool_function_name,user_data,then_columns,else_columns,join_flag,terminate_flag)
+    local bool_fn = Get_boolean_function(bool_function_name)
+    Activate_boolean_function(bool_function_name)
+    if join_flag == nil then
+        join_flag = true
+    end
+    if terminate_flag == nil then
+        terminate_flag = true
+    end
+    local then_array = generate_column_array(then_columns)
+    local else_array = generate_column_array(else_columns)
+    local if_then_else_name = generate_unique_function_name()
+    local message = string.format(if_then_format_string,if_then_else_name,terminate_flag,join_flag,#then_columns,then_array,#else_columns,else_array,user_data)
     Store_user_code(message)
-    Activate_column_function('IF_COLUMN')
-    local column_fn_name = Get_column_function("IF_COLUMN")
-    local aux_fn_name = Get_if_function(if_fn)
-    Activate_if_function(if_fn)
-    store_column_element(column_fn_name,aux_fn_name,'(void *)&'..if_name)
+    Activate_column_function('IF_THEN_ELSE')
+    column_fn_name = Get_column_function("IF_THEN_ELSE")
+    store_column_element(column_fn_name,bool_fn,'(void *)&'..if_then_else_name)
 end
 
 
-static int try_column_handler(void *input, void *aux_fn, void *params,
-                              Event_data_CFL_t *event_data)
+local while_function_header = [[
+typedef struct While_column_control_CFL_t
 {
+   bool  *state;
+   unsigned *current_count;
+   void* user_data;
+   const unsigned short number_of_columns;
+   const unsigned short* column_indexes;
 
-  Try_function_CFL_t fn = (Try_function_CFL_t)aux_fn;
-  Try_column_CFL_t *data;
-  bool pass_flag;
-
-  data = (Try_column_CFL_t *)params;
-  pass_flag = !data->invert_flag;
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-
-    data->progress_step = 0;
-    data->current_column_index = 0;
-    disable_indexes(input, data->column_number, data->column_indexes);
-    return CONTINUE_CFL;
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-
-    
-
-      disable_indexes(input, data->column_number, data->column_indexes);
    
-  }
-  if (event_data->event_index != TIMER_TICK_CFL)
-  {
-    return HALT_CFL;
-  }
-  if (data->progress_step == 0)
-  {
-    Enable_column_CFL(input, data->column_indexes[data->current_column_index]);
-    data->progress_step = 1;
-    return HALT_CFL;
-  }
 
-  if (Column_State_CFL(
-          input, data->column_indexes[data->current_column_index]) == false)
-  {
+} While_column_control_CFL_t;
 
-    if (Get_column_index_return_code_CFL(
-            input, data->column_indexes[data->current_column_index]) ==
-        pass_flag)
-    {
-      data->final_state = true;
-      fn(input, data);
-      return DISABLE_CFL;
-    }
+int while_column_handler_CFL(const void *input, void *aux_fn,void *params, Event_data_CFL_t *event_data);
 
-    if (data->current_column_index < data->column_number - 1)
-    {
-      data->current_column_index += 1;
-      data->progress_step = 0;
-      return HALT_CFL;
-    }
-    else
-    {
-      data->final_state = false;
-      fn(input, data);
-      return DISABLE_CFL;
-    }
+]]
 
-    return HALT_CFL;
-  }
-  return HALT_CFL; // try column is still active
-}
-
-
-
-static int while_column_handler(void *handle, void *aux_fn, void *params,
-                                Event_data_CFL_t *event_data)
+local while_function_code = [[
+int while_column_handler_CFL(const void *input, void *aux_fn,void *params, Event_data_CFL_t *event_data)
 {
-  Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
-  While_column_control_CFL_t *while_control;
-  while_control = (While_column_control_CFL_t *)params;
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    While_column_control_CFL_t *while_control;
+    while_control = (While_column_control_CFL_t *)params;
 
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    while_control->state = 0;
-    while_control->current_iterations = 0;
-  }
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+       fn(input, while_control, event_data);
+       *while_control->current_count = 0;
+       *while_control->state = true;
+      
 
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    disable_indexes(handle, while_control->number_of_columns,
-                    while_control->column_indexes);
-  }
-  if (event_data->event_index != TIMER_TICK_CFL)
-  {
+    }
+
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+
+        for(unsigned i=0;i<while_control->number_of_columns;i++){
+            disable_column_CFL(input,while_control->column_indexes[i]);
+        }
+    }
+    if (event_data->event_index != TIMER_TICK_CFL)
+    {
+        return HALT_CFL;
+    }
+    
+    if(*while_control->state == true){
+        if(fn(input, while_control, event_data) == false)
+        {
+           
+            // chains are already disabled
+            return DISABLE_CFL;
+        }else{
+            *while_control->current_count = *while_control->current_count + 1;
+            for(unsigned i=0;i<while_control->number_of_columns;i++){
+                enable_column_CFL(input,while_control->column_indexes[i]);
+            }
+            
+        }
+        *while_control->state = false;
+        return HALT_CFL;
+    }else{
+        if(join_columns_CFL(input,while_control->number_of_columns,while_control->column_indexes) == true){
+            *while_control->state = true;
+        }
+
+
+    }
+
     return HALT_CFL;
-  }
-  switch (while_control->state)
-  {
-  case 0:
-    if (fn(handle, while_control, event_data) == false)
-    {
-      return DISABLE_CFL;
-    }
-    enable_indexes(handle, while_control->number_of_columns,
-                   while_control->column_indexes);
-    while_control->current_iterations += 1;
-    while_control->state = 1;
-    break;
-  default:
-    if (number_Of_active_columns(handle, while_control->number_of_columns,
-                                 while_control->column_indexes) == 0)
-    {
-      while_control->state = 0;
-    }
-  }
-  return HALT_CFL;
 }
+]]
 
+Store_column_function("WHILE_COLUMN", 'while_column_handler_CFL',while_function_code, while_function_header)
+
+
+local while_format_string = "const While_column_control_CFL_t %s = { %s, %s, %s, %s,%s };\n"
+
+local state_format = "bool %s = true;\n"
+
+function while_handler(bool_function_name,user_data,column_list)
+    local bool_fn = Get_boolean_function(bool_function_name)
+    Activate_boolean_function(bool_function_name)
+    local column_array = generate_column_array(column_list)
+    local state_name = generate_unique_function_name()
+
+    local message = string.format(state_format,state_name)
+    Store_user_code(message)
+    state_name = '(bool *)&'..state_name
+    local current_count = generate_unique_function_name()
+    message = string.format("unsigned %s = 0;\n",current_count)
+    Store_user_code(message)
+    current_count = '(unsigned *)&'..current_count;
+    
+    local while_name = generate_unique_function_name()
+    if user_data ~= 'NULL' then
+        user_data = '(void *)&'..user_data
+    end
+    local message = string.format(while_format_string,while_name,state_name,current_count,user_data,#column_list,column_array)
+    Store_user_code(message)
+    Activate_column_function('WHILE_COLUMN')
+    local column_fn_name = Get_column_function("WHILE_COLUMN")
+    
+    store_column_element(column_fn_name,bool_fn,'(void *)&'..while_name)
+end
+     

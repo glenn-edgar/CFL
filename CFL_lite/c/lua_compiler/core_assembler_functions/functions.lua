@@ -207,35 +207,4 @@ function Get_boolean_function(op_code)
     return boolean_functions[op_code]["c_function_name"]
 end
 
-function Get_conditional_function(op_code)
-    if (conditional_functions[op_code] == nil) then
-        print("Error: conditional function -- " .. op_code .. " not defined")
-        os.exit(1)
-    end
-    Activate_conditional_function(op_code)
-    return conditional_functions[op_code]["c_function_name"]
-end
 
-function Store_conditional_function(op_code, c_function_name, function_code,
-    function_header_code)
-
-    if conditional_functions[op_code] ~= nil then
-        print("Error: function code for " .. op_code .. " already defined")
-        os.exit(1)
-    end
-    conditional_functions[op_code] = {}
-    conditional_functions[op_code]["c_function_name"] = c_function_name
-    conditional_functions[op_code]["function_code"] = function_code
-    conditional_functions[op_code]["function_header_code"] = function_header_code
-    -- print("functions.lua: " .. op_code .. " function code inserted")
-end
-
-function Activate_conditional_function(op_code)
-
-    if (conditional_functions[op_code] == nil) then
-        print("Error: bool function ++ " .. op_code .. " not defined")
-        os.exit(1)
-    end
-    active_conditonal_functions[op_code] = true
-
-end
