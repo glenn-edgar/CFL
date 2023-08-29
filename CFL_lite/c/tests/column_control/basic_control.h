@@ -16,172 +16,172 @@ extern "C" {
 
 //----------RAM data structures for event queues ----
 
-static Event_control_RAM_CFL_t htycrgaebe[1];
-static Event_data_CFL_t qfcwxszgqz[10];
+static Event_control_RAM_CFL_t hfilmsbpuq[1];
+static Event_data_CFL_t flpzkkilcw[10];
 
 
 //------  ROM data structures for event queues ----
 
-static const Event_control_ROM_CFL_t jszlwwktyv[] = { 
-     {  10, qfcwxszgqz },
+static const Event_control_ROM_CFL_t owbnklmjxo[] = { 
+     {  10, flpzkkilcw },
 };
-static const char *mzwegjkrnc = "will enable column and terminate";
-static const unsigned short mpueyloqmx[] = { 1};
-const Enable_column_CFL_t zvfdyhrxyq = { false, 1, mpueyloqmx };
-static const char *iefwumdxuf = "timer is done";
-static const char *wyptrvfyki = "will enable columns and wait 15 seconds and terminate";
-static const unsigned short oidnjwnimt[] = { 3,2};
-const Enable_column_CFL_t hlqdhssqtg = { true, 2, oidnjwnimt };
+static const char *ywfejcmagl = "will enable column and terminate";
+static const unsigned short enkelmwywp[] = { 1};
+const Enable_column_CFL_t swskghuaaw = { false, 1, enkelmwywp };
+static const char *cpnttaeqrk = "timer is done";
+static const char *bcfwrwwiko = "will enable columns and wait 15 seconds and terminate";
+static const unsigned short grdyntzhwu[] = { 3,2};
+const Enable_column_CFL_t kegoegpfdi = { true, 2, grdyntzhwu };
 
 
-unsigned  xmlygtltin;
-const While_time_control_ROM_CFL_t govufssbqj = { 5000,&xmlygtltin };
-
-
-
-static While_control_RAM_CFL_t bleinrfxrf_ram = { 0 };  // current count 
-
-
-  
-
-static const While_control_ROM_CFL_t wtkcdedtfz_rom = { 0 ,true, &govufssbqj,&bleinrfxrf_ram,null_function};
-
-    
-static const unsigned short esqhvamwsu[] = { 3};
-const Enable_column_CFL_t mbteyungkf = { true, 1, esqhvamwsu };
-
-
-unsigned  iucyydwtsk;
-const While_time_control_ROM_CFL_t wbycrrmkxm = { 11000,&iucyydwtsk };
+unsigned  sczrxkggqk;
+const While_time_control_ROM_CFL_t sxlldnwgtw = { 5000,&sczrxkggqk };
 
 
 
-static While_control_RAM_CFL_t nanbjdekai_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t qrmfcadrmz_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t lgbqkfzbpe_rom = { 0 ,true, &wbycrrmkxm,&nanbjdekai_ram,null_function};
+static const While_control_ROM_CFL_t oqqwfsurzn_rom = { 0 ,true, &sxlldnwgtw,&qrmfcadrmz_ram,null_function};
 
     
-static const char *apbnburqlf = "timer is done";
-static const char *iddwzdenwq = "will wait 5 seconds and reset";
+static const unsigned short ohcozyzaed[] = { 3};
+const Enable_column_CFL_t ijwkpiiayq = { true, 1, ohcozyzaed };
 
 
-unsigned  unikujxajt;
-const While_time_control_ROM_CFL_t qdqgzweajt = { 5000,&unikujxajt };
+unsigned  rofpvvvzjx;
+const While_time_control_ROM_CFL_t eefzudvpyr = { 11000,&rofpvvvzjx };
 
 
 
-static While_control_RAM_CFL_t vclfjvuhxq_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t uokvbhbfxz_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t ymdhkjjeyx_rom = { 0 ,true, &qdqgzweajt,&vclfjvuhxq_ram,null_function};
+static const While_control_ROM_CFL_t karatshhwc_rom = { 0 ,true, &eefzudvpyr,&uokvbhbfxz_ram,null_function};
 
     
-static const char *ureblovznr = "when reset happend this message will be seen";
+static const char *hqggxnnkij = "timer is done";
+static const char *uegojicvjy = "will wait 5 seconds and reset";
 
 
-unsigned  dipyghtwas;
-const While_time_control_ROM_CFL_t bzcoozgtqc = { 17000,&dipyghtwas };
+unsigned  hzvhfybkln;
+const While_time_control_ROM_CFL_t kdzoiixuuj = { 5000,&hzvhfybkln };
 
 
 
-static While_control_RAM_CFL_t dczqjbllhb_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t ojegdugvna_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t kelicrywxp_rom = { 0 ,true, &bzcoozgtqc,&dczqjbllhb_ram,null_function};
+static const While_control_ROM_CFL_t xxcswmvgto_rom = { 0 ,true, &kdzoiixuuj,&ojegdugvna_ram,null_function};
 
     
-static const char *acjhmujfna = "this message should not be seen";
-static const unsigned short wdeimiroag[] = { 5};
-const Enable_column_CFL_t tkjfqcumug = { false, 1, wdeimiroag };
-static const char *yqwgtwyarx = "will disable reset column after 12 seconds";
+static const char *xgysreyqxs = "when reset happend this message will be seen";
 
 
-unsigned  hplefrosyq;
-const While_time_control_ROM_CFL_t qkyecnjurm = { 12000,&hplefrosyq };
+unsigned  hlmojcyyqp;
+const While_time_control_ROM_CFL_t ayrgsstqll = { 17000,&hlmojcyyqp };
 
 
 
-static While_control_RAM_CFL_t lpnyewuisu_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t cxuyppbzqh_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t osohjnzssb_rom = { 0 ,true, &qkyecnjurm,&lpnyewuisu_ram,null_function};
+static const While_control_ROM_CFL_t uqelimmsvh_rom = { 0 ,true, &ayrgsstqll,&cxuyppbzqh_ram,null_function};
 
     
-static const unsigned short mevevtrkln[] = { 5};
-const Disable_column_CFL_t zxvhxdczpq = { 1, mevevtrkln };
-static const char *qrdbmtpcpo = "Now will wait till enable_terminate column terminates this column";
+static const char *vznvmbnlwi = "this message should not be seen";
+static const unsigned short tpoqmzskre[] = { 5};
+const Enable_column_CFL_t aqcxzhpgvo = { false, 1, tpoqmzskre };
+static const char *yjxrlzzzpx = "will disable reset column after 12 seconds";
 
 
-unsigned  dlzjxjotfg;
-const While_time_control_ROM_CFL_t qrxxdakgzn = { 1000,&dlzjxjotfg };
+unsigned  movqkjqhfg;
+const While_time_control_ROM_CFL_t zyjjktjfjk = { 12000,&movqkjqhfg };
 
 
 
-static While_control_RAM_CFL_t mpijmwhdjx_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t jgspvwizvm_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t rbwtqhwqhh_rom = { 0 ,true, &qrxxdakgzn,&mpijmwhdjx_ram,null_function};
+static const While_control_ROM_CFL_t ybwgayucdw_rom = { 0 ,true, &zyjjktjfjk,&jgspvwizvm_ram,null_function};
 
     
-static const char *gtvzmdexjc = "will wait 5 seconds and reset";
+static const unsigned short qupwcvbpej[] = { 5};
+const Disable_column_CFL_t pemmrgkhhu = { 1, qupwcvbpej };
+static const char *mzjgmnwmtm = "Now will wait till enable_terminate column terminates this column";
 
 
-unsigned  syfnqgkpax;
-const While_time_control_ROM_CFL_t zzuluwaauf = { 5000,&syfnqgkpax };
+unsigned  augtstmbdv;
+const While_time_control_ROM_CFL_t rkcwhgqune = { 1000,&augtstmbdv };
 
 
 
-static While_control_RAM_CFL_t nqacqhhyhu_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t hovedtpnhz_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t lulszobstz_rom = { 0 ,true, &zzuluwaauf,&nqacqhhyhu_ram,null_function};
+static const While_control_ROM_CFL_t ztlupuanuu_rom = { 0 ,true, &rkcwhgqune,&hovedtpnhz_ram,null_function};
 
     
-static const unsigned short vxrfqjdtyv[] = { 7};
-const Enable_column_CFL_t etdsvpeoex = { false, 1, vxrfqjdtyv };
-static const char *uihunpzluy = "waiting for join";
-static const unsigned short clmuwkxuzk[] = { 7};
-const Join_column_CFL_t tdphtofazj = { true, 1, clmuwkxuzk };
-static const char *hfslgxpyuw = "Column has been joined";
-static const char *meyqkyijri = "will wait 5 seconds and terminate";
+static const char *mbfoinhcdd = "will wait 5 seconds and reset";
 
 
-unsigned  sxfjiqujsk;
-const While_time_control_ROM_CFL_t rnuooztmbj = { 5000,&sxfjiqujsk };
+unsigned  dgeamhtohn;
+const While_time_control_ROM_CFL_t ocmihfdsyv = { 5000,&dgeamhtohn };
 
 
 
-static While_control_RAM_CFL_t gfkyxmhkkh_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t buewdzlwfm_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t jfrtahmgmk_rom = { 0 ,true, &rnuooztmbj,&gfkyxmhkkh_ram,null_function};
+static const While_control_ROM_CFL_t oqgkqznraf_rom = { 0 ,true, &ocmihfdsyv,&buewdzlwfm_ram,null_function};
 
     
-static const char *yakbssvdch = "timer is done";
+static const unsigned short htxwpwrnjy[] = { 7};
+const Enable_column_CFL_t cycpajgzqq = { false, 1, htxwpwrnjy };
+static const char *iieoenwfim = "waiting for join";
+static const unsigned short jkrajscmkl[] = { 7};
+const Join_column_CFL_t gprjfjxtxu = { true, 1, jkrajscmkl };
+static const char *bulloutlcw = "Column has been joined";
+static const char *eypkrlsomb = "will wait 5 seconds and terminate";
+
+
+unsigned  zlxxpdspau;
+const While_time_control_ROM_CFL_t wallhbkkiv = { 5000,&zlxxpdspau };
+
+
+
+static While_control_RAM_CFL_t jwbndwrnsw_ram = { 0 };  // current count 
+
+
+  
+
+static const While_control_ROM_CFL_t ecukjeiwlk_rom = { 0 ,true, &wallhbkkiv,&jwbndwrnsw_ram,null_function};
+
+    
+static const char *ohvjkczrlh = "timer is done";
 
 
 //----------RAM data structures for columns ----
 
-unsigned jadygcrvot[8];
-Watch_dog_struct_CFL_t * ibwfbxcghd[8];
-unsigned char hbualmaixo[8];
-unsigned char txaonfowrr[8];
-void* fqjewfsnvy[8];
+unsigned nmtbqrahwl[8];
+Watch_dog_struct_CFL_t * sqrcswbjno[8];
+unsigned char xmjdkftufh[8];
+unsigned char qpyvsxagao[8];
+void* erfwejcodu[8];
 /*
 ------------------------ ROM data structures for columns --------------------------
 typedef struct Column_ROM_CFL_t
@@ -202,7 +202,7 @@ typedef struct Column_ROM_CFL_t
 
 //----------ROM data structures for columns ----
 
-static const Column_ROM_CFL_t hloaitgczt[] = {
+static const Column_ROM_CFL_t hsnnatxpoy[] = {
   { -1,true, 0, 4, 0, -1, -1 },
   { -1,false, 1, 7, 4, -1, -1 },
   { -1,false, 2, 3, 11, -1, -1 },
@@ -218,7 +218,7 @@ static const Column_ROM_CFL_t hloaitgczt[] = {
 
 
 
-static unsigned char gomsrbhacx[37];
+static unsigned char atvmqqqwwt[37];
 
 
   /* 
@@ -237,68 +237,68 @@ static unsigned char gomsrbhacx[37];
 
 //----------Column elements Flash structures----
 
-static const Column_element_CFL_t jowbvztvrm[] = {
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mzwegjkrnc},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&zvfdyhrxyq},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&iefwumdxuf},
+static const Column_element_CFL_t qypyoqxneq[] = {
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ywfejcmagl},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&swskghuaaw},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&cpnttaeqrk},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&wyptrvfyki},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&hlqdhssqtg},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&wtkcdedtfz_rom},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&mbteyungkf},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&lgbqkfzbpe_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&apbnburqlf},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&bcfwrwwiko},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&kegoegpfdi},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&oqqwfsurzn_rom},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&ijwkpiiayq},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&karatshhwc_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&hqggxnnkij},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&iddwzdenwq},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&ymdhkjjeyx_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&uegojicvjy},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&xxcswmvgto_rom},
     {return_condition_code_CFL,NULL,(void *)reset_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ureblovznr},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&kelicrywxp_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&acjhmujfna},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&xgysreyqxs},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&uqelimmsvh_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&vznvmbnlwi},
     {return_condition_code_CFL,NULL,(void *)reset_buffer},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&tkjfqcumug},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&yqwgtwyarx},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&osohjnzssb_rom},
-    {one_shot_handler_CFL,disable_columns_function_CFL,(void *)&zxvhxdczpq},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&qrdbmtpcpo},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&rbwtqhwqhh_rom},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&aqcxzhpgvo},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&yjxrlzzzpx},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&ybwgayucdw_rom},
+    {one_shot_handler_CFL,disable_columns_function_CFL,(void *)&pemmrgkhhu},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&mzjgmnwmtm},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&ztlupuanuu_rom},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&gtvzmdexjc},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&lulszobstz_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&mbfoinhcdd},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&oqgkqznraf_rom},
     {return_condition_code_CFL,NULL,(void *)reset_buffer},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&etdsvpeoex},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&uihunpzluy},
-    {join_columns_function_CFL,null_function,(void *)&tdphtofazj},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&hfslgxpyuw},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&cycpajgzqq},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&iieoenwfim},
+    {join_columns_function_CFL,null_function,(void *)&gprjfjxtxu},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&bulloutlcw},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&meyqkyijri},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&jfrtahmgmk_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&yakbssvdch},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&eypkrlsomb},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&ecukjeiwlk_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ohvjkczrlh},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
 };
 
 
-static Time_control_CFL_t jcfcgyaaoc;
+static Time_control_CFL_t iaucdxeptn;
 
 
 
 
-static Engine_control_CFL_t zvwevxsgfo;
+static Engine_control_CFL_t ckvtunqcbx;
 
 
 /* remaining allocate heap size */
 
-static unsigned riuvzmxqti;
+static unsigned jbjuhbmjnw;
 
 
 /* current heap pointer */
 
-static char* dzcmquuprf;
+static char* ykiuqqrpes;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL efpwifpgsr;
+static CS_MEMORY_CONTROL flgvjfjlyw;
 
 
     
@@ -350,46 +350,46 @@ static CS_MEMORY_CONTROL efpwifpgsr;
 */
 
 
-const struct Handle_CFL_t uvvulkectz =
+const struct Handle_CFL_t glsoohmjtc =
 {
 
   .queue_number = 1,
-  .queue_rom = jszlwwktyv,
-  .queue_ram = htycrgaebe,
+  .queue_rom = owbnklmjxo,
+  .queue_ram = hfilmsbpuq,
 
-  .column_elements_flags =gomsrbhacx,
-  .column_elements_ROM = jowbvztvrm,
+  .column_elements_flags =atvmqqqwwt,
+  .column_elements_ROM = qypyoqxneq,
 
-  .watch_dog_struct = ibwfbxcghd,
-  .watch_dog_count  = jadygcrvot,
+  .watch_dog_struct = sqrcswbjno,
+  .watch_dog_count  = nmtbqrahwl,
    
    
-  .column_flags = hbualmaixo,
-  .column_local_data = fqjewfsnvy,
-  .column_state = txaonfowrr,
+  .column_flags = xmjdkftufh,
+  .column_local_data = erfwejcodu,
+  .column_state = qpyvsxagao,
   .number_of_columns = 8,
-  .column_rom_data = hloaitgczt,
+  .column_rom_data = hsnnatxpoy,
 
   
   
   
-  .time_control = &jcfcgyaaoc,
-  .engine_control =&zvwevxsgfo,
+  .time_control = &iaucdxeptn,
+  .engine_control =&ckvtunqcbx,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
   .master_heap_starting_location = &allocate_once_memory,
   .master_heap_size = 2000,
-  .remaining_heap_size = &riuvzmxqti,
-  .current_heap_location = &dzcmquuprf,
-  .private_heap   = &efpwifpgsr,
+  .remaining_heap_size = &jbjuhbmjnw,
+  .current_heap_location = &ykiuqqrpes,
+  .private_heap   = &flgvjfjlyw,
   .private_heap_size =   1000,
 } ;
 
 
 const Handle_CFL_t*  basic_control_handle(){
-    return &uvvulkectz;
+    return &glsoohmjtc;
 }
    
 

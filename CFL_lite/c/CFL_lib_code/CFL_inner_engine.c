@@ -327,12 +327,23 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
 **
 */
 
+static bool test_column_count(const void *input){
+  
+   for(unsigned i=0;i<((Handle_CFL_t *)input)->number_of_columns;i++){
+      if(((Handle_CFL_t *)input)->column_flags[i] & COLUMN_ACTIVE){
+         return true;
+      }
+   }
+   
+   return false;
+}
+
 bool process_single_sweep_CFL(const void *input,
                               Event_data_CFL_t *event_data)
 {
 
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  unsigned column_count = 0;
+
   for (unsigned short i = 0; i < handle->number_of_columns; i++)
   {
 
@@ -343,7 +354,7 @@ bool process_single_sweep_CFL(const void *input,
       //printf("column flag %d %d not active\n", i, handle->column_flags[i]);
       continue;
     }
-    column_count += 1;
+   
 
     handle->engine_control->current_column_index = column->id;
 
@@ -370,13 +381,9 @@ bool process_single_sweep_CFL(const void *input,
       return false; // engine shut down
     }
   }
-  //printf("column count %d\n", column_count);
-  if (column_count == 0)
-  {
-    return false;
-  }
+  
+  return test_column_count(input);
 
-  return true;
 }
 
 void disable_all_columns_CFL(const void *input)
