@@ -417,7 +417,7 @@ void disable_column_CFL(const void *input, unsigned column_index)
 
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   disable_all_column_elements(input, column_index);
-  handle->column_flags[column_index] = 0;
+  handle->column_flags[column_index] =handle->column_flags[column_index] & COLUMN_SUCCESS;
   const Column_ROM_CFL_t *column = handle->column_rom_data + column_index;
   if (column->queue_number >= 0)
   {
@@ -472,6 +472,7 @@ void initialize_columns_CFL(const void *input)
     {
 
       handle->column_flags[i] = COLUMN_ACTIVE;
+
       reset_column_CFL(handle, i);
     }
     else
@@ -494,12 +495,13 @@ void set_current_column_return_code_CFL(const void *input, bool state)
   {
     handle->column_flags[column_index] = handle->column_flags[column_index] & ~COLUMN_SUCCESS;
   }
+ 
 }
 
-bool get_current_column_return_code_CFL(const void *input)
+bool get_current_column_return_code_CFL(const void *input,unsigned short column_index)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  unsigned column_index = handle->engine_control->current_column_index;
+  
   if (handle->column_flags[column_index] & COLUMN_SUCCESS)
   {
     return true;

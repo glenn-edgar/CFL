@@ -51,50 +51,19 @@ typedef struct Event_data_CFL_t
 
 typedef void (*One_shot_function_CFL_t)(const void* input, void* params, Event_data_CFL_t* event_data);
 
-typedef struct If_control_CFL_t
-{
-  unsigned short column_number;
-  unsigned short* column_indexes;
-  bool* return_indexes;
-  One_shot_function_CFL_t termination_fn;
-  void* user_data;
-} If_control_CFL_t;
-
-typedef struct Try_column_CFL_t
-{
-  bool init_flag;
-  bool invert_flag;
-  bool terminate_flag;
-  unsigned char progress_step;
-  unsigned short current_column_index;
-  unsigned short column_number;
-  unsigned short* column_indexes;
-  bool final_state;
-  void* user_data;
-
-} Try_column_CFL_t;
-
 
 
 
 
 
 typedef bool (*Bool_function_CFL_t)(const void *input, void* params, Event_data_CFL_t* event_data);
-typedef void (*If_function_CFL_t)(const void *input, If_control_CFL_t* params);
-typedef void (*Try_function_CFL_t)(const void *input, Try_column_CFL_t* params);
 
 
 
 
 
 
-typedef union {
-    One_shot_function_CFL_t   one_shot_fn;
-    Bool_function_CFL_t       bool_fn;
-    If_function_CFL_t         if_fn;
-    Try_function_CFL_t        try_fn;
-    
-} CFL_fn_t;
+
           
 typedef int (*Column_function_CFL_t)(const void *input, void *aux_fun, void* params, Event_data_CFL_t* event_data);
 

@@ -438,44 +438,48 @@ function while_handler(bool_function_name,user_data,column_list)
     store_column_element(column_fn_name,bool_fn,'(void *)&'..while_name)
 end
 
---[[
-bool state
-//unsigned char progress_step;
+try_function_header = [[
+
+typedef struct Try_function_RAM_t{
   bool final_state;
+  unsigned short current_column_index;
+  unsigned char progress_step;
+  
+} Try_function_RAM_t;
+
 typedef struct Try_column_CFL_t
 {
-
   bool invert_flag;
-
-  
-  unsigned short current_column_index;
   unsigned short column_number;
-  unsigned short* column_indexes;
-
+  const unsigned short* column_indexes;
+  Try_function_RAM_t* ram_data;
   void* user_data;
-
 } Try_column_CFL_t;
 
+typedef void (*Try_function_CFL_t)(const void *input, Try_column_CFL_t* params);
+int try_column_handler_CFL(const void *input, void *aux_fn, void *params,
+                              Event_data_CFL_t *event_data);
+]]
+
+try_function_code = [[
 
 
-
-
-static int try_column_handler(void *input, void *aux_fn, void *params,
+ int try_column_handler_CFL(const void *input, void *aux_fn, void *params,
                               Event_data_CFL_t *event_data)
 {
-
-  Try_function_CFL_t fn = (Try_function_CFL_t)aux_fn;
-  Try_column_CFL_t *data;
   bool pass_flag;
-
-  data = (Try_column_CFL_t *)params;
-  pass_flag = !data->invert_flag;
+  Try_function_CFL_t fn = (Try_function_CFL_t)aux_fn;
+  Try_column_CFL_t *rom_data = (Try_column_CFL_t *)params;
+  Try_function_RAM_t *ram_data = rom_data->ram_data;
+  pass_flag = !rom_data->invert_flag;
   if (event_data->event_index == EVENT_INIT_CFL)
   {
-
-    data->progress_step = 0;
-    data->current_column_index = 0;
-    disable_indexes(input, data->column_number, data->column_indexes);
+    
+    ram_data->progress_step = 0;
+    ram_data->current_column_index = 0;
+    for(unsigned i=0;i<rom_data->column_number;i++){
+        disable_column_CFL(input,rom_data->column_indexes[i]);
+    }
     return CONTINUE_CFL;
   }
   if (event_data->event_index == EVENT_TERMINATION_CFL)
@@ -483,49 +487,111 @@ static int try_column_handler(void *input, void *aux_fn, void *params,
 
     
 
-      disable_indexes(input, data->column_number, data->column_indexes);
-   
+    for(unsigned i=0;i<rom_data->column_number;i++){
+        disable_column_CFL(input,rom_data->column_indexes[i]);
+    }
+    return CONTINUE_CFL;
   }
   if (event_data->event_index != TIMER_TICK_CFL)
   {
     return HALT_CFL;
   }
-  if (data->progress_step == 0)
+  
+  if (ram_data->progress_step == 0)
   {
-    Enable_column_CFL(input, data->column_indexes[data->current_column_index]);
-    data->progress_step = 1;
+
+    enable_column_CFL(input, rom_data->column_indexes[ram_data->current_column_index]);
+    ram_data->progress_step = 1;
+   
     return HALT_CFL;
   }
 
-  if (Column_State_CFL(
-          input, data->column_indexes[data->current_column_index]) == false)
-  {
-
-    if (Get_column_index_return_code_CFL(
-            input, data->column_indexes[data->current_column_index]) ==
-        pass_flag)
+  if (column_state_CFL(input, rom_data->column_indexes[ram_data->current_column_index]) == true)
+  { 
+    return HALT_CFL;  // try column is still active
+  }
+    printf("column return code %d\n",get_current_column_return_code_CFL(input, rom_data->column_indexes[ram_data->current_column_index]));
+    if( get_current_column_return_code_CFL(input, rom_data->column_indexes[ram_data->current_column_index]) == pass_flag)
     {
-      data->final_state = true;
-      fn(input, data);
+      ram_data->final_state = false;
+      fn(input, rom_data);
       return DISABLE_CFL;
     }
 
-    if (data->current_column_index < data->column_number - 1)
-    {
-      data->current_column_index += 1;
-      data->progress_step = 0;
+    if (ram_data->current_column_index < rom_data->column_number - 1)
+    {            // try next column                     
+      ram_data->current_column_index += 1;
+      ram_data->progress_step = 0;
       return HALT_CFL;
     }
-    else
-    {
-      data->final_state = false;
-      fn(input, data);
-      return DISABLE_CFL;
-    }
+    
+     ram_data->final_state = true;
+     fn(input, rom_data);
+     return DISABLE_CFL;
+}
+]]
 
+Store_column_function("TRY_HANDLER", 'try_column_handler_CFL',try_function_code, try_function_header)
+
+
+local try_rom_string = "const Try_column_CFL_t %s = { %s, %s, %s,&%s,%s };\n"
+local try_rom_string_null = "const Try_column_CFL_t %s = { %s, %s, %s,&s,NULL };\n"
+local try_ram_string = "Try_function_RAM_t %s = {true, 0, 0 };\n"
+
+function try_handler(try_function_name,column_list,invert_flag,user_data)
+    local try_fn = Get_try_function(try_function_name)
+    Activate_try_function(try_function_name)
+    try_ram = generate_unique_function_name()
+    local message = string.format(try_ram_string,try_ram)
+    Store_user_code(message)
+    local column_array = generate_column_array(column_list)
+    try_rom = generate_unique_function_name()
+    if user_data ~= 'NULL' then
+        message = string.format(try_rom_string,try_rom,invert_flag,#column_list,column_array,try_ram,'(void *)'..user_data)
+    else
+        message = string.format(try_rom_string_null,try_rom,invert_flag,#column_list,column_array,try_ram)
+    end
+    Store_user_code(message)
+    Activate_column_function('TRY_HANDLER')
+    local column_fn_name = Get_column_function("TRY_HANDLER")
+    store_column_element(column_fn_name,try_fn,'(void *)&'..try_rom)
+    
+end
+
+
+local set_return_code_header = [[
+typedef struct Set_return_code_CFL_t
+{
+  bool return_code;
+} Set_return_code_CFL_t;
+
+
+int set_return_code_CFL(const void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local set_return_code_code = [[
+
+int set_return_code_CFL(const void *input,void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    (void)aux_fn;
+    Set_return_code_CFL_t *set_return_code = (Set_return_code_CFL_t *)params;
+    if(event_data->event_index != EVENT_INIT_CFL){
+        set_current_column_return_code_CFL(input, set_return_code->return_code);
+        return DISABLE_CFL;
+    }
     return HALT_CFL;
-  }
-  return HALT_CFL; // try column is still active
 }
 
 ]]
+
+Store_column_function("SET_RETURN_CODE", 'set_return_code_CFL',set_return_code_code, set_return_code_header)
+
+
+function set_column_return_code(return_code)
+    local return_code_name = generate_unique_function_name()
+    local message = string.format("const Set_return_code_CFL_t %s = { %s };\n",return_code_name,return_code)
+    Store_user_code(message)
+    Activate_column_function('SET_RETURN_CODE')
+    local column_fn_name = Get_column_function("SET_RETURN_CODE")
+    store_column_element(column_fn_name,'NULL','(void *)&'..return_code_name)
+end

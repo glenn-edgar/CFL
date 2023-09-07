@@ -136,7 +136,7 @@ end
 
 function check_for_undefined_columns()
    for i,v in ipairs(column_list) do
-      
+     
       if column_names[v]["defined"] == false then
          print("Column "..v.." not defined")
          os.exit(1)

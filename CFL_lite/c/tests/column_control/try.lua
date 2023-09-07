@@ -1,124 +1,183 @@
---[[
+
+set_h_file("try_1.h")
+local entry_point = "try_1_handle"
 
 
-pass_c([[
-/*
-** If opcode tests
-*/
+local allocate_once_heap_size = 2000
+local private_heap_size = 1000
+local default_event_queue_size = 10 
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
 
-static void test_if_function(void* input, If_control_CFL_t* if_control) {
-  // enable only even columns
-  bool* enable_ptr = if_control->return_indexes;
 
-  for (unsigned i = 0; i < if_control->column_number; i++) {
-    if (i % 2 == 0) {
-      *enable_ptr = true;
-    }
-    else {
-      *enable_ptr = false;
-    }
-    enable_ptr++;
-  }
+
+test_try_function_header =[[
+
+static const char user_data[] = "This is a test message for try \n";
+void test_try_function(void* input, Try_column_CFL_t* try_control);
+
+]]
+
+test_try_function_code=[[
+void test_try_function(void* input, Try_column_CFL_t* try_control) {
+  (void)input; // unused parameter
+  Try_function_RAM_t* try_ram = try_control->ram_data;
+   Printf_CFL("%s final state %d column index %d \n", __func__,
+    try_ram->final_state, try_ram->current_column_index);
+   Printf_CFL("user data %s\n", try_control->user_data);
 }
-#if 0
-typedef struct If_control_CFL_t
-{
-  bool termination_flag;
-  bool init_flag;
-  unsigned short column_number;
-  unsigned short* column_indexes;
-  bool* return_indexes;
-  One_shot_function_CFL_t termination_fn;
-  void* user_data;
-} If_control_CFL_t;
-#endif
+]]
 
-const char* try_user_data = "try_user_data";
+Store_try_function("TEST_TRY",'test_try_function', test_try_function_code,test_try_function_header)
+column_names = {"try_column","try_0","try_1","try_2"}
+define_columns(column_names)
 
-static void final_try_function(void *input, void *params, Event_data_CFL_t *event_data) {
-   If_control_CFL_t* if_control = (If_control_CFL_t*)params;
+try_column_list = {"try_0","try_1","try_2"}
 
-   printf("final_try_function called\n");
-   for(unsigned i = 0; i < if_control->column_number; i++) {
-     printf("if_control->return_indexes[%d] = %d\n", i, if_control->return_indexes[i]) ;
-   }
-   printf("user data is %s\n", (char*)if_control->user_data);
+define_column("try_column", true)
+  Log_msg("test where there is success in one of the try columns")
+  Log_msg("try column is active")
+  try_handler("TEST_TRY",try_column_list,false,'user_data')
+  Log_msg("try column is done")
+  terminate_column()
+end_column()
+     
 
-}
+  
+define_column( "try_0", false)
+  Log_msg("try_0 should be active")
+  Wait_delay( 2000)
+  Log_msg("try_0 is terminating with failure");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+     
+
+   
+define_column( "try_1", false);
+  Log_msg("try_1 should be active");
+  Wait_delay( 2000)
+  Log_msg("try_1 is terminating with success");
+  set_column_return_code(true)
+  terminate_column()
+end_column()
+            
+
+ 
+define_column( "try_2", false);
+  Log_msg("try_2 should not be active");
+  Wait_delay( 2000)
+  Log_msg("try_2 is terminating");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+        
+dump_build()
 
 
+set_h_file("try_2.h")
+local entry_point = "try_2_handle"
 
 
-Start_function('test_if_columns_normal_case')
-
-Conf_engine('config_handle','50000','2500')
-
-column_names = quote_list({ "if_column", "test_if_0", "test_if_1",
-                                "test_if_2", "test_if_3", "test_if_4",
-                                "test_if_5" })
-
-if_columns = quote_list({ "test_if_0", "test_if_1", "test_if_2",
-                              "test_if_3", "test_if_4", "test_if_5" })
+local allocate_once_heap_size = 2000
+local private_heap_size = 1000
+local default_event_queue_size = 10 
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
 
 
-Store_if_function("local_if_function", 'test_if_function')
-Store_one_shot("final_try_function", 'final_try_function')
-Def_columns('column_names',column_names)
+column_names = {"try_column","try_0","try_1","try_2"}
+define_columns(column_names)
 
-Start_column("if_column", true)
-  Log_msg( "if normal case")
-  Log_msg( "if column is active")
-  If_columns('local_if_function','col_name',if_columns,"final_try_function",'(void*)try_user_data')
-  Log_msg( "if column is done")
-  Term_column()
-End_column()
+try_column_list = {"try_0","try_1","try_2"}
 
-Start_column("test_if_0", false)
-  Log_msg( "test_if_0 should be active")
-  Log_msg( "will wait 2 seconds and terminate")
-  Wait_delay(  2000)
-  Log_msg( "test_if_0 is terminating")
-  Term_column()
-End_column()
+define_column("try_column", true)
+  Log_msg("test when all try columns  fail")
+  Log_msg("try column is active")
+  try_handler("TEST_TRY",try_column_list,false,'user_data')
+  Log_msg("try column is done")
+  terminate_column()
+end_column()
+define_column( "try_0", false)
+  Log_msg("try_0 should be active")
+  Wait_delay( 2000)
+  Log_msg("try_0 is terminating with failure");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+     
 
-Start_column("test_if_1", false)
-  Log_msg( "test_if_1 should not be active")
-  Log_msg( "will wait 3 seconds and terminate")
-  Wait_delay(  3000)
-  Log_msg( "test_if_1 is terminating")
-  Term_column()
-End_column()
+   
+define_column( "try_1", false);
+  Log_msg("try_1 should be active");
+  Wait_delay( 2000)
+  Log_msg("try_1 is terminating with success");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+            
 
-Start_column("test_if_2", false)
-  Log_msg( "test_if_2 should be active")
-  Log_msg( "will wait 4 seconds and terminate")
-  Wait_delay(  4000)
-  Log_msg( "test_if_2 is terminating")
-  Term_column()
-End_column()
+ 
+define_column( "try_2", false);
+  Log_msg("try_2 should not be active");
+  Wait_delay( 2000)
+  Log_msg("try_2 is terminating");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+        
+dump_build()
+     
 
-Start_column("test_if_3", false)
-  Log_msg( "test_if_0 should not be active")
-  Log_msg( "will wait 5 seconds to ")
-  Wait_delay(  5000)
-  Log_msg( "test_if_3 is terminating")
-  Term_column()
-End_column()
+set_h_file("try_3.h")
+local entry_point = "try_3_handle"
 
-Start_column("test_if_4", false)
-  Log_msg( "test_if_4 should be active")
-  Log_msg( "will wait 6 seconds and terminate")
-  Wait_delay(  6000)
-  Log_msg( "test_if_4 is terminating")
-  Term_column()
-End_column()
 
-Start_column("test_if_5", false)
-  Log_msg( "test_if_5 should not be active")
-  Log_msg( "will wait 7 seconds and reset")
-  Wait_delay(  7000)
-  Log_msg( "test_if_5 is terminating")
-  Term_column()
-End_column()
+local allocate_once_heap_size = 2000
+local private_heap_size = 1000
+local default_event_queue_size = 10 
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
 
-]]--
+
+column_names = {"try_column","try_0","try_1","try_2"}
+define_columns(column_names)
+
+try_column_list = {"try_0","try_1","try_2"}
+
+define_column("try_column", true)
+  Log_msg("test when all try columns  fail")
+  Log_msg("try column is active")
+  try_handler("TEST_TRY",try_column_list,true,'user_data')
+  Log_msg("try column is done")
+  terminate_column()
+end_column()
+define_column( "try_0", false)
+  Log_msg("try_0 should be active")
+  Wait_delay( 2000)
+  Log_msg("try_0 is terminating with failure");
+  set_column_return_code(true)
+  terminate_column()
+end_column()
+     
+
+   
+define_column( "try_1", false);
+  Log_msg("try_1 should be active");
+  Wait_delay( 2000)
+  Log_msg("try_1 is terminating with success");
+  set_column_return_code(true)
+  terminate_column()
+end_column()
+            
+
+ 
+define_column( "try_2", false);
+  Log_msg("try_2 should not be active");
+  Wait_delay( 2000)
+  Log_msg("try_2 is terminating");
+  set_column_return_code(false)
+  terminate_column()
+end_column()
+        
+dump_build()
+     
+
+

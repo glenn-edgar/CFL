@@ -157,9 +157,10 @@ void initialize_columns_CFL(const void *input);
 
 void set_current_column_return_code_CFL(const void *input, bool state);
 
-bool get_current_column_return_code_CFL(const void *input);
+bool get_current_column_return_code_CFL(const void *input,unsigned short column_index);
 
 unsigned get_current_column_element_index_CFL(const void *input);
+
 
 unsigned short get_current_column_index_CFL(const void *input);
 

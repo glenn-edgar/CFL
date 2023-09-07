@@ -8,8 +8,8 @@ PXT.cwd(current_working_directory)
 
 dofile("basic_control.lua")
 dofile("if_columns.lua")
-dofile("while_column.lua")
 dofile("try.lua")
+dofile("while_column.lua")
 dump_runtime_support()
 
 

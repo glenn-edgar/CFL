@@ -1,16 +1,17 @@
-column_functions = {}
-one_shot_functions = {}
-boolean_functions = {}
-try_functions = {}
-if_functions = {}
-conditional_functions = {}
 
-active_column_functions = {}
-active_one_shot_functions = {}
-active_boolean_functions = {}
-active_try_functions = {}
-active_if_functions = {}
-active_conditional_functions = {}
+
+
+    column_functions = {}
+    one_shot_functions = {}
+    boolean_functions = {}
+    try_functions = {}
+    if_functions = {}
+    active_column_functions = {}
+    active_one_shot_functions = {}
+    active_boolean_functions = {}
+    active_try_functions = {}
+    active_if_functions = {}
+
 
 function dump_column_functions()
 
@@ -60,16 +61,7 @@ function dump_try_functions()
     end
 end
 
-function dump_conditional_functions()
 
-    for fn_name, dummy in pairs(active_conditional_functions) do
-        local code = conditional_functions[fn_name]["function_code"]
-        Store_basic_code(code)
-        local header_code =
-            conditional_functions[fn_name]["function_header_code"]
-        Store_basic_header_code(header_code)
-    end
-end
 
 function dump_if_functions() end
 
@@ -80,7 +72,7 @@ function dump_functions()
     dump_boolean_functions()
     dump_try_functions()
     dump_if_functions()
-    dump_conditional_functions()
+ 
 end
 
 function Store_column_function(op_code, c_function_name, function_code,
@@ -207,4 +199,36 @@ function Get_boolean_function(op_code)
     return boolean_functions[op_code]["c_function_name"]
 end
 
+function Store_try_function(op_code, c_function_name, function_code,
+                                function_header_code)
+
+    if try_functions[op_code] ~= nil then
+        print("Error: function code for " .. op_code .. " already defined")
+        os.exit(1)
+    end
+    try_functions[op_code] = {}
+    try_functions[op_code]["c_function_name"] = c_function_name
+    try_functions[op_code]["function_code"] = function_code
+    try_functions[op_code]["function_header_code"] = function_header_code
+    -- print("functions.lua: " .. op_code .. " function code inserted")
+end
+
+function Activate_try_function(op_code)
+
+    if (try_functions[op_code] == nil) then
+        print("Error: bool function ++ " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    active_try_functions[op_code] = true
+
+end
+
+function Get_try_function(op_code)
+    if (try_functions[op_code] == nil) then
+        print("Error: bool function -- " .. op_code .. " not defined")
+        os.exit(1)
+    end
+    Activate_try_function(op_code)
+    return try_functions[op_code]["c_function_name"]
+end
 
