@@ -1,5 +1,7 @@
-set_h_file("state_machine_2.h")
-local entry_point = "state_machine_2_handle"
+
+
+set_h_file("state_machine_3.h")
+local entry_point = "state_machine_3_handle"
 
 
 local allocate_once_heap_size = 2000
@@ -7,8 +9,6 @@ local private_heap_size = 1000
 local default_event_queue_size = 10 
 start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
 
-local message = string.format('const char test_data_2[] = "%s\\n";\n',"test_data")
-Store_user_code(message)
 
 -- start of user events
 set_user_event_start(100)
@@ -38,7 +38,52 @@ filter_event_3 = generate_event(113,false,'NULL')
 -- returns const event address
 
 
+local sm_conditional_state_change_header = [[
 
+typedef struct condition_state_change_t{
+   unsigned short trigger_event;
+   unsigned short trigger_count_limit;
+   unsigned short *trigger_count;
+}condition_state_change_t;
+
+bool conditional_state_change(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local sm_conditional_state_change_body = [[
+
+bool conditional_state_change(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    condition_state_change_t *condition_state_change = (condition_state_change_t *)params;
+    if(event_data->event_index == EVENT_INIT_CFL){
+        *condition_state_change->trigger_count = 0;
+        return false;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return false;
+
+    }
+    if(event_data->event_index == condition_state_change->trigger_event){
+        *condition_state_change->trigger_count = *condition_state_change->trigger_count + 1;
+        if(*condition_state_change->trigger_count >= condition_state_change->trigger_count_limit){
+            return true;
+        }
+    }
+    return false;
+
+}
+
+]]
+
+Store_boolean_function('conditional_state_change_fn','conditional_state_change',sm_conditional_state_change_body,sm_conditional_state_change_header)
+
+
+Store_user_code([[
+#define state_1_event 101
+unsigned short test_counter = 0;
+const condition_state_change_t bool_state_change = {state_1_event,3,&test_counter};
+
+]])
 
 
 
@@ -48,10 +93,10 @@ define_columns({"start_column","event_generator"})
 
 local message = [[
 
-const char test_data_11[] = "state 1 debug message";
-const char test_data_21[] = "state 2 debug message";
-const char test_data_31[] = "state 3 debug message";
-const char test_data_41[] = "state 4 debug message";
+const char test_data_12[] = "state 1 debug message";
+const char test_data_22[] = "state 2 debug message";
+const char test_data_32[] = "state 3 debug message";
+const char test_data_42[] = "state 4 debug message";
 ]]
 Store_user_code(message)
 
@@ -68,38 +113,40 @@ end_column()
 
 define_column("event_generator",false,nil)
     Log_msg("event generator start")
-    Wait_delay(2000)
-    send_state_machine_event("test_sm",filter_event_1)
-    send_state_machine_event("test_sm",filter_event_2)
-    send_state_machine_event("test_sm",filter_event_3)
-
-    send_state_machine_event("test_sm",state_machine_event_1)
-    Wait_delay(2000)
+    Wait_delay(1000)
     send_state_machine_event("test_sm",filter_event_1)
     send_state_machine_event("test_sm",filter_event_2)
     send_state_machine_event("test_sm",filter_event_3)
 
     send_state_machine_event("test_sm",state_machine_event_2)
-    Wait_delay(2000)
+    Wait_delay(1000)
     send_state_machine_event("test_sm",filter_event_1)
     send_state_machine_event("test_sm",filter_event_2)
     send_state_machine_event("test_sm",filter_event_3)
 
     send_state_machine_event("test_sm",state_machine_event_3)
-    Wait_delay(2000)
+    Wait_delay(1000)
     send_state_machine_event("test_sm",filter_event_1)
     send_state_machine_event("test_sm",filter_event_2)
     send_state_machine_event("test_sm",filter_event_3)
 
     send_state_machine_event("test_sm",state_machine_event_4)
+    Wait_delay(1000)
+    send_state_machine_event("test_sm",filter_event_1)
+    send_state_machine_event("test_sm",filter_event_2)
+    send_state_machine_event("test_sm",filter_event_3)
+
+    send_state_machine_event("test_sm",state_machine_event_1)
     reset_column()
 end_column()
 
 local state_list = {"test_state1","test_state2","test_state3","test_state4"}
 local queue_name = "test_sm_queue"
 local queue_size = 10
-local user_data = "(void *)test_data_2"
-define_state_machine("test_sm",state_list,queue_name,queue_size,user_data)
+
+define_state_machine("test_sm",state_list,queue_name,queue_size,'NULL')
+
+
 
 
 
@@ -107,10 +154,6 @@ define_add_manager_chain()
     Log_msg('state machine manager starting')
 
     change_state("test_state1")
-    state_change({state_1_event},"test_state1")
-    state_change({state_2_event},"test_state2")
-    state_change({state_3_event},"test_state3")
-    state_change({state_4_event},"test_state4")
     redirect_event("TRUE","NULL")
    
     halt_column()
@@ -119,28 +162,34 @@ end_column()
 
 define_state("test_state1")
     Log_msg('state 1 starting')
-    sm_debug_function('test_data_11')
-   
+    state_change({state_2_event},"test_state2")
+    sm_debug_function('test_data_12')
+    
     halt_column()
 end_column()
 
 define_state("test_state2")
     Log_msg('state 2 starting')
-    sm_debug_function('test_data_21')
+    state_change({state_3_event},"test_state3")
+    sm_debug_function('test_data_22')
     halt_column()
 end_column()
 
 
 define_state("test_state3")
     Log_msg('state 3 starting')
-    sm_debug_function('test_data_31')
+    sm_debug_function('test_data_32')
+    state_change({state_4_event},"test_state4")
+    
     halt_column()
 end_column()
 
 
 define_state("test_state4")
     Log_msg('state 4 starting')
-    sm_debug_function('test_data_41')
+    Activate_boolean_function('conditional_state_change_fn')
+    conditional_state_change('conditional_state_change_fn','bool_state_change','test_state1')
+    sm_debug_function('test_data_42')
     halt_column()
 end_column()
 

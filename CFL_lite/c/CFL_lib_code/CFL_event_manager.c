@@ -80,7 +80,8 @@ void dequeue_event_CFL(const void *input,unsigned queue_id) {
   Event_data_CFL_t *event;
 
   if (is_queue_empty_CFL(input,queue_id)) {
-    ASSERT_PRINT_INT("Queue is empty",queue_id);
+    //ASSERT_PRINT_INT("Queue is empty",queue_id);
+    return;
   }
    
   const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+queue_id;

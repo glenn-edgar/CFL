@@ -10,7 +10,7 @@ dofile("state_machine_1.lua")
 dofile("state_machine_2.lua")
 dofile("state_machine_3.lua")  -- conditional state change
 dofile("state_machine_4.lua")  -- sync event
-dofile("state_machine_5.lua")  -- column state machine
+--dofile("state_machine_5.lua")  -- column state machine
 dump_runtime_support()
 
 

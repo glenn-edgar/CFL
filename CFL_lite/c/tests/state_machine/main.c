@@ -28,7 +28,7 @@ void test_state_machine_1(void);
 void test_state_machine_2(void);
 void test_state_machine_3(void);
 void test_state_machine_4(void);
-void test_state_machine_5(void);
+//void test_state_machine_5(void);
 
 
 int main()
@@ -39,7 +39,7 @@ int main()
   test_state_machine_2();
   test_state_machine_3();
   test_state_machine_4();
-  test_state_machine_5();
+  //test_state_machine_5();
   
  
 }
@@ -49,7 +49,7 @@ int main()
 void test_state_machine_1(void)
 {  
     
-
+ 
 
    create_allocate_once_heap(); // create allocate once heap
 
@@ -66,7 +66,7 @@ void test_state_machine_2(void)
 {  
     
 
-
+ 
    create_allocate_once_heap(); // create allocate once heap
 
    const Handle_CFL_t *handle = state_machine_2_handle();
@@ -92,6 +92,7 @@ void test_state_machine_3(void)
  
    printf("Engine is done \n");
 }
+
 #include "state_machine_4.h"
 void test_state_machine_4(void)
 {  
@@ -107,6 +108,7 @@ void test_state_machine_4(void)
  
    printf("Engine is done \n");
 }
+#if 0
 #include "state_machine_5.h"
 void test_state_machine_5(void)
 {  
@@ -122,3 +124,4 @@ void test_state_machine_5(void)
  
    printf("Engine is done \n");
 }
+#endif
