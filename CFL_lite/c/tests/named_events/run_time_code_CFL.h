@@ -12,22 +12,6 @@ extern "C" {
 //----------Ref function header code ----
 
 
-int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
-
-
-extern const int reset_buffer[1];
-extern const int halt_buffer[1];
-extern const int terminate_buffer[1];
-extern const int terminate_engine_buffer[1];
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data);
-
-    
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
-
-
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -46,8 +30,27 @@ typedef struct While_control_ROM_t
 
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
-void null_function(const void *handle,
+
+extern const int reset_buffer[1];
+extern const int halt_buffer[1];
+extern const int terminate_buffer[1];
+extern const int terminate_engine_buffer[1];
+
+int return_condition_code_CFL(const void *handle, void *aux_fn,
     void *params, Event_data_CFL_t *event_data);
+
+    
+int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
+
+
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data);
+
 
 typedef struct Queue_event_CFL_t
 {
@@ -59,11 +62,8 @@ typedef struct Queue_event_CFL_t
 void send_queue_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
 
 
-
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data);
-
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
 
      
 typedef struct While_time_control_ROM_t

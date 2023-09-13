@@ -292,7 +292,7 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
 
     return true;
   }
-
+  
   if (is_queue_empty_CFL(handle, column->queue_number) == true)
   {
     return true;
@@ -300,23 +300,28 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
 
   while (true)
   {
-
+   
     if (is_queue_empty_CFL(handle, column->queue_number) == true)
     {
 
       return true;
     }
-
+    
     temp = peak_event_CFL(handle, column->queue_number);
 
     result = inner_process_column(handle, column_index, temp);
 
+    
+    dequeue_event_CFL(handle, column->queue_number);
+   
+    
     if (result == false)
     {
       return false; // engine shut down
     }
+   
+    return true; // hack to process only one event
 
-    dequeue_event_CFL(handle, column->queue_number);
   }
   return true; // should never get here
 }

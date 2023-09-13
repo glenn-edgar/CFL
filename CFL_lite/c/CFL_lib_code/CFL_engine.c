@@ -68,6 +68,7 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
   
 
   reset_all_queues(handle);
+  reset_all_state_machines_CFL(handle);
 
   
   handle->time_control->tick_ms = ms_tick;
@@ -139,6 +140,7 @@ static bool process_single_loop(const Handle_CFL_t *handle)
     
   return true;
 }
+
 
 /*
   these are default linux handlers

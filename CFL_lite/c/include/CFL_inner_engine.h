@@ -10,6 +10,7 @@ extern "C" {
 #include "CFL_event_manager.h"
 #include "CFL_private_heap.h"
 #include "CFL_local_heap_functions.h"
+#include "CFL_state_machine.h"
 
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
@@ -33,6 +34,9 @@ typedef struct Time_control_CFL_t
 
 typedef void (*Idle_function_CFL_t)(const void *input, Time_control_CFL_t *timer_control, bool init_flag);
 typedef void (*Calendar_function_CFL_t)(const void *input, Time_control_CFL_t *timer_control, bool init_flag);
+
+
+
 
 typedef struct Column_element_CFL_t
 {
@@ -131,6 +135,11 @@ typedef struct Handle_CFL_t
   CS_MEMORY_CONTROL *private_heap;      
   
   unsigned private_heap_size;
+
+  unsigned number_of_sm;
+  const Sm_control_ROM_CFL_t *sm_rom;
+  Sm_control_RAM_CFL_t *sm_ram;
+
 
 } Handle_CFL_t;
 

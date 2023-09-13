@@ -24,57 +24,100 @@ void free_allocate_once_heap(){
 
 
 
-void test_basic_control(void);
-void test_while_control(void);
-void test_if_then_else_control(void);
+void test_state_machine_1(void);
+void test_state_machine_2(void);
+void test_state_machine_3(void);
+void test_state_machine_4(void);
+void test_state_machine_5(void);
 
 
 int main()
+
 {
-  printf("\n\n test column control \n\n");
-  test_basic_control();
-  test_while_control();
-  test_if_then_else_control();
+  printf("\n\n test_state machine \n\n");
+  test_state_machine_1();
+  test_state_machine_2();
+  test_state_machine_3();
+  test_state_machine_4();
+  test_state_machine_5();
   
  
 }
 
-#include "basic_control.h"
-void test_basic_control(void)
-{
-   return;
-   create_allocate_once_heap(); // create allocate once heap
 
-   const Handle_CFL_t *handle = basic_control_handle();
-   Initialize_engine_CFL(handle);
-   Start_engine_CFL(handle, 500, default_idle_function, default_calendar_function);
-   free_allocate_once_heap(); // free allocate once heap
- 
-   printf("Engine is done \n");
-}
-#include "while_column.h"
-void test_while_control(void)
+#include "state_machine_1.h"
+void test_state_machine_1(void)
 {  
     
-   return; 
+
+
    create_allocate_once_heap(); // create allocate once heap
 
-   const Handle_CFL_t *handle = while_column_handle();
+   const Handle_CFL_t *handle = state_machine_1_handle();
    Initialize_engine_CFL(handle);
-   Start_engine_CFL(handle, 500, default_idle_function, default_calendar_function);
+   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
    free_allocate_once_heap(); // free allocate once heap
  
    printf("Engine is done \n");
 }
 
-#include "if_then_else.h"
-void test_if_then_else_control(void)
-{
+#include "state_machine_2.h"
+void test_state_machine_2(void)
+{  
+    
+
+
    create_allocate_once_heap(); // create allocate once heap
 
-   const Handle_CFL_t *handle = if_then_else_handle();
+   const Handle_CFL_t *handle = state_machine_2_handle();
    Initialize_engine_CFL(handle);
-   Start_engine_CFL(handle, 500, default_idle_function, default_calendar_function);
+   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+   printf("Engine is done \n");
+}
+
+#include "state_machine_3.h"
+void test_state_machine_3(void)
+{  
+    
+
+
+   create_allocate_once_heap(); // create allocate once heap
+
+   const Handle_CFL_t *handle = state_machine_3_handle();
+   Initialize_engine_CFL(handle);
+   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+   printf("Engine is done \n");
+}
+#include "state_machine_4.h"
+void test_state_machine_4(void)
+{  
+    
+
+
+   create_allocate_once_heap(); // create allocate once heap
+
+   const Handle_CFL_t *handle = state_machine_4_handle();
+   Initialize_engine_CFL(handle);
+   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+   printf("Engine is done \n");
+}
+#include "state_machine_5.h"
+void test_state_machine_5(void)
+{  
+    
+
+
+   create_allocate_once_heap(); // create allocate once heap
+
+   const Handle_CFL_t *handle = state_machine_5_handle();
+   Initialize_engine_CFL(handle);
+   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
    free_allocate_once_heap(); // free allocate once heap
  
    printf("Engine is done \n");

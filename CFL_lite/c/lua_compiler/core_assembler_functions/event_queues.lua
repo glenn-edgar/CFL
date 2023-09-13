@@ -84,7 +84,8 @@ end
 
 
 function define_named_queue(name,size)
-    if queue_names[queue_name] ~= nil then
+
+    if queue_names[name] ~= nil then
         print("Cannot define queue "..queue_name.." twice")
         os.exit(1)
      end

@@ -10,9 +10,12 @@ function initialize_columns()
 end
     
 function define_columns(columns)
-   
+    
     for i,v in ipairs(columns) do
-      
+       if column_names[v] ~= nil then
+          print("Column name "..v.." already defined")
+          os.exit(1)
+       end  
        column_names[v] = {}
        column_names[v]["defined"] = false
        column_names[v]["number"] = column_number

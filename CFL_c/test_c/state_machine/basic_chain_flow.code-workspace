@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../basic_chain_flow"
+		},
+		{
+			"path": "../../include"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

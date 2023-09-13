@@ -39,7 +39,7 @@ end
 function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap_size, private_heap_size,
                      default_event_queue_size,debug_function)
 
-    
+    reset_state_machine()
     initialize_build_variables()
     build_status["entry_point"] = entry_point
     build_status["allocate_once_heap_size"] = allocate_once_heap_size
@@ -64,6 +64,7 @@ current_heap_pointer = nil -- global variable
 
 
 function dump_header()
+    generate_state_machines()
     time_control_name = generate_unique_function_name()
     local message = string.format("\n\nstatic Time_control_CFL_t %s;\n\n\n",time_control_name);
     write_output(message)
@@ -124,6 +125,10 @@ function dump_header()
       CS_MEMORY_CONTROL *private_heap;      
       
       unsigned private_heap_size;
+      unsigned number_of_sm;
+      Sm_control_ROM_CFL_t *sm_rom;
+      Sm_control_RAM_CFL_t *sm_ram;
+    
     
     } Handle_CFL_t;
 
@@ -170,6 +175,9 @@ const struct Handle_CFL_t %s =
   .current_heap_location = &%s,
   .private_heap   = &%s,
   .private_heap_size =   %s,
+  .number_of_sm      = %s,
+   .sm_rom     =  %s,
+   .sm_ram     = %s,
 } ;
 
 
@@ -205,7 +213,11 @@ local message = string.format(header_def,
                               remaing_size_name,
                               current_heap_pointer,
                               heap_block_control,
-                              build_status["private_heap_size"])   
+                              build_status["private_heap_size"],
+                              build_status["number_of_sm"],
+                              build_status["sm_rom"],
+                              build_status["sm_ram"] )
+                              
 write_output(message)
 
 
@@ -224,7 +236,7 @@ end
 
 
 function dump_build()
-  print("Dumping output")
+
   message = '#include "run_time_code_CFL.h"\n'
   write_output(message)
   dump_event_queues()
