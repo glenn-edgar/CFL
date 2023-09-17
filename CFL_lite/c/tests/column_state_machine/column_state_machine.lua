@@ -190,7 +190,7 @@ local sm_template_code = [[
   }
   if( event->event_index == SECOND_TICK_CFL){
     
-    
+    Printf("second tics received \n");
     *count = *count + 1;
    
     if(*count >=  5){

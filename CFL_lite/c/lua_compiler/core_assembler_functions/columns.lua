@@ -34,8 +34,9 @@ function get_column_number(name)
    return column_names[name]["number"]
 end
 
+active_column = nil -- insure variable is global
+function define_column(name, startup_flag,queue_name,size)
 
-function define_column(name, startup_flag,queue_name)
    
    if build_status["column_status"] == true then
       print("Cannot define column while another column is being defined")
@@ -48,6 +49,13 @@ function define_column(name, startup_flag,queue_name)
    if(column_names[name]["defined"] == true) then
       print("Column name "..name.." already defined")
       os.exit(1)
+   end
+
+  if size == nil then
+     size = 10
+   end
+   if queue_name ~= nil then
+      define_named_queue(queue_name,size)
    end
    build_status["column_state_changes"] = {} -- list of column state changes
    build_status["column_status"] = true
@@ -67,7 +75,9 @@ function define_column(name, startup_flag,queue_name)
    else
       column_data["queue_number"] = lookup_named_queue(queue_name)
    end
-
+   active_column = {}
+   active_column["name"] = name
+   active_column["queue_name"] = queue_name
    column_names[name]["defined"] = true
    column_names[name]["data"] = column_data
   
@@ -129,11 +139,12 @@ function end_column()
    -- check column state changes
    for i,state_change in ipairs(build_status["column_state_changes"]) do
        
-       if state_change > column_data["end_state"]-column_data["start_state"] then
-          print("Column "..column_name.." has state change greater than end state")
-          os.exit(1)
-       end
+      if state_change > column_data["end_state"]-column_data["start_state"] then
+         print("Column "..column_name.." has state change greater than end state")
+         os.exit(1)
       end
+   end
+   active_column = nil
 end
 
 

@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../helper_functions"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"state_machine_1.h": "c"
+		}
+	}
+}

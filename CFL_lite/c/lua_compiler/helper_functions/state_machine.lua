@@ -103,7 +103,7 @@ function define_add_manager_chain()
         os.exit(1)
     end
     
-    queue_name = active_state_machine.queue_name
+    local queue_name = active_state_machine.queue_name
     if(queue_name == nil) then
         print("error queue_name is nil")
         os.exit(1)
@@ -111,9 +111,11 @@ function define_add_manager_chain()
     active_state_machine.sm_manager = chain_name
 
     
-    define_named_queue(queue_name,active_state_machine.queue_size)
+  
     define_columns({chain_name})
-    define_column(chain_name,false,queue_name)
+    
+    define_column(chain_name,false,queue_name,active_state_machine.queue_size)
+   
 end
 
 function verify_state(state_name)
@@ -152,7 +154,7 @@ end
 
 function define_state(state_name)
     chain_name = generate_unique_function_name()
-    queue_name = generate_unique_function_name()
+    local queue_name = generate_unique_function_name()
     if(sm_active == false) then
         print("error sm_active is not actove")
         os.exit(1)
@@ -175,9 +177,10 @@ function define_state(state_name)
     active_state_machine.defined_states[state_name] = {chain_name,queue_name}
     define_columns({chain_name})
  
-    define_named_queue(queue_name,active_state_machine.queue_size)
-  
-    define_column(chain_name,false,queue_name)
+
+    
+    define_column(chain_name,false,queue_name,active_state_machine.queue_size)
+    
 end
 
 

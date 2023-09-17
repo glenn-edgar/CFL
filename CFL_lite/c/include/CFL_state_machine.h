@@ -2,6 +2,7 @@
 #define __CFL_STATE_MACHINE_H__
 #include "CFL_debug.h"
 
+
 typedef struct Sm_control_RAM_CFL_t
 {
   

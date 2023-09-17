@@ -11,6 +11,7 @@ extern "C" {
 #include "CFL_private_heap.h"
 #include "CFL_local_heap_functions.h"
 #include "CFL_state_machine.h"
+#include "CFL_rpc_types.h"
 
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
