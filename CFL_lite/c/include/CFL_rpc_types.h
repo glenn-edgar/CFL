@@ -21,10 +21,10 @@ typedef struct rpc_rom_message_t
 } rpc_rom_message_CFL_t;
 
 #define RPC_MESSAGE_ID_CFL 0x4321
-#define RPC_EVENT_CFL 0x1234
+#define RPC_EVENT_CFL 0x7fff
 
-typedef void (*Generate_RPC_event_CFL_t )(const void *input,void *params, rpc_rom_message_CFL_t *data);
-typedef void (*Client_Process_RPC_event_CFL_t )(const void *input,void *params, rpc_rom_message_CFL_t *data);
+typedef void (*Generate_RPC_event_CFL_t )(const void *input,void *params, Event_data_CFL_t *data);
+typedef void (*Client_Process_RPC_event_CFL_t )(const void *input,void *params, rpc_ram_message_CFL_t *data);
 typedef void (*Server_Process_RPC_event_CFL_t )(const void *input,void *user_data, rpc_rom_message_CFL_t *data);
 
 #endif // __CFL_RPC_TYPES_H__

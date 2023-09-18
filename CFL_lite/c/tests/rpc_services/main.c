@@ -31,7 +31,7 @@ void test_rpc_services(void);
 int main()
 
 {
-  printf("\n\n test_state machine \n\n");
+  printf("\n\n test rpc services \n\n");
   test_rpc_services();
   
   
@@ -44,12 +44,14 @@ void test_rpc_services(void)
 {  
     
  
-   return;
+   
    create_allocate_once_heap(); // create allocate once heap
 
    const Handle_CFL_t *handle = rpc_services_handle();
    Initialize_engine_CFL(handle);
+
    Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+
    free_allocate_once_heap(); // free allocate once heap
  
    printf("Engine is done \n");

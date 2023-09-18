@@ -21,7 +21,7 @@ define_column("start_column",true,nil)
 end_column()
 
 
-define_column("rpc_server_column",true,"server_queue")
+define_column("rpc_server_column",false,"server_queue")
     store_server_event_process("SERVICE_HANDLER_1",'NULL',{11,12,13,14,15})
     store_server_event_process("SERVICE_HANDLER_2",'NULL',{21,22,23,24,25})
     rpc_event_clean_up("RPC_CLEAN_UP_FUNCTION","(void *)clean_up_data",true)
@@ -29,18 +29,27 @@ define_column("rpc_server_column",true,"server_queue")
 end_column()
 
 
-define_column("rpc_client_column1",true,"client_queue1")
+define_column("rpc_client_column1",false,"client_queue1")
+    generate_rpc_event("RPC_CLIENT_1_GENERATOR","server_queue",13)
+    Wait_event(rpc_event_id, 1, 1000, true, "RPC_CLIENT_1_TIME_OUT", '"unexpected one second time out"')
+    rpc_client_event_processor("PROCESS_EVENT_1",'"process event 1 user data"')
+    Wait_delay(5000)
     reset_column()
 end_column()
 
-define_column("rpc_client_column2",true,"client_queue2")
+define_column("rpc_client_column2",false,"client_queue2")
+    generate_rpc_event("RPC_CLIENT_2_GENERATOR","server_queue",23)
+    rpc_client_event_processor("PROCESS_EVENT_1",'"process event 2 user data"')
+    Wait_delay(5000)
     reset_column()
 end_column()
 
 
-define_column("rpc_client_column3",true,"client_queue3")
+define_column("rpc_client_column3",false,"client_queue3")
     Wait_delay(45000)
-    --- generate a bad request
+    generate_rpc_event("RPC_CLIENT_3_GENERATOR","server_queue",33)
+    rpc_client_event_processor("PROCESS_EVENT_1",'"process event 3 user data"')
+    Wait_delay(45000)
     reset_column()
 end_column()
 

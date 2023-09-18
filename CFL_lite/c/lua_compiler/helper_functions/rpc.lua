@@ -27,6 +27,8 @@ typedef void (*Process_RPC_event_CFL_t )(const void *input, rpc_ram_message_CFL_
 
 ]]
 
+rpc_event_id = 0x7fff
+
 
 local rpc_client_event_generator_header = [[
 
@@ -39,9 +41,10 @@ local rpc_client_event_generator_body = [[
 int rpc_client_event_generator_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
   Generate_RPC_event_CFL_t generate_rpc_event = (Generate_RPC_event_CFL_t)aux_fn;
   rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)params;
-  if(event_data->event_index == RPC_EVENT_CFL){
-    generate_rpc_event(input,rpc_message); 
-    Event_data_CFL_t event_data_to_send = ( RPC_EVENT_CFL, false,(void *)rpc_message);
+  if(event_data->event_index != EVENT_INIT_CFL){
+  
+    generate_rpc_event(input,params,&rpc_message->ram_message->sent_event); 
+    Event_data_CFL_t event_data_to_send = {RPC_EVENT_CFL, false,(void *)rpc_message};
     enqueue_event_CFL(input,rpc_message->destination_queue, &event_data_to_send);
     return DISABLE_CFL;
   }
@@ -59,17 +62,21 @@ function generate_rpc_event(rpc_event_generator_fn,destination_queue,request_id)
     error("generate_rpc_event must be called inside a column function")
   end
   receieved_queue = active_column["queue_name"] 
+  receieved_queue_id = lookup_named_queue(receieved_queue)
+  destination_queue_id = lookup_named_queue(destination_queue)
   local aux_fn = Get_generate_rpc_event(rpc_event_generator_fn)
-  Activate_one_shot_function(client_server_fn)
+  
   local unique_ram_name = generate_unique_function_name()
+ 
+ 
   local message = string.format("rpc_ram_message_CFL_t %s;\n",unique_ram_name)
   Store_user_code(message)
   local unique_name = generate_unique_function_name()
-  local message = string.format("const rpc_rom_message_CFL_t %s = {%s,RPC_MESSAGE_ID_CFL,%s,%s,&s};\n",unique_name,request_id,destination_queue,receieved_queue,unique_ram_name)
+  local message = string.format("const rpc_rom_message_CFL_t %s = {%s,RPC_MESSAGE_ID_CFL,%s,%s,&%s};\n",unique_name,request_id,destination_queue_id,receieved_queue_id,unique_ram_name)
   Store_user_code(message)
   column_fn = Get_column_function("RPC_CLIENT_EVENT_GENERATOR")
   Activate_column_function("RPC_CLIENT_EVENT_GENERATOR")
-  store_column_element("RPC_CLIENT_EVENT_GENERATOR",aux_fn,"(void *)&"..unique_name)
+  store_column_element(column_fn,aux_fn,"(void *)&"..unique_name)
 end
 
 local rpc_client_event_processor_header = [[
@@ -86,20 +93,21 @@ local rpc_client_event_processor_body = [[
   int rpc_client_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
     Client_Process_RPC_event_CFL_t client_process_rpc_event = (Client_Process_RPC_event_CFL_t)aux_fn;
     if(event_data->event_index == RPC_EVENT_CFL){
-      rpc_ram_message_CFL_t *rpc_message = (rpc_ram_message_CFL_t *)event_data->event_data;
+      
+      rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
       if(rpc_message->unique_id != RPC_MESSAGE_ID_CFL){
           ASSERT_PRINT_F("unique id is not valid expected %x got %x\n",RPC_MESSAGE_ID_CFL,rpc_message->unique_id);
       }
-      client_process_rpc_event(input,params,rpc_message);
-      if(rpc_message->ram_message.sent_event.malloc_flag == true){
-        private_heap_free_CFL(input,rpc_message->ram_message.sent_event.event_data);
+      client_process_rpc_event(input,params,rpc_message->ram_message);
+      if(rpc_message->ram_message->sent_event.malloc_flag == true){
+        private_heap_free_CFL(input,rpc_message->ram_message->sent_event.params);
       }
-      if(rpc_message->ram_message.received_event.malloc_flag == true){
-        private_heap_free_CFL(input,rpc_message->ram_message.received_event.event_data);
+      if(rpc_message->ram_message->received_event.malloc_flag == true){
+        private_heap_free_CFL(input,rpc_message->ram_message->received_event.params);
       }
-      return HALT_CFL;
+      return DISABLE_CFL;
     }
-
+    return HALT_CFL;
 
 
   }
@@ -111,13 +119,14 @@ local rpc_client_event_processor_body = [[
 Store_column_function("RPC_CLIENT_EVENT_PROCESSOR","rpc_client_event_processor_CFL", rpc_client_event_processor_body,rpc_client_event_processor_header)
 
 function rpc_client_event_processor(client_process_event_fn,user_data)
+  
   local aux_fn = Get_client_process_event(client_process_event_fn)
   column_fn = Get_column_function("RPC_CLIENT_EVENT_PROCESSOR")
   Activate_column_function("RPC_CLIENT_EVENT_PROCESSOR")
   if(user_data ~= 'NULL') then
-    store_column_element("RPC_CLIENT_EVENT_PROCESSOR",aux_fn,"(void *)&"..user_data)
+    store_column_element(column_fn,aux_fn,"(void *)&"..user_data)
   else
-    store_column_element("RPC_CLIENT_EVENT_PROCESSOR",aux_fn,"NULL")
+    store_column_element(column_fn,aux_fn,"NULL")
   end
 end
 
@@ -149,6 +158,7 @@ int rpc_server_event_processor_CFL(const void *input,void *aux_fn, void *params,
   rpc_server_event_processor_CFL_t *rpc_server_event_processor = (rpc_server_event_processor_CFL_t *)params;
   
   if(event_data->event_index == RPC_EVENT_CFL){
+    
     rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
     for(unsigned i = 0; i< rpc_server_event_processor->rpc_request_number; i++){
       if(rpc_message->rpc_request_id == rpc_server_event_processor->rpc_request_list[i]){

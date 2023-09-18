@@ -188,7 +188,7 @@ void null_function(const void *handle,
 Store_one_shot_function('NULL', null_function_name, null_code, null_header_code)
 
 function Activate_one_shot_function(op_code)
-
+  
     if (one_shot_functions[op_code] == nil) then
         print("Error: one shot function " .. op_code .. " not defined")
         os.exit(1)
@@ -345,7 +345,7 @@ end
 
 
 function Get_client_process_event(op_code)
-    if (rpc_event_process_functions[op_code] == nil) then
+    if (rpc_event_client_process_functions[op_code] == nil) then
         print("Error: bool function -- " .. op_code .. " not defined")
         os.exit(1)
     end
