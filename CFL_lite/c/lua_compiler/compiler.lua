@@ -52,6 +52,7 @@ function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap
     initialize_columns()
     initialize_column_elements()
     reset_code_buffers()
+    initialize_bit_maps()
     
 
 end
@@ -178,6 +179,8 @@ const struct Handle_CFL_t %s =
   .number_of_sm      = %s,
    .sm_rom     =  %s,
    .sm_ram     = %s,
+   .number_of_bitmaps = %d,
+    .bitmaps = %s,
 } ;
 
 
@@ -216,7 +219,10 @@ local message = string.format(header_def,
                               build_status["private_heap_size"],
                               build_status["number_of_sm"],
                               build_status["sm_rom"],
-                              build_status["sm_ram"] )
+                              build_status["sm_ram"] ,
+                              build_status["number_of_bitmaps"],
+                              build_status["bitmaps"]                              
+                              )
                               
 write_output(message)
 
@@ -248,9 +254,10 @@ function dump_build()
    
     dump_columns()
     dump_column_elements()
-    
+    dump_bit_maps()
     dump_header()
     write_output(header_end)
+    
     
 end
 

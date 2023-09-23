@@ -12,6 +12,7 @@ extern "C" {
 #include "CFL_local_heap_functions.h"
 #include "CFL_state_machine.h"
 #include "CFL_rpc_types.h"
+#include "CFL_bit_map.h"
 
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
@@ -140,6 +141,8 @@ typedef struct Handle_CFL_t
   unsigned number_of_sm;
   const Sm_control_ROM_CFL_t *sm_rom;
   Sm_control_RAM_CFL_t *sm_ram;
+  const unsigned number_of_bitmaps;
+  Bitmap_CFL *bitmaps;
 
 
 } Handle_CFL_t;
