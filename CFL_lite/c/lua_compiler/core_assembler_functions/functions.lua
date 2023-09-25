@@ -75,12 +75,15 @@ end
 function dump_one_shot_functions()
 
     for fn_name, dummy in pairs(active_one_shot_functions) do
-
+        
         if active_one_shot_functions[fn_name] ~= nil then
+           
             local code = one_shot_functions[fn_name]["function_code"]
+           
             Store_basic_code(code)
             local header_code =
                 one_shot_functions[fn_name]["function_header_code"]
+          
             Store_basic_header_code(header_code)
 
         end
@@ -213,6 +216,7 @@ function Get_one_shot_function(op_code)
         os.exit(1)
     end
     Activate_one_shot_function(op_code)
+   
     return one_shot_functions[op_code]["c_function_name"]
 end
 

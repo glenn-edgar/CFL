@@ -54,6 +54,7 @@ bool bitmap_get_bit_CFL(Bitmap_CFL* bmp, uint32_t index) {
 
 void bitmap_set_all_CFL(Bitmap_CFL* bmp, bool value) {
     uint32_t dataSize = (bmp->length + 7) / 8;
+   
     if (value) {
         // Set all bits to 1
         memset(bmp->data, 0xFF, dataSize);

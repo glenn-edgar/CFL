@@ -16,45 +16,61 @@ extern "C" {
 
 //----------RAM data structures for event queues ----
 
-static Event_control_RAM_CFL_t ncisvludnp[1];
-static Event_data_CFL_t gaiugabdnd[10];
+static Event_control_RAM_CFL_t kgyflrvsdr[1];
+static Event_data_CFL_t fwhovaluqr[10];
 
 
 //------  ROM data structures for event queues ----
 
-static const Event_control_ROM_CFL_t ctmipmrvla[] = { 
-     {  10, gaiugabdnd },
+static const Event_control_ROM_CFL_t ppaqcfxznt[] = { 
+     {  10, fwhovaluqr },
 };
-static const char *bsexuikeae = "start column";
-static const unsigned short golvdhwdor[] = { 1};
-const Enable_column_CFL_t fnsormbfyh = { true, 1, golvdhwdor };
+static const char *wsmhvyglcj = "start column";
+static const unsigned short epyogkisyf[] = { 1};
+const Enable_column_CFL_t qpejufpirx = { true, 1, epyogkisyf };
 
 
-unsigned  qnauupejty;
-const While_time_control_ROM_CFL_t waittwozor = { 6000,&qnauupejty };
+unsigned  mjjznidrcb;
+const While_time_control_ROM_CFL_t nuvouxblak = { 6000,&mjjznidrcb };
 
 
 
-static While_control_RAM_CFL_t lxscfnztvs_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t gnipvheben_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t omhoxlfljn_rom = { 0 ,true, &waittwozor,&lxscfnztvs_ram,null_function};
+static const While_control_ROM_CFL_t adqzmvpoem_rom = { 0 ,true, &nuvouxblak,&gnipvheben_ram,null_function};
 
     
-static const char *kydgcqsgfx = "terminating system";
-static const char *mrluvgrtzr = "configure bit maps";
-static const char *mztfgholpm = "terminating bit map configuration";
+static const char *xbrysynoct = "terminating system";
+static const char *facfixbldg = "configure bit maps";
+static const clear_bit_map_CFL_t jsjbddkxao = {0,true};
+static const dump_buffer_CFL_t oxyxczhpoe = {0,19};
+static const clear_bit_map_CFL_t znjwwolbhg = {0,false};
+static const dump_buffer_CFL_t qumvnpcrpv = {0,19};
+static const clear_bit_map_CFL_t samjokfalp = {1,true};
+static const dump_buffer_CFL_t xttqikccns = {1,8};
+static const bit_map_copy_CFL_t eikkjjjzev = {1,0,0,5,63};
+static const dump_buffer_CFL_t nvwkbqszrv = {0,19};
+static const bit_map_and_CFL_t mweydrnigb = {1,0,0,0,63};
+static const dump_buffer_CFL_t rniewuvxwy = {0,19};
+static const bit_map_or_CFL_t bbbbkskeqb = {1,0,0,0,63};
+static const dump_buffer_CFL_t twpxqseoph = {0,19};
+static const bit_map_xor_CFL_t zptafohtnw = {1,0,0,0,63};
+static const dump_buffer_CFL_t jphvzfylfw = {0,19};
+static const bit_map_not_CFL_t eaoojzoryr = {0,0,0,0,128};
+static const dump_buffer_CFL_t cqmclllqfl = {0,19};
+static const char *gpcrhdtwxw = "terminating bit map configuration";
 
 
 //----------RAM data structures for columns ----
 
-unsigned xyfbkbkfcw[2];
-Watch_dog_struct_CFL_t * iipmjzfdyh[2];
-unsigned char lfgnhvatwq[2];
-unsigned char gzdpgipatz[2];
-void* gzvqnztmuu[2];
+unsigned saenumeawd[2];
+Watch_dog_struct_CFL_t * dvcosxsfgz[2];
+unsigned char qtbsioylem[2];
+unsigned char napcdhuubf[2];
+void* gocquguemc[2];
 /*
 ------------------------ ROM data structures for columns --------------------------
 typedef struct Column_ROM_CFL_t
@@ -75,9 +91,9 @@ typedef struct Column_ROM_CFL_t
 
 //----------ROM data structures for columns ----
 
-static const Column_ROM_CFL_t cpamerxmkd[] = {
+static const Column_ROM_CFL_t woezgmmhud[] = {
   { -1,true, 0, 5, 0, -1, -1 },
-  { -1,false, 1, 3, 5, -1, -1 },
+  { -1,false, 1, 19, 5, -1, -1 },
 };
 
 
@@ -85,7 +101,7 @@ static const Column_ROM_CFL_t cpamerxmkd[] = {
 
 
 
-static unsigned char fblrcnhpsw[8];
+static unsigned char njieyljwmw[24];
 
 
   /* 
@@ -104,49 +120,65 @@ static unsigned char fblrcnhpsw[8];
 
 //----------Column elements Flash structures----
 
-static const Column_element_CFL_t ydlxvlfpxf[] = {
-    {one_shot_handler_CFL,log_message_CFL,(void *)&bsexuikeae},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&fnsormbfyh},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&omhoxlfljn_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&kydgcqsgfx},
+static const Column_element_CFL_t szxtqvmqzm[] = {
+    {one_shot_handler_CFL,log_message_CFL,(void *)&wsmhvyglcj},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&qpejufpirx},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&adqzmvpoem_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&xbrysynoct},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mrluvgrtzr},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mztfgholpm},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&facfixbldg},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jsjbddkxao},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&oxyxczhpoe},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&znjwwolbhg},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&qumvnpcrpv},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&samjokfalp},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xttqikccns},
+    {one_shot_handler_CFL,bit_map_copy_CFL,(void *)&eikkjjjzev},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&nvwkbqszrv},
+    {one_shot_handler_CFL,bit_map_and_CFL,(void *)&mweydrnigb},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&rniewuvxwy},
+    {one_shot_handler_CFL,bit_map_or_CFL,(void *)&bbbbkskeqb},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&twpxqseoph},
+    {one_shot_handler_CFL,bit_map_xor_CFL,(void *)&zptafohtnw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&jphvzfylfw},
+    {one_shot_handler_CFL,bit_map_not_CFL,(void *)&eaoojzoryr},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&cqmclllqfl},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&gpcrhdtwxw},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
 };
-static uint8_t bioplfkaml[19]= {255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
-static uint8_t ulcpgeryym[8]= {0,0,0,0,0,0,0,0};
-static uint8_t wuubghqyfg[10]= {0,0,0,0,0,0,0,0,0,0};
-Bitmap_CFL gkayectvvi[3] = {
- {152, &bioplfkaml[0]},
- {63, &ulcpgeryym[0]},
- {75, &wuubghqyfg[0]},
+static uint8_t exfnppowbl[19]= {255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
+static uint8_t cduumlcggj[8]= {0,0,0,0,0,0,0,0};
+static uint8_t yzdctlajdm[10]= {0,0,0,0,0,0,0,0,0,0};
+Bitmap_CFL bhnxyqliny[3] = {
+ {152, &exfnppowbl[0]},
+ {63, &cduumlcggj[0]},
+ {75, &yzdctlajdm[0]},
 };
-const Sm_control_ROM_CFL_t wchdaphjbt[0];
-Sm_control_RAM_CFL_t jkzdikfnwm[0];
+const Sm_control_ROM_CFL_t zvnbperfdw[0];
+Sm_control_RAM_CFL_t jorfcdsluq[0];
 
 
-static Time_control_CFL_t oolhttoscz;
+static Time_control_CFL_t nkeqzxfbmz;
 
 
 
 
-static Engine_control_CFL_t oxnzboiwpf;
+static Engine_control_CFL_t rovkkzlveg;
 
 
 /* remaining allocate heap size */
 
-static unsigned ummiikdlev;
+static unsigned yqquevfube;
 
 
 /* current heap pointer */
 
-static char* xrxoxuuzxp;
+static char* dbjnrcenmm;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL axmelnvubx;
+static CS_MEMORY_CONTROL phsgpcwozv;
 
 
     
@@ -202,51 +234,51 @@ static CS_MEMORY_CONTROL axmelnvubx;
 */
 
 
-const struct Handle_CFL_t tzszhqfzxo =
+const struct Handle_CFL_t vunhulsqcc =
 {
 
   .queue_number = 1,
-  .queue_rom = ctmipmrvla,
-  .queue_ram = ncisvludnp,
+  .queue_rom = ppaqcfxznt,
+  .queue_ram = kgyflrvsdr,
 
-  .column_elements_flags =fblrcnhpsw,
-  .column_elements_ROM = ydlxvlfpxf,
+  .column_elements_flags =njieyljwmw,
+  .column_elements_ROM = szxtqvmqzm,
 
-  .watch_dog_struct = iipmjzfdyh,
-  .watch_dog_count  = xyfbkbkfcw,
+  .watch_dog_struct = dvcosxsfgz,
+  .watch_dog_count  = saenumeawd,
    
    
-  .column_flags = lfgnhvatwq,
-  .column_local_data = gzvqnztmuu,
-  .column_state = gzdpgipatz,
+  .column_flags = qtbsioylem,
+  .column_local_data = gocquguemc,
+  .column_state = napcdhuubf,
   .number_of_columns = 2,
-  .column_rom_data = cpamerxmkd,
+  .column_rom_data = woezgmmhud,
 
   
   
   
-  .time_control = &oolhttoscz,
-  .engine_control =&oxnzboiwpf,
+  .time_control = &nkeqzxfbmz,
+  .engine_control =&rovkkzlveg,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
   .master_heap_starting_location = &allocate_once_memory,
   .master_heap_size = 2000,
-  .remaining_heap_size = &ummiikdlev,
-  .current_heap_location = &xrxoxuuzxp,
-  .private_heap   = &axmelnvubx,
+  .remaining_heap_size = &yqquevfube,
+  .current_heap_location = &dbjnrcenmm,
+  .private_heap   = &phsgpcwozv,
   .private_heap_size =   1000,
   .number_of_sm      = 0,
-   .sm_rom     =  wchdaphjbt,
-   .sm_ram     = jkzdikfnwm,
+   .sm_rom     =  zvnbperfdw,
+   .sm_ram     = jorfcdsluq,
    .number_of_bitmaps = 3,
-    .bitmaps = gkayectvvi,
+    .bitmaps = bhnxyqliny,
 } ;
 
 
 const Handle_CFL_t*  bit_maps_1_handle(){
-    return &tzszhqfzxo;
+    return &vunhulsqcc;
 }
    
 

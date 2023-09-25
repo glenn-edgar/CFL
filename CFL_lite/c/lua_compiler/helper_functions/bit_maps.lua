@@ -22,9 +22,11 @@ function define_bit_map(name,size,state)
         print("ERROR: state must be boolean",name,state)
         os.exit(1)
     end
-    table.insert(bit_map_list,name)
     local definition = {}
     definition.number = #bit_map_list
+    table.insert(bit_map_list,name)
+  
+    
     definition.name = name
     definition.size = size
     definition.byte_number = math.floor(size/8)
@@ -39,21 +41,21 @@ function define_bit_map(name,size,state)
 end
 
 function get_buffer_number(buffer_name)
-    local buffer_data = buffer_definition[buffer_name]
+    local buffer_data = bit_map_definition[buffer_name]
     if buffer_data == nil then
         print("ERROR: buffer not defined",buffer_name)
         os.exit(1)
     end
-    return buffer_data.buffer_number
+    return buffer_data.number, buffer_data.byte_number
 end
 
 function check_buffer_parameters(source_buffer,source_offset,size)
-    local buffer_data = buffer_definition[source_buffer]
+    local buffer_data = bit_map_definition[source_buffer]
     if buffer_data == nil then
         print("ERROR: buffer not defined",source_buffer)
         os.exit(1)
     end
-    if source_offset + size >= buffer_data.size then
+    if source_offset + size > buffer_data.size then
         print("ERROR: buffer overflow",source_buffer,source_offset,size,buffer_data.size)
         os.exit(1)
     end
@@ -146,7 +148,8 @@ local dump_buffer_header = [[
 
 typedef struct dump_buffer_CFL_t{
     uint16_t buffer_number;
-dump_buffer_CFL_t;
+    uint16_t size;
+}dump_buffer_CFL_t;
 
 void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
@@ -158,29 +161,31 @@ void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_da
     (void)event_data;
     Handle_CFL_t* handle = (Handle_CFL_t*)input;
     dump_buffer_CFL_t* setup = (dump_buffer_CFL_t*)params;
-    uint16_t size = bitmap_buffer_size_CFL(setup->buffer_number);
-    uint8_t *bit_map = bitmap_buffer(setup->buffer_number);
-    Printf_CFL("Buffer %d\n",setup->buffer_number);
+    uint16_t size = setup->size;
+    
+    uint8_t *bit_map = bitmap_buffer(handle,setup->buffer_number);
+   
+    Printf_CFL("\n\nDumping Buffer %d\n",setup->buffer_number);
     Printf_CFL("Buffer Size %d\n",size);
     Printf_CFL("Buffer Bit Map ");
     for(unsigned i = 0; i< size;i++){
-        Printf_CFL("%d",bit_map[i]);
+        Printf_CFL("%02x ",bit_map[i]);
     }
-    Printf_CFL("\n");
+    Printf_CFL("\n\n");
     
 }
 
 ]]  
 
 
-Store_one_shot_function("dump_buffer_CFL",dump_buffer_body,dump_buffer_header)
+Store_one_shot_function("DUMP_BIT_MAP","dump_buffer_CFL",dump_buffer_body,dump_buffer_header)
 
 function dump_bit_map_buffer(buffer_name)
-    local buffer_number = get_buffer_number(buffer_name)
+    local buffer_number,buffer_size = get_buffer_number(buffer_name)
     local user_data = generate_unique_function_name()
-    local message = string.format("static const dump_buffer_CFL_t %s = {%d};\n",user_data,buffer_number)
+    local message = string.format("static const dump_buffer_CFL_t %s = {%d,%d};\n",user_data,buffer_number,buffer_size)
     Store_user_code(message)
-    One_shot("dump_buffer_CFL", '(void *)&'..user_data)
+    One_shot("DUMP_BIT_MAP",user_data)
 end
 
 
@@ -201,7 +206,7 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
     Handle_CFL_t* handle = (Handle_CFL_t*)input;
     clear_bit_map_CFL_t* setup = (clear_bit_map_CFL_t*)params;
    
-    Bitmap_CFL* map = get_bitmap_control_CFL(input,setup->buffer_number);
+    Bitmap_CFL* map = get_bitmap_control_CFL(handle,setup->buffer_number);
     bool state = setup->state;
     bitmap_set_all_CFL(map, state);
 
@@ -211,14 +216,15 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
 
 ]]  
 
-Store_one_shot_function("clear_bit_map_CFL",clear_bit_map_body,clear_bit_map_header)
+Store_one_shot_function("CLEAR_BIT_MAP","clear_bit_map_CFL",clear_bit_map_body,clear_bit_map_header)
 
 function clear_bit_map(buffer_name,state)
+   
     local buffer_number = get_buffer_number(buffer_name)
     local user_data = generate_unique_function_name()
     local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s};\n",user_data,buffer_number,state)
     Store_user_code(message)
-    One_shot("clear_bit_map_CFL", '(void *)&'..user_data)
+    One_shot("CLEAR_BIT_MAP", user_data)
 end
 
 
@@ -229,7 +235,7 @@ typedef struct bit_map_copy_CFL_t{
     uint16_t destination_buffer;
     uint16_t source_offset;
     uint16_t destination_offset;
-    unit16_t size;
+    uint16_t size;
 }bit_map_copy_CFL_t;
 
 void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
@@ -239,31 +245,32 @@ void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_d
 local bit_map_copy_body = [[
 
 void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    (void )event_data;
     bit_map_copy_CFL_t* setup = (bit_map_copy_CFL_t*)params;
     Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
     Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
     
     for(unsigned i = 0; i< setup->size;i++){
-        bool source_bit = bitmap_get_CFL(source_bmp,setup->source_offset + i);
-        bitmap_set_CFL(destination_bmp,setup->destination_offset + i,source_bit);
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,source_bit);
     }
 }
 
 ]]
 
-Store_one_shot_function("bit_map_copy_CFL",bit_map_copy_body,bit_map_copy_header)
+Store_one_shot_function("COPY_BIT_MAP_BUFFER","bit_map_copy_CFL",bit_map_copy_body,bit_map_copy_header)
 
 function cp_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
     local source_buf_number = get_buffer_number(source_buffer)
+        
     local destination_buf_number = get_buffer_number(destination_buffer)
     check_buffer_parameters(source_buffer,source_offset,size)
     check_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
-    local message = string.format("static const bit_map_copy_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buffer_number,destination_buffer_number,source_offset,destination_offset,size)
+    local message = string.format("static const bit_map_copy_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
     Store_user_code(message)
-    One_shot("bit_map_copy_CFL", '(void *)&'..user_data)
+    One_shot("COPY_BIT_MAP_BUFFER",user_data)
 end
 
 
@@ -271,11 +278,11 @@ end
 local bit_map_and_header = [[
 
 typedef struct bit_map_and_CFL_t{
-    uint8_t* source_buffer;
-    uint8_t* destination_buffer;
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
     uint16_t source_offset;
     uint16_t destination_offset;
-    unit16_t size;
+    uint16_t size;
 }bit_map_and_CFL_t;
 
 void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
@@ -285,33 +292,45 @@ void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 local bit_map_and_body = [[
 
 void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    (void)event_data;
     bit_map_and_CFL_t* setup = (bit_map_and_CFL_t*)params;
-    // find source buffer
-    // find destination buffer
-    // verify source buffer
-    // verify destination buffer
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
     for(unsigned i = 0; i< setup->size;i++){
-        // get source bit
-        // store destination bit
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = source_bit && destination_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
     }
 }
 
 ]]
 
-Store_one_shot_function("bit_map_and_CFL",bit_map_and_body,bit_map_and_header)
+Store_one_shot_function("AND_BIT_MAP_BUFFER","bit_map_and_CFL",bit_map_and_body,bit_map_and_header)
 
-
+function and_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
+    local source_buf_number = get_buffer_number(source_buffer)
+        
+    local destination_buf_number = get_buffer_number(destination_buffer)
+    check_buffer_parameters(source_buffer,source_offset,size)
+    check_buffer_parameters(destination_buffer,destination_offset,size)
+   
+    user_data = generate_unique_function_name()
+    local message = string.format("static const bit_map_and_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
+    Store_user_code(message)
+    One_shot("AND_BIT_MAP_BUFFER",user_data)
+end
 
 local bit_map_or_header = [[
 
 typedef struct bit_map_or_CFL_t{
-    uint8_t* source_buffer;
-    uint8_t* destination_buffer;
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
     uint16_t source_offset;
     uint16_t destination_offset;
-    unit16_t size;
-}bit_map_and_CFL_t;
+    uint16_t size;
+}bit_map_or_CFL_t;
 
 void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
@@ -320,32 +339,45 @@ void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_dat
 local bit_map_or_body = [[
 
 void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    (void)event_data;
     bit_map_or_CFL_t* setup = (bit_map_or_CFL_t*)params;
-    // find source buffer
-    // find destination buffer
-    // verify source buffer
-    // verify destination buffer
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
     for(unsigned i = 0; i< setup->size;i++){
-        // get source bit
-        // store destination bit
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = source_bit || destination_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
     }
 }
 
 ]]
 
-Store_one_shot_function("bit_map_or_CFL",bit_map_or_body,bit_map_or_header)
+Store_one_shot_function("OR_BIT_MAP_BUFFER","bit_map_or_CFL",bit_map_or_body,bit_map_or_header)
 
+function or_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
+    local source_buf_number = get_buffer_number(source_buffer)
+        
+    local destination_buf_number = get_buffer_number(destination_buffer)
+    check_buffer_parameters(source_buffer,source_offset,size)
+    check_buffer_parameters(destination_buffer,destination_offset,size)
+   
+    user_data = generate_unique_function_name()
+    local message = string.format("static const bit_map_or_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
+    Store_user_code(message)
+    One_shot("OR_BIT_MAP_BUFFER",user_data)
+end
 
 local bit_map_xor_header = [[
 
-typedef struct bit_map_or_CFL_t{
-    uint8_t* source_buffer;
-    uint8_t* destination_buffer;
+typedef struct bit_map_xor_CFL_t{
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
     uint16_t source_offset;
     uint16_t destination_offset;
-    unit16_t size;
-}bit_map_and_CFL_t;
+    uint16_t size;
+}bit_map_xor_CFL_t;
 
 void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
@@ -354,30 +386,46 @@ void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 local bit_map_xor_body = [[
 
 void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    bit_map_or_CFL_t* setup = (bit_map_or_CFL_t*)params;
-    // find source buffer
-    // find destination buffer
-    // verify source buffer
-    // verify destination buffer
+    (void)event_data;
+    bit_map_xor_CFL_t* setup = (bit_map_xor_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
     for(unsigned i = 0; i< setup->size;i++){
-        // get source bit
-        // store destination bit
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = source_bit ^ destination_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
     }
 }
 
 ]]
 
-Store_one_shot_function("bit_map_xor_CFL",bit_map_xor_body,bit_map_xor_header)
+Store_one_shot_function("XOR_BIT_MAP_BUFFER","bit_map_xor_CFL",bit_map_xor_body,bit_map_xor_header)
 
+function xor_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
+    local source_buf_number = get_buffer_number(source_buffer)
+        
+    local destination_buf_number = get_buffer_number(destination_buffer)
+    check_buffer_parameters(source_buffer,source_offset,size)
+    check_buffer_parameters(destination_buffer,destination_offset,size)
+   
+    user_data = generate_unique_function_name()
+    local message = string.format("static const bit_map_xor_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
+    Store_user_code(message)
+    One_shot("XOR_BIT_MAP_BUFFER",user_data)
+end
 
 local bit_map_not_header = [[
 
 typedef struct bit_map_not_CFL_t{
-    uint8_t* source_buffer;
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
     uint16_t source_offset;
-    unit16_t size;
+    uint16_t destination_offset;
+    uint16_t size;
 }bit_map_not_CFL_t;
+
 
 void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
@@ -385,24 +433,36 @@ void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 
 local bit_map_not_body = [[
 
-void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    bit_map_or_CFL_t* setup = (bit_map_or_CFL_t*)params;
-    // find source buffer
-    // find destination buffer
-    // verify source buffer
-    // verify destination buffer
+void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    bit_map_not_CFL_t* setup = (bit_map_not_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
     for(unsigned i = 0; i< setup->size;i++){
-        // get source bit
-        // store destination bit
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        //bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = !source_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
     }
 }
 
 ]]
 
-Store_one_shot_function("bit_map_not_CFL",bit_map_xor_body,bit_map_xor_header)
+Store_one_shot_function("NOT_BIT_MAP_BUFFER","bit_map_not_CFL",bit_map_not_body,bit_map_not_header)
 
-
+function not_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
+    local source_buf_number = get_buffer_number(source_buffer)
+        
+    local destination_buf_number = get_buffer_number(destination_buffer)
+    check_buffer_parameters(source_buffer,source_offset,size)
+    check_buffer_parameters(destination_buffer,destination_offset,size)
+   
+    user_data = generate_unique_function_name()
+    local message = string.format("static const bit_map_not_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
+    Store_user_code(message)
+    One_shot("NOT_BIT_MAP_BUFFER",user_data)
+end
 
 
 

@@ -176,7 +176,7 @@ end
 
 function One_shot_terminate_raw(function_name, user_data)
   Activate_column_function("BID_ONE_SHOT")
- 
+  Activate_one_shot_function(function_name)
   local column_fn_name = Get_column_function("BID_ONE_SHOT")
   if user_data ~= "NULL" then
     store_column_element(column_fn_name,function_name,'(void *)&'..user_data)
