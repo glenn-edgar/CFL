@@ -441,7 +441,7 @@ void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_da
     
     for(unsigned i = 0; i< setup->size;i++){
         bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
-        //bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        
         bool output_bit = !source_bit;
         bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
     }

@@ -14,6 +14,7 @@ extern "C" {
 #include "CFL_rpc_types.h"
 #include "CFL_bit_map.h"
 
+
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
 typedef long long unsigned (*Elasped_ms_fn)(void);
