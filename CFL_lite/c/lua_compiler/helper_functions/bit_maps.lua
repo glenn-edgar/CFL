@@ -40,16 +40,16 @@ function define_bit_map(name,size,state)
     bit_map_definition[name] = definition
 end
 
-function get_buffer_number(buffer_name)
+function get_s_bit_buffer_number(buffer_name)
     local buffer_data = bit_map_definition[buffer_name]
     if buffer_data == nil then
         print("ERROR: buffer not defined",buffer_name)
         os.exit(1)
     end
-    return buffer_data.number, buffer_data.byte_number
+    return buffer_data.number, buffer_data.byte_number, buffer_data.size
 end
 
-function check_buffer_parameters(source_buffer,source_offset,size)
+function check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     local buffer_data = bit_map_definition[source_buffer]
     if buffer_data == nil then
         print("ERROR: buffer not defined",source_buffer)
@@ -181,7 +181,7 @@ void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 Store_one_shot_function("DUMP_BIT_MAP","dump_buffer_CFL",dump_buffer_body,dump_buffer_header)
 
 function dump_bit_map_buffer(buffer_name)
-    local buffer_number,buffer_size = get_buffer_number(buffer_name)
+    local buffer_number,buffer_size = get_s_bit_buffer_number(buffer_name)
     local user_data = generate_unique_function_name()
     local message = string.format("static const dump_buffer_CFL_t %s = {%d,%d};\n",user_data,buffer_number,buffer_size)
     Store_user_code(message)
@@ -220,7 +220,7 @@ Store_one_shot_function("CLEAR_BIT_MAP","clear_bit_map_CFL",clear_bit_map_body,c
 
 function clear_bit_map(buffer_name,state)
    
-    local buffer_number = get_buffer_number(buffer_name)
+    local buffer_number = get_s_bit_buffer_number(buffer_name)
     local user_data = generate_unique_function_name()
     local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s};\n",user_data,buffer_number,state)
     Store_user_code(message)
@@ -261,11 +261,11 @@ void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_d
 Store_one_shot_function("COPY_BIT_MAP_BUFFER","bit_map_copy_CFL",bit_map_copy_body,bit_map_copy_header)
 
 function cp_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
-    local source_buf_number = get_buffer_number(source_buffer)
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)
         
-    local destination_buf_number = get_buffer_number(destination_buffer)
-    check_buffer_parameters(source_buffer,source_offset,size)
-    check_buffer_parameters(destination_buffer,destination_offset,size)
+    local destination_buf_number = get_s_bit_buffer_number(destination_buffer)
+    check_s_bit_buffer_parameters(source_buffer,source_offset,size)
+    check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_copy_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
@@ -310,11 +310,11 @@ void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 Store_one_shot_function("AND_BIT_MAP_BUFFER","bit_map_and_CFL",bit_map_and_body,bit_map_and_header)
 
 function and_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
-    local source_buf_number = get_buffer_number(source_buffer)
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)
         
-    local destination_buf_number = get_buffer_number(destination_buffer)
-    check_buffer_parameters(source_buffer,source_offset,size)
-    check_buffer_parameters(destination_buffer,destination_offset,size)
+    local destination_buf_number = get_s_bit_buffer_number(destination_buffer)
+    check_s_bit_buffer_parameters(source_buffer,source_offset,size)
+    check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_and_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
@@ -357,11 +357,11 @@ void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_dat
 Store_one_shot_function("OR_BIT_MAP_BUFFER","bit_map_or_CFL",bit_map_or_body,bit_map_or_header)
 
 function or_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
-    local source_buf_number = get_buffer_number(source_buffer)
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)
         
-    local destination_buf_number = get_buffer_number(destination_buffer)
-    check_buffer_parameters(source_buffer,source_offset,size)
-    check_buffer_parameters(destination_buffer,destination_offset,size)
+    local destination_buf_number = get_s_bit_buffer_number(destination_buffer)
+    check_s_bit_buffer_parameters(source_buffer,source_offset,size)
+    check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_or_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
@@ -404,11 +404,11 @@ void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 Store_one_shot_function("XOR_BIT_MAP_BUFFER","bit_map_xor_CFL",bit_map_xor_body,bit_map_xor_header)
 
 function xor_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
-    local source_buf_number = get_buffer_number(source_buffer)
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)
         
-    local destination_buf_number = get_buffer_number(destination_buffer)
-    check_buffer_parameters(source_buffer,source_offset,size)
-    check_buffer_parameters(destination_buffer,destination_offset,size)
+    local destination_buf_number = get_s_bit_buffer_number(destination_buffer)
+    check_s_bit_buffer_parameters(source_buffer,source_offset,size)
+    check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_xor_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
@@ -452,14 +452,15 @@ void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 Store_one_shot_function("NOT_BIT_MAP_BUFFER","bit_map_not_CFL",bit_map_not_body,bit_map_not_header)
 
 function not_bit_map_buffer(source_buffer,destination_buffer,source_offset,destination_offset,size)
-    local source_buf_number = get_buffer_number(source_buffer)
-        
-    local destination_buf_number = get_buffer_number(destination_buffer)
-    check_buffer_parameters(source_buffer,source_offset,size)
-    check_buffer_parameters(destination_buffer,destination_offset,size)
+    
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)    
+    local destination_buf_number = get_s_bit_buffer_number(destination_buffer)
+    check_s_bit_buffer_parameters(source_buffer,source_offset,size)
+    check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
     user_data = generate_unique_function_name()
-    local message = string.format("static const bit_map_not_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
+    local message = string.format("static const bit_map_not_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,
+    source_offset,destination_offset,size)
     Store_user_code(message)
     One_shot("NOT_BIT_MAP_BUFFER",user_data)
 end
@@ -468,5 +469,234 @@ end
 
 
 
+local s_expression_header = [[
+typedef struct s_bit_expression_CFL_t{
+    uint8_t buffer_number;
+    uint16_t offset;
+    s_bit_definition_CFL_t* definition;
+} s_bit_expression_CFL_t;
+
+void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local s_expression_body = [[
+
+bool bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    s_bit_expression_CFL_t* setup = (s_bit_expression_CFL_t*)params; 
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    Bitmap_CFL *bmp = get_bitmap_control_CFL(input, setup->buffer_number);
+    bitmap_set_bit_CFL(Bitmap_CFL* bmp,setup->offset,result);  
+}
+
+]]
+Store_one_shot_function("EVALUATE_S_EXPRESSION","wait_bit_map_s_expr_CFL",wait_s_expression_body,wait_s_expression_header)
 
 
+
+
+
+
+
+function s_bit_expression(destination_bit_map, bit_map_location,source_bit_map,s_expression)
+    local user_data = generate_unique_function_name()
+    local bit_map_number = get_s_bit_buffer_number(source_buffer)    
+    
+    check_s_bit_buffer_parameters(source_buffer, bit_map_location,1)
+    local s_expression_structure = generate_unique_function_name()
+    generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
+    local message = string.format("static const s_bit_expression_CFL_t %s = {%d,%d,%s};\n",user_data,bit_map_number,bit_map_location,s_expression_structure)
+    Store_user_code(message)
+    One_shot("EVALUATE_S_EXPRESSION",user_data)
+end
+
+local wait_s_expression_header = [[
+
+
+
+typedef wait_bit_map_s_expr_CFL_t struct{
+    s_bit_definition_CFL_t* definition;
+    void* time_out_message
+}wait_bit_map_s_expr_CFL_t;
+
+void wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local verify_s_expression_body = [[
+
+bool wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    wait_bit_map_s_expr_CFL_t* setup = (wait_bit_map_s_expr_CFL_t*)params;   
+}
+
+]]
+Store_boolean_function("WAIT_EVALUATE_BIT_MAP","wait_bit_map_s_expr_CFL",wait_s_expression_body,wait_s_expression_header)
+
+
+
+function Wait_s_expression(s_buffer,s_expression, time_out_ms, terminate_flag, one_shot_time_out_fn, time_out_data)
+    local user_data = generate_unique_function_name()
+    local s_expression_structure = generate_unique_function_name()
+    generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
+    local message = string.format("static const wait_bit_map_s_expr_CFL_t %s = {%s,%s};\n",s_expression_structure,"(void *)&"..time_out_data)
+    Store_user_code(message)
+    Wait("EVALUATE_BIT_MAP", time_out_ms, terminate_flag, one_shot_time_out_fn, user_data)
+
+end  
+
+local verify_s_expression_header = [[
+
+
+
+typedef verify_bit_map_s_expr_CFL_t struct{
+    s_bit_definition_CFL_t* definition;
+    void* error_message
+}verify_bit_map_s_expr_CFL_t;
+
+void verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local verify_s_expression_body = [[
+
+bool verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    verify_bit_map_s_expr_CFL_t* setup = (verify_bit_map_s_expr_CFL_t*)params;   
+}
+
+]]
+
+Store_boolean_function("VERIFY_EVALUATE_BIT_MAP","verify_bit_map_s_expr_CFL",verify_s_expression_body,verify_s_expression_header)
+
+function  Verify_s_expression(source_bit_map,s_expression, terminate_flag, one_shot_time_out_fn, error_data)
+    local user_data = generate_unique_function_name()
+    local s_expression_structure = generate_unique_function_name()
+    generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
+    local message = string.format("static constverify_bit_map_s_expr_CFL_t %s = {%s,%s};\n",s_expression_structure,"(void *)&"..error_data)
+    Store_user_code(message)
+    Verify("VERIFY_EVALUATE_BIT_MAP", terminate_flag, one_shot_time_out_fn, user_data)
+end
+
+function verify_integer(value)
+    if type(value) ~= "number" then
+        print("ERROR: value must be a number",value)
+        os.exit(1)
+    end
+    if value < 0 then
+        print("ERROR: value must be positive",value)
+        os.exit(1)
+    end
+    if math.floor(value) ~= value then
+        print("ERROR: value must be an integer",value)
+        os.exit(1)
+    end
+end
+
+local function verify_no_null_entries(s_expression)
+    for i = 1, #s_expression do
+        if s_expression[i] == nil then
+            print("ERROR: s_expression must not have nil entries")
+            os.exit(1)
+        end
+    end
+end
+
+
+function add_buffer_positions_to_s_expression(source_buffer,s_expression,position_index_list)
+    verify_no_null_entries(position_index_list)
+    for i,v in ipairs(position_index_list) do
+        verify_integer(v)
+        check_s_bit_buffer_parameters(source_buffer,v,1)
+        table.insert(s_expression,v)
+
+    end
+end
+function s_and_buffer(bit_map,position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"@&" )
+    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
+    return s_expression
+
+end
+
+function s_or_buffer(bit_map,position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"@|" )
+    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
+    return s_expression    
+
+end
+
+function s_nor_buffer(bit_map,position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"@~" )
+    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
+    return s_expression 
+
+end
+
+
+
+
+
+function add_logical_operations(s_expression,position_indexes)
+    if #position_indexes == 0 then
+        print("ERROR: logical operations must have at least one operand")
+        os.exit(1)
+    end
+    verify_no_null_entries(position_indexes)
+    for i,v in ipairs(position_indexes) do
+        
+        if(type(v) == "table")or(type(v) == "boolean") then
+            table.insert(s_expression,v)
+        
+        else 
+            print("ERROR: logical operations must be boolean",v,type(v))
+        end
+    
+
+    end
+
+end
+
+function s_and(position_indexes)
+    s_expression = {}
+    table.insert(s_expression, "&&" )
+    add_logical_operations(s_expression,position_indexes)
+    return s_expression
+
+end
+
+function s_or(position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"||" )
+    add_logical_operations(s_expression,position_indexes)
+    return s_expression
+
+end
+
+function s_nor(position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"~~" )
+    add_logical_operations(s_expression,position_indexes)
+    return s_expression
+
+end
+
+function dump_s_expression(s_expression,tab)
+    if tab == nil then
+        tab = "->"
+    end
+    for i,v in ipairs(s_expression) do
+        if(type(v) == "table") then
+           
+            dump_s_expression(v,"----"..tab)
+           
+            
+        else
+            print(tab,i,v)
+        end
+    end
+end

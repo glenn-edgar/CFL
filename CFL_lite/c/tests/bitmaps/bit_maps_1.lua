@@ -25,7 +25,7 @@ add_bit_map_label("bit_map_1","l8",8)
 define_bit_map("bit_map_2",63,false)
 define_bit_map("bit_map_3",75)
 
-define_columns({"start_column","configure_bit_maps"})
+define_columns({"start_column","configure_bit_maps","s_expression_bit_map"})
 
 define_column("start_column",true,nil)
     Log_msg('start column')
@@ -54,6 +54,47 @@ define_column("configure_bit_maps",false,nil)
     not_bit_map_buffer("bit_map_1","bit_map_1",0,0,128)
     dump_bit_map_buffer("bit_map_1")
     Log_msg('terminating bit map configuration')
+    terminate_column()
+end_column()
+
+p1 = 6
+p2 = 7
+p3 = 8
+s_expression_1 = s_and_buffer("bit_map_2",{1,2,3,4,p1,p2,p3,11,12,13})
+print("s expression_1")
+dump_s_expression(s_expression_1)
+s_expression_2 = s_or_buffer("bit_map_2",{1,2,3,4,p1,p2,p3,11,12,13})
+print("s expression_2")
+dump_s_expression(s_expression_2)
+s_expression_3 = s_nor_buffer("bit_map_2",{1,2,3,4,p1,p2,p3,11,12,13})
+print("s expression_3")
+dump_s_expression(s_expression_3)
+s_expression_4 = s_and({true,false,true,false,true,false,true,false,true,false})
+print("s expression_4")
+dump_s_expression(s_expression_4)
+s_expression_5 = s_or({true,false,true,false,true,false,true,false,true,false})
+print("s expression_5")
+dump_s_expression(s_expression_5)
+s_expression_6 = s_nor({true,false,true,false,true,false,true,false,true,false})
+print("s expression_6")
+dump_s_expression(s_expression_6)
+
+s_expression_7 = s_and({s_expression_1,true,s_expression_2,false})
+print("dumping nested s expression")
+
+dump_s_expression(s_expression_7)
+os.exit(1)
+
+define_column("s_expression_bit_map",false,nil)
+    Log_msg('s expression bit map')
+    clear_bit_map("bit_map_1",false)
+    dump_bit_map_buffer("bit_map_1")
+    clear_bit_map("bit_map_2",true)
+    dump_bit_map_buffer("bit_map_2")
+
+    --s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression)
+    dump_bit_map_buffer("bit_map_1")
+    Log_msg('terminating s expression bit map')
     terminate_column()
 end_column()
 

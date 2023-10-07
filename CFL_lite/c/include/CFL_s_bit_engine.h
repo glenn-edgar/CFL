@@ -15,7 +15,7 @@
 #define S_BIT_LOGICAL_AND_CFL 0
 #define S_BIT_LOGICAL_OR_CFL 1
 #define S_BIT_LOGICAL_NOR_CFL 2
-#define S_BIT_LOGICAL_OP_END_CFL 3
+
 
 
 // S_BIT_BUFFER_OPERATOR_CFL operators
@@ -23,7 +23,7 @@
 #define S_BIT_BUFFER_AND_CFL 0
 #define S_BIT_BUFFER_OR_CFL 1
 #define S_BIT_BUFFER_NOR_CFL 2
-#define S_BIT_BUFFER_OP_END_CFL 2
+
 
 typedef struct s_operator_CFL_t{
   uint8_t operator_type;  // value or operator
