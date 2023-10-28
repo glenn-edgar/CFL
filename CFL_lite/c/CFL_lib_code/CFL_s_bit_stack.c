@@ -13,6 +13,7 @@ s_stack_control_CFL_t *bit_initialize_s_stack_CFL(const void *input,uint16_t p_s
     stack_control->s_p_stack_size = p_stack_size;
     stack_control->s_op_stack = private_heap_malloc_CFL(input,sizeof(uint16_t )*op_stack_size);
     stack_control->s_p_stack = private_heap_malloc_CFL(input,sizeof(s_parameter_type_CFL_t)*p_stack_size);
+   
     return stack_control;
 }
 
@@ -54,7 +55,7 @@ s_parameter_type_CFL_t  * s_bit_get_parameter_stack_CFL(s_stack_control_CFL_t *s
     if(stack_start >= stack_control->s_p_stack_top){
       ASSERT_PRINT_F("s_stack parameter stack start is not valid %d\n",stack_control->s_p_stack_size);
     }
-
+   
     return &stack_control->s_p_stack[stack_start];
 
 
@@ -92,11 +93,23 @@ s_operator_type_CFL_t  bit_pop_op_stack_CFL(s_stack_control_CFL_t *stack_control
     }
     return stack_control->s_op_stack[stack_control->s_op_stack_top];
 }
+s_operator_type_CFL_t *bit_peak_op_stack_CFL(s_stack_control_CFL_t *stack_control){
+
+  if(stack_control->s_op_stack_top > 0){
+    return &stack_control->s_op_stack[stack_control->s_op_stack_top-1];
+  }
+  
+  return NULL;
+  
+
+
+}
 
 uint16_t bit_op_stack_size_CFL(s_stack_control_CFL_t *stack_control){
     return stack_control->s_op_stack_top;
 }
 
 uint16_t bit_parameter_stack_size_CFL(s_stack_control_CFL_t *stack_control){
+    
     return stack_control->s_p_stack_top;
 }

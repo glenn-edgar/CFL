@@ -39,6 +39,7 @@ void bit_push_op_stack_CFL(s_stack_control_CFL_t *stack_control, s_operator_type
 
 s_operator_type_CFL_t  bit_pop_op_stack_CFL(s_stack_control_CFL_t *stack_control);
 
+s_operator_type_CFL_t *bit_peak_op_stack_CFL(s_stack_control_CFL_t *stack_control);
 uint16_t bit_op_stack_size_CFL(s_stack_control_CFL_t *stack_control);
 uint16_t bit_parameter_stack_size_CFL(s_stack_control_CFL_t *stack_control);
 

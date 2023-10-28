@@ -2,6 +2,7 @@
 #define _CFL_S_BIT_ENGINE_H_
 #include <stdint.h> 
 #include <stdbool.h>
+#include "CFL_inner_engine.h"
 
 // operator types
 #define S_BIT_VALUE_CFL 0
@@ -47,7 +48,7 @@ typedef struct s_bit_working_control_CFL_t{
     bool                  result;
 }s_bit_working_control_CFL_t;
 
-bool process_s_bit_buffer_CFL(const void *input, s_bit_definition_CFL_t *s_bit_buffer_interface);
+bool process_s_bit_buffer_CFL(const void *input, const s_bit_definition_CFL_t *s_bit_buffer_interface);
 
 
 

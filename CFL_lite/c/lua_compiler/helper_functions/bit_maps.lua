@@ -41,6 +41,7 @@ function define_bit_map(name,size,state)
 end
 
 function get_s_bit_buffer_number(buffer_name)
+   
     local buffer_data = bit_map_definition[buffer_name]
     if buffer_data == nil then
         print("ERROR: buffer not defined",buffer_name)
@@ -466,14 +467,36 @@ function not_bit_map_buffer(source_buffer,destination_buffer,source_offset,desti
 end
 
 
+function if_then_else_bit_map(source_buffer,bit,then_one_shot,else_one_shot)
 
+end    
+
+function shift_bit_map_buffer(source_buffer,offset,shift_direction,fill_bit)
+
+end
+
+function drum_operation_bit_map()
+   --tbd
+end
+
+--[[
+typedef struct s_bit_definition_CFL_t{
+    uint8_t bit_map_number;
+    uint8_t parameter_stack_size;
+    uint8_t operator_stack_size;
+    uint8_t stream_length;
+    const s_operator_CFL_t *operator_stream;
+}s_bit_definition_CFL_t;
+
+]]--
 
 
 local s_expression_header = [[
 typedef struct s_bit_expression_CFL_t{
+
     uint8_t buffer_number;
     uint16_t offset;
-    s_bit_definition_CFL_t* definition;
+    const s_bit_definition_CFL_t* definition;
 } s_bit_expression_CFL_t;
 
 void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
@@ -482,34 +505,38 @@ void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event
 
 local s_expression_body = [[
 
-bool bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
-    s_bit_expression_CFL_t* setup = (s_bit_expression_CFL_t*)params; 
+
+    const s_bit_expression_CFL_t* setup = (const s_bit_expression_CFL_t*)params; 
     bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    
     Bitmap_CFL *bmp = get_bitmap_control_CFL(input, setup->buffer_number);
-    bitmap_set_bit_CFL(Bitmap_CFL* bmp,setup->offset,result);  
+    bitmap_set_bit_CFL(bmp,setup->offset,result);  
 }
 
 ]]
-Store_one_shot_function("EVALUATE_S_EXPRESSION","wait_bit_map_s_expr_CFL",wait_s_expression_body,wait_s_expression_header)
-
-
-
-
-
+Store_one_shot_function("EVALUATE_S_EXPRESSION"," bit_map_s_expr_CFL",s_expression_body,s_expression_header)
 
 
 function s_bit_expression(destination_bit_map, bit_map_location,source_bit_map,s_expression)
+ 
     local user_data = generate_unique_function_name()
-    local bit_map_number = get_s_bit_buffer_number(source_buffer)    
+    local bit_map_number = get_s_bit_buffer_number(destination_bit_map)    
     
-    check_s_bit_buffer_parameters(source_buffer, bit_map_location,1)
+    check_s_bit_buffer_parameters(destination_bit_map, bit_map_location,1)
     local s_expression_structure = generate_unique_function_name()
+    
     generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
-    local message = string.format("static const s_bit_expression_CFL_t %s = {%d,%d,%s};\n",user_data,bit_map_number,bit_map_location,s_expression_structure)
+    local message = string.format("static const s_bit_expression_CFL_t %s = {%d,%d,&%s};\n",user_data,bit_map_number,bit_map_location,s_expression_structure)
     Store_user_code(message)
     One_shot("EVALUATE_S_EXPRESSION",user_data)
 end
+
+
+
+
+
 
 local wait_s_expression_header = [[
 
@@ -524,7 +551,7 @@ void wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *
 
 ]]
 
-local verify_s_expression_body = [[
+local wait_s_expression_body = [[
 
 bool wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
@@ -595,7 +622,9 @@ function verify_integer(value)
 end
 
 local function verify_no_null_entries(s_expression)
+    
     for i = 1, #s_expression do
+   
         if s_expression[i] == nil then
             print("ERROR: s_expression must not have nil entries")
             os.exit(1)
@@ -610,9 +639,14 @@ function add_buffer_positions_to_s_expression(source_buffer,s_expression,positio
         verify_integer(v)
         check_s_bit_buffer_parameters(source_buffer,v,1)
         table.insert(s_expression,v)
-
     end
+    table.insert(s_expression,")")
 end
+
+
+
+
+
 function s_and_buffer(bit_map,position_indexes)
     s_expression = {}
     table.insert( s_expression,"@&" )
@@ -637,50 +671,83 @@ function s_nor_buffer(bit_map,position_indexes)
 
 end
 
-
-
-
-
-function add_logical_operations(s_expression,position_indexes)
-    if #position_indexes == 0 then
-        print("ERROR: logical operations must have at least one operand")
+function check_for_boolean_operator(operator)
+    if type(operator) ~= "boolean" then
+        print("ERROR: operator must be a boolean",operator)
         os.exit(1)
     end
-    verify_no_null_entries(position_indexes)
-    for i,v in ipairs(position_indexes) do
-        
-        if(type(v) == "table")or(type(v) == "boolean") then
-            table.insert(s_expression,v)
-        
-        else 
-            print("ERROR: logical operations must be boolean",v,type(v))
-        end
-    
+end
 
+function add_table_entries(s_expression,position_list)
+    verify_no_null_entries(position_list)
+    for i,v in ipairs(position_list) do
+        
+        if(type(v) == "table") then
+            add_table_entries(s_expression,v)
+        else
+            table.insert(s_expression,v)
+        end
+    end
+end
+function pack_boolean(v)
+    if(type(v) ~= "boolean") then
+        print("ERROR: parameter must be a boolean",v)
+        os.exit(1)
+    end
+    if v == true then
+        table.insert(s_expression,1)
+    else
+        table.insert(s_expression,0)
+    end
+end
+
+
+
+function expand_table(s_expr,parameter_list)
+    local op_type = nil
+    verify_no_null_entries(parameter_list)
+    for i,v in ipairs(parameter_list) do
+        table.insert(s_expr,v)
+ 
     end
 
-end
+ end
+ 
+function expand_table_start(bit_map,s_expression,position_indexes)
+    
+    verify_no_null_entries(position_indexes)
+    for i,v in ipairs(position_indexes) do
+        if(type(v) == "table") then
+            expand_table(s_expression,v)
+        else
+            pack_boolean(v)
+        end
+    end
+    table.insert(s_expression,")")
+ end
 
-function s_and(position_indexes)
+
+function s_and(bit_map,position_indexes)
+
     s_expression = {}
     table.insert(s_expression, "&&" )
-    add_logical_operations(s_expression,position_indexes)
+    expand_table_start(bit_map,s_expression,position_indexes)
     return s_expression
 
 end
 
-function s_or(position_indexes)
+function s_or(bit_map,position_indexes)
     s_expression = {}
     table.insert( s_expression,"||" )
-    add_logical_operations(s_expression,position_indexes)
+    expand_table_start(bit_map,s_expression,position_indexes)
     return s_expression
 
 end
 
-function s_nor(position_indexes)
+function s_nor(bit_map,position_indexes)
     s_expression = {}
     table.insert( s_expression,"~~" )
-    add_logical_operations(s_expression,position_indexes)
+    expand_table_start(bit_map,s_expression,position_indexes)
     return s_expression
 
 end
