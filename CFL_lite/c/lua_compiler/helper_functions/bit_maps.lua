@@ -632,13 +632,46 @@ local function verify_no_null_entries(s_expression)
     end
 end
 
+function isValidInteger(str)
+    local num = tonumber(str)
+    -- Check if 'num' is a number and an integer
+    if num and num == math.floor(num) then
+        return true
+    else
+        return false
+    end
+end
+
+local function extract_buffer_position(position)
+    local first_char = string.sub(position,1,1)
+    if first_char ~= "@" then
+        print("ERROR: string values must start with @",position)
+        os.exit(1)
+    end
+    local remaining = string.sub(position,2)
+    if #remaining == 0 then
+        print("ERROR: string values must have a number after the @",position)
+        os.exit(1)
+    end
+    if isValidInteger(remaining) == false then
+        print("ERROR: string values must have a number after the @",position)
+        os.exit(1)
+    end
+    return tonumber(bp)
+end
 
 function add_buffer_positions_to_s_expression(source_buffer,s_expression,position_index_list)
     verify_no_null_entries(position_index_list)
     for i,v in ipairs(position_index_list) do
-        verify_integer(v)
-        check_s_bit_buffer_parameters(source_buffer,v,1)
-        table.insert(s_expression,v)
+        if(type(v) == "string")then
+            local bp = extract_buffer_position(v)
+            verify_integer(bp)
+            check_s_bit_buffer_parameters(source_buffer,bp,1)
+            table.insert(s_expression,v)
+        else
+            verify_boolean(v)
+            table.insert(s_expression,v)
+        end
     end
     table.insert(s_expression,")")
 end
@@ -649,7 +682,7 @@ end
 
 function s_and_buffer(bit_map,position_indexes)
     s_expression = {}
-    table.insert( s_expression,"@&" )
+    table.insert( s_expression,"&&" )
     add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
     return s_expression
 
@@ -657,7 +690,7 @@ end
 
 function s_or_buffer(bit_map,position_indexes)
     s_expression = {}
-    table.insert( s_expression,"@|" )
+    table.insert( s_expression,"||" )
     add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
     return s_expression    
 
@@ -665,7 +698,7 @@ end
 
 function s_nor_buffer(bit_map,position_indexes)
     s_expression = {}
-    table.insert( s_expression,"@~" )
+    table.insert( s_expression,"~~" )
     add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
     return s_expression 
 

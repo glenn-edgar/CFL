@@ -1,7 +1,7 @@
 // bitmap.h
 
-#ifndef BITMAP_H
-#define BITMAP_H
+#ifndef __BITMAP_H__
+#define __BITMAP_H__
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -21,4 +21,4 @@ Bitmap_CFL* get_bitmap_control_CFL(const void *input, unsigned buffer_number);
 uint16_t bitmap_buffer_size_CFL(const void *input, unsigned buffer_number);
 uint8_t *bitmap_buffer(const void *input, unsigned buffer_number);
 
-#endif
+#endif // __BITMAP_H__

@@ -15,36 +15,25 @@ typedef struct s_bit_definition_CFL_t{
 ]]
 
 
-
--- operator types
-local  S_BIT_VALUE_CFL = 0
-local  S_BIT_BUFFER_POSITION_CFL= 1
-local  S_BIT_LOGIC_OPERATOR_CFL=  2
-local  S_BIT_BUFFER_OPERATOR_CFL= 3
-local  S_BIT_OPERATOR_END_CFL= 4
+// operator types
+local  S_BIT_VALUE_CFL =0
+local  S_BIT_BUFFER_POSITION_CFL =1
+local  S_BIT_OPERATOR_CFL = 2
 
 
--- S_BIT_LOGIC_OPERATOR_CFL operators
+// operators
 
-local S_BIT_LOGICAL_AND_CFL= 0
-local S_BIT_LOGICAL_OR_CFL= 1
-local S_BIT_LOGICAL_NOR_CFL= 2
+local  S_BIT_AND_CFL= 0
+local  S_BIT_OR_CFL =1
+local  S_BIT_NOR_CFL =2
 
 
-
--- S_BIT_BUFFER_OPERATOR_CFL operators
-local S_BIT_BUFFER_AND_CFL = 0
-local S_BIT_BUFFER_OR_CFL = 1
-local S_BIT_BUFFER_NOR_CFL =  2
 
 operator_def = {}
-operator_def["&&"] = {S_BIT_LOGIC_OPERATOR_CFL,S_BIT_LOGICAL_AND_CFL,S_BIT_VALUE_CFL}
-operator_def["||"] = {S_BIT_LOGIC_OPERATOR_CFL,S_BIT_LOGICAL_OR_CFL,S_BIT_VALUE_CFL}
-operator_def["~~"] = {S_BIT_LOGIC_OPERATOR_CFL,S_BIT_LOGICAL_NOR_CFL,S_BIT_VALUE_CFL}
+operator_def["&&"] = {S_BIT_AND_CFL}
+operator_def["||"] = {S_BIT_OR_CFL}
+operator_def["~~"] = {S_BIT_NOR_CFL}
 
-operator_def["@&"] = {S_BIT_BUFFER_OPERATOR_CFL,S_BIT_LOGICAL_AND_CFL, S_BIT_BUFFER_POSITION_CFL}
-operator_def["@|"] = {S_BIT_BUFFER_OPERATOR_CFL,S_BIT_LOGICAL_OR_CFL, S_BIT_BUFFER_POSITION_CFL}
-operator_def["@~"] = {S_BIT_BUFFER_OPERATOR_CFL,S_BIT_LOGICAL_NOR_CFL, S_BIT_BUFFER_POSITION_CFL}
 
 
 local encoded stream = {}
@@ -56,23 +45,47 @@ function add_to_stream(stream_type,stream_value)
 end
 
 
-
+function parse_stream_value(op)
+  
+  if type(op) == "boolean" then
+      return S_BIT_VALUE_CFL,op
+  end
+  if type(op) == "string" then
+    local first_char = string.sub(position,1,1)
+    if first_char ~= "@" then
+        print("ERROR: string values must start with @",position)
+        os.exit(1)
+    end
+    local remaining = string.sub(position,2)
+    if #remaining == 0 then
+        print("ERROR: string values must have a number after the @",position)
+        os.exit(1)
+    end
+    if isValidInteger(remaining) == false then
+        print("ERROR: string values must have a number after the @",position)
+        os.exit(1)
+    end
+    return S_BIT_BUFFER_POSITION_CFL, tonumber(bp)
+  end
+  print("invalid op value ",op,type(op))
+  os.exit(1)
+end
 
 local function generate_s_operator_stream(s_expression)
     local stream_type = nil
     
     for i,op in ipairs(s_expression) do
         if(operator_def[op] ~= nil) then
-            add_to_stream(operator_def[op][1],operator_def[op][2])
-            stream_type = operator_def[op][3]
+            add_to_stream(S_BIT_OPERATOR_CFL,operator_def[op][1])
             operator_number = operator_number + 1
         elseif(op == ")") then
             add_to_stream(S_BIT_OPERATOR_END_CFL,0)
         else
-            if(stream_type == S_BIT_BUFFER_POSITION_CFL) then
-                add_to_stream(S_BIT_BUFFER_POSITION_CFL,op)
+            stream_type , op = parse_stream_value(op)
+            if(stream_type ==  S_BIT_VALUE_CFL) then
+                add_to_stream( S_BIT_VALUE_CFL,op)
             else
-                add_to_stream(S_BIT_VALUE_CFL,op)
+                add_to_stream(S_BIT_BUFFER_POSITION_CFL,op)
             end
         end
     end

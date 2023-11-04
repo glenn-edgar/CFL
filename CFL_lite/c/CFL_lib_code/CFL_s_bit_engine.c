@@ -47,11 +47,10 @@ static bool pop_last_instruction(s_bit_working_control_CFL_t *working_control){
 
 
 #define EXPRESSION_START 0
-#define EVALUATE_BUFFER_EXPRESSION 1    
-#define EVALUATE_LOGICAL_EXPRESSION 2
-#define EXPRESSION_END 3
+#define EVALUATE_EXPRESSION 1    
+#define EXPRESSION_END 2
 
-unsigned verify_expression_start(const void *input,s_bit_working_control_CFL_t *working_control,s_operator_CFL_t operator){
+static unsigned verify_expression_start(const void *input,s_bit_working_control_CFL_t *working_control,s_operator_CFL_t operator){
 
     (void)input;
     unsigned return_value;
@@ -65,15 +64,11 @@ unsigned verify_expression_start(const void *input,s_bit_working_control_CFL_t *
            ASSERT_PRINT_F("s_bit_engine: operator type %d is not a valid start operator\n",operator_type);
            break;
 
-      case S_BIT_LOGIC_OPERATOR_CFL:
-           return_value = EVALUATE_LOGICAL_EXPRESSION;
+      case S_BIT_OPERATOR_CFL:
+           return_value = EVALUATE_EXPRESSION;
 
            break;
-      case S_BIT_BUFFER_OPERATOR_CFL:
-           return_value = EVALUATE_BUFFER_EXPRESSION;
-
-
-           break;
+     
       
       default:
               ASSERT_PRINT_F("s_bit_engine: unknown operator type %d\n",operator_type);
@@ -85,97 +80,36 @@ unsigned verify_expression_start(const void *input,s_bit_working_control_CFL_t *
     return return_value;
 }
 
-unsigned evaluate_logical_expression(const void *input,s_bit_working_control_CFL_t *working_control,s_operator_CFL_t operator){
+static unsigned evaluate_expression(const void *input,s_bit_working_control_CFL_t *working_control,s_operator_CFL_t operator){
     unsigned return_value;
     uint8_t operator_type = operator.operator_type;
-    unsigned op_type;
+
     uint16_t operator_value = operator.operator_index_value;
 
-    switch(operator_type){
-      case S_BIT_BUFFER_POSITION_CFL:
-            ASSERT_PRINT_F("s_bit_engine: operator type %d is not a valid  operator\n",operator_type);
-           break;
 
+    switch(operator_type){
 
       
-      case S_BIT_BUFFER_OPERATOR_CFL:
-      case S_BIT_LOGIC_OPERATOR_CFL:
+      
+      case S_BIT_OPERATOR_CFL:
            return_value = verify_expression_start(input,working_control,operator);
            break;
-
+           
+     case S_BIT_BUFFER_POSITION_CFL:
      case S_BIT_VALUE_CFL:
            ;
            s_parameter_type_CFL_t parameter = {operator_type,operator_value};
            bit_push_parameter_stack_CFL(working_control->stack_control, parameter);
-           return_value =  EVALUATE_LOGICAL_EXPRESSION;
+           return_value =  EVALUATE_EXPRESSION;
            break;
       case S_BIT_OPERATOR_END_CFL:
               ;  
               s_operator_type_CFL_t working_instruction = bit_pop_op_stack_CFL(working_control->stack_control);
-              op_type = working_instruction.operator_type; 
+             
               uint16_t op_value = working_instruction.operator_value;
               uint8_t p_stack_start = working_instruction.parameter_stack_start; // index of operator or value
-              process_logical_operator_CFL(input, working_control, op_value, p_stack_start);
-              if(op_type == S_BIT_BUFFER_OPERATOR_CFL){
-                return_value = EVALUATE_BUFFER_EXPRESSION;
-              }
-              else if(op_type == S_BIT_LOGIC_OPERATOR_CFL){
-                return_value = EVALUATE_LOGICAL_EXPRESSION;
-              }
-              else{
-                ASSERT_PRINT_F("s_bit_engine: unknown operator type %d\n",op_type);
-              }
-              break;
-      default:
-              ASSERT_PRINT_F("s_bit_engine: unknown operator type %d\n",operator_type);
-              break;
-      
-    }
-    
-    return return_value;
-}
-
-
-unsigned evaluate_buffer_expression(const void *input,s_bit_working_control_CFL_t *working_control,s_operator_CFL_t operator){
-    unsigned return_value;
-    unsigned op_type;
-    uint8_t operator_type = operator.operator_type;
-    uint16_t operator_value = operator.operator_index_value;
-    
-    switch(operator_type){
-      case S_BIT_VALUE_CFL:
-      case S_BIT_BUFFER_OPERATOR_CFL:
-      case S_BIT_LOGIC_OPERATOR_CFL:
-           ASSERT_PRINT_F("s_bit_engine: operator type %d is not a valid start operator\n",operator_type);
-           break;
-
-      case S_BIT_BUFFER_POSITION_CFL:
-           ;
-           s_parameter_type_CFL_t parameter = {operator_type,operator_value};
-           bit_push_parameter_stack_CFL(working_control->stack_control, parameter);
-           return_value = EVALUATE_BUFFER_EXPRESSION;
-           break;
-      case S_BIT_OPERATOR_END_CFL:
-              ;    
-              s_operator_type_CFL_t working_instruction = bit_pop_op_stack_CFL(working_control->stack_control);
-              s_operator_type_CFL_t *return_op;
-              uint16_t op_value = working_instruction.operator_value;
-              uint8_t p_stack_start = working_instruction.parameter_stack_start; // index of operator or value
-              process_buffer_operator_CFL(input, working_control,op_value,p_stack_start);
-              return_op = bit_peak_op_stack_CFL(working_control->stack_control);
-              if(return_op == NULL){
-                return EXPRESSION_END;
-              }
-              op_type = return_op->operator_type;
-              if(op_type == S_BIT_BUFFER_OPERATOR_CFL){
-                return_value = EVALUATE_BUFFER_EXPRESSION;
-              }
-              else if(op_type == S_BIT_LOGIC_OPERATOR_CFL){
-                return_value = EVALUATE_LOGICAL_EXPRESSION;
-              }
-              else{
-                ASSERT_PRINT_F("s_bit_engine: unknown operator type %d\n",op_type);
-              }
+              process_operator_CFL(input, working_control, op_value, p_stack_start);
+              return_value = EVALUATE_EXPRESSION;
               
               break;
       default:
@@ -186,8 +120,6 @@ unsigned evaluate_buffer_expression(const void *input,s_bit_working_control_CFL_
     
     return return_value;
 }
-
-
 
 
 
@@ -206,19 +138,14 @@ static void iterate_input_stream(const void *input, s_bit_working_control_CFL_t 
           state = verify_expression_start(input,working_control,operator);
           break;
            
-        case EVALUATE_BUFFER_EXPRESSION:
-          state = evaluate_buffer_expression(input,working_control,operator);
+        case EVALUATE_EXPRESSION:
+          state = evaluate_expression(input,working_control,operator);
           if(state == EXPRESSION_END){
             state = EXPRESSION_START;
           } 
           break;
 
-        case EVALUATE_LOGICAL_EXPRESSION:  
-          state = evaluate_logical_expression(input,working_control,operator);
-          if(state == EXPRESSION_END){
-            state = EXPRESSION_START;
-          }
-          break;
+  
 
         default:
           ASSERT_PRINT_F("s_bit_engine: unknown state %d\n",state);
@@ -226,9 +153,7 @@ static void iterate_input_stream(const void *input, s_bit_working_control_CFL_t 
 
         }
 
-    }
-    
- 
+    } 
 
 }
 

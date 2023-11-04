@@ -17,6 +17,15 @@ extern "C" {
 #include "CFL_s_bit_engine.h"
 
 
+#include "CFL_register_map.h"
+#include "CFL_s_register_engine.h"
+#include "CFL_s_register_stack.h"
+
+#include "CFL_float_map.h"
+#include "CFL_s_float_engine.h"
+#include "CFL_s_float_stack.h"
+
+
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
 typedef long long unsigned (*Elasped_ms_fn)(void);
@@ -146,6 +155,10 @@ typedef struct Handle_CFL_t
   Sm_control_RAM_CFL_t *sm_ram;
   const unsigned number_of_bitmaps;
   Bitmap_CFL *bitmaps;
+  const unsigned number_of_registermaps;
+  Registermap_CFL_t *registermaps;
+  const unsigned number_of_floatmaps;
+  Floatmap_CFL_t *floatmaps;
 
 
 } Handle_CFL_t;

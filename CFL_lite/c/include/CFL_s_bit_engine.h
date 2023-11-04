@@ -7,23 +7,17 @@
 // operator types
 #define S_BIT_VALUE_CFL 0
 #define S_BIT_BUFFER_POSITION_CFL 1
-#define S_BIT_LOGIC_OPERATOR_CFL  2
-#define S_BIT_BUFFER_OPERATOR_CFL 3
+#define S_BIT_OPERATOR_CFL  2
 #define S_BIT_OPERATOR_END_CFL 4
 
-// S_BIT_LOGIC_OPERATOR_CFL operators
-#define S_BIT_NUMBER_OF_LOGIC_OPERATORS_CFL 4
-#define S_BIT_LOGICAL_AND_CFL 0
-#define S_BIT_LOGICAL_OR_CFL 1
-#define S_BIT_LOGICAL_NOR_CFL 2
+// operators
+
+#define S_BIT_AND_CFL 0
+#define S_BIT_OR_CFL 1
+#define S_BIT_NOR_CFL 2
 
 
 
-// S_BIT_BUFFER_OPERATOR_CFL operators
-#define S_BIT_NUMBER_OF_BUFFER_OPERATORS_CFL 4
-#define S_BIT_BUFFER_AND_CFL 0
-#define S_BIT_BUFFER_OR_CFL 1
-#define S_BIT_BUFFER_NOR_CFL 2
 
 
 typedef struct s_operator_CFL_t{
