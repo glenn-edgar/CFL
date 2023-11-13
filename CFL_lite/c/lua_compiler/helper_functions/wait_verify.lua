@@ -193,7 +193,7 @@ function Verify(bool_fn_name, terminate_flag, one_shot_time_out_fn, user_data)
     local unique_name = generate_unique_function_name()
     
 
-    message = string.format(verify_template_data_rom, unique_name.."_rom",terminate_flag,user_data,fn_time_out)
+    message = string.format(verify_template_data_rom, unique_name.."_rom",terminate_flag,'(void *)&'..user_data,fn_time_out)
     Store_user_code(message)
 
     

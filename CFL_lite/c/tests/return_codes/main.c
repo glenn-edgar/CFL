@@ -31,6 +31,7 @@ void free_allocate_once_heap(){
 int main()
 {
 
+   
    create_allocate_once_heap(); // create allocate once heap
 
    const Handle_CFL_t *handle = test_entry_point();

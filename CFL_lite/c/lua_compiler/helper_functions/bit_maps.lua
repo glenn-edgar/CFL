@@ -14,12 +14,12 @@ function define_bit_map(name,size,state)
         state = false
     end
     if bit_map_definition[name] ~= nil then
-        print("ERROR: bit map already defined",name)
+        error("ERROR: bit map already defined",name)
         os.exit(1)
     end
     
     if type(state) ~= "boolean" then
-        print("ERROR: state must be boolean",name,state)
+        error("ERROR: state must be boolean",name,state)
         os.exit(1)
     end
     local definition = {}
@@ -33,7 +33,7 @@ function define_bit_map(name,size,state)
     if(size % 8 ~= 0) then
         definition.byte_number = definition.byte_number + 1
     end
-    definition.labels = {}
+   
     definition.state = state
     definition.array_name = generate_unique_function_name()
     
@@ -44,7 +44,7 @@ function get_s_bit_buffer_number(buffer_name)
    
     local buffer_data = bit_map_definition[buffer_name]
     if buffer_data == nil then
-        print("ERROR: buffer not defined",buffer_name)
+        error("ERROR: buffer not defined",buffer_name)
         os.exit(1)
     end
     return buffer_data.number, buffer_data.byte_number, buffer_data.size
@@ -53,26 +53,22 @@ end
 function check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     local buffer_data = bit_map_definition[source_buffer]
     if buffer_data == nil then
-        print("ERROR: buffer not defined",source_buffer)
+        error("ERROR: buffer not defined",source_buffer)
         os.exit(1)
     end
     if source_offset + size > buffer_data.size then
-        print("ERROR: buffer overflow",source_buffer,source_offset,size,buffer_data.size)
+        error("ERROR: buffer overflow",source_buffer,source_offset,size,buffer_data.size)
         os.exit(1)
     end
 end
 
 function add_bit_map_label(bit_map_name,label_name,position)
     if bit_map_definition[bit_map_name] == nil then
-        print("ERROR: bit map not defined",bit_map_name)
+        error("ERROR: bit map not defined",bit_map_name)
         os.exit(1)
     end
     local bit_map = bit_map_definition[bit_map_name]
-    if bit_map.labels[label_name] ~= nil then
-        print("ERROR: label already defined",bit_map_name,label_name)
-        os.exit(1)
-    end
-    bit_map.labels[label_name] = position
+   
     bit_map_definition[bit_map_name] = bit_map
 end
 
@@ -195,6 +191,8 @@ local clear_bit_map_header = [[
 typedef struct clear_bit_map_CFL_t{
     uint16_t buffer_number;
     bool state;
+    uint16_t start;
+    uint16_t ending;
 }clear_bit_map_CFL_t;
 
 void clear_bit_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
@@ -209,7 +207,11 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
    
     Bitmap_CFL* map = get_bitmap_control_CFL(handle,setup->buffer_number);
     bool state = setup->state;
-    bitmap_set_all_CFL(map, state);
+
+    for(unsigned i = setup->start; i< setup->ending;i++){
+    
+        bitmap_set_bit_CFL(map,i,state);
+    }
 
 }
 
@@ -219,14 +221,39 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
 
 Store_one_shot_function("CLEAR_BIT_MAP","clear_bit_map_CFL",clear_bit_map_body,clear_bit_map_header)
 
-function clear_bit_map(buffer_name,state)
-   
+function clear_bit_map(buffer_name,state,start,ending)
+    
     local buffer_number = get_s_bit_buffer_number(buffer_name)
+    if start == nil then
+        start = 0
+    end
+   
+    if ending == nil then
+        ending = bit_map_definition[buffer_name].size
+    
+    end
+    if start > bit_map_definition[buffer_name].size then
+        print("ERROR: start must be less than buffer size",start, bit_map_definition[buffer_name].size)
+        error("ERROR: start must be less than buffer size")
+        os.exit(1)
+    end
+    if ending > bit_map_definition[buffer_name].size then
+        print("ERROR: ending must be less than buffer size",ending, bit_map_definition[buffer_name].size)
+        error("ERROR:ending must be less than buffer size")
+        os.exit(1)
+    end
+   
     local user_data = generate_unique_function_name()
-    local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s};\n",user_data,buffer_number,state)
+    local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s,%d,%d};\n",user_data,buffer_number,state,start,ending)
     Store_user_code(message)
     One_shot("CLEAR_BIT_MAP", user_data)
 end
+
+
+
+
+
+
 
 
 local bit_map_copy_header = [[
@@ -268,7 +295,7 @@ function cp_buffer(source_buffer,destination_buffer,source_offset,destination_of
     check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
-    user_data = generate_unique_function_name()
+    local user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_copy_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
     Store_user_code(message)
     One_shot("COPY_BIT_MAP_BUFFER",user_data)
@@ -317,7 +344,7 @@ function and_bit_map_buffer(source_buffer,destination_buffer,source_offset,desti
     check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
-    user_data = generate_unique_function_name()
+    local user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_and_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
     Store_user_code(message)
     One_shot("AND_BIT_MAP_BUFFER",user_data)
@@ -364,7 +391,7 @@ function or_bit_map_buffer(source_buffer,destination_buffer,source_offset,destin
     check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
-    user_data = generate_unique_function_name()
+    local user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_or_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
     Store_user_code(message)
     One_shot("OR_BIT_MAP_BUFFER",user_data)
@@ -411,7 +438,7 @@ function xor_bit_map_buffer(source_buffer,destination_buffer,source_offset,desti
     check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
-    user_data = generate_unique_function_name()
+    local user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_xor_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,source_offset,destination_offset,size)
     Store_user_code(message)
     One_shot("XOR_BIT_MAP_BUFFER",user_data)
@@ -459,7 +486,7 @@ function not_bit_map_buffer(source_buffer,destination_buffer,source_offset,desti
     check_s_bit_buffer_parameters(source_buffer,source_offset,size)
     check_s_bit_buffer_parameters(destination_buffer,destination_offset,size)
    
-    user_data = generate_unique_function_name()
+    local user_data = generate_unique_function_name()
     local message = string.format("static const bit_map_not_CFL_t %s = {%d,%d,%d,%d,%d};\n",user_data,source_buf_number,destination_buf_number,
     source_offset,destination_offset,size)
     Store_user_code(message)
@@ -467,17 +494,57 @@ function not_bit_map_buffer(source_buffer,destination_buffer,source_offset,desti
 end
 
 
-function if_then_else_bit_map(source_buffer,bit,then_one_shot,else_one_shot)
+local if_then_else_header = [[
+
+typedef struct if_then_else_bit_map_CFL_t{
+    uint8_t source_buffer;
+    uint8_t if_bit;
+    One_shot_function_CFL_t then_one_shot;
+    One_shot_function_CFL_t else_one_shot;
+    const void* then_data;
+    const void* else_data;
+} if_then_else_bit_map_CFL_t;
+
+
+void if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local if_then_else_body = [[
+
+void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    if_then_else_bit_map_CFL_t* setup = (if_then_else_bit_map_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->if_bit);
+    if(source_bit == true){
+        setup->then_one_shot(input,(void *)setup->then_data,event_data);
+    }else{
+        setup->else_one_shot(input,(void *)setup->else_data,event_data);
+    }
+
+}
+
+]]
+
+
+
+Store_one_shot_function("IF_THEN_ELSE_BIT_MAP","if_then_else_CFL",if_then_else_body, if_then_else_header,then_data,else_data)
+
+function if_then_else_bit_map(source_buffer,test_bit,then_one_shot,then_one_shot_data, else_one_shot,else_one_shot_data)
+ 
+    local source_buf_number = get_s_bit_buffer_number(source_buffer) 
+    check_s_bit_buffer_parameters(source_buffer,test_bit,1)
+    unique_name = generate_unique_function_name()
+    local then_one_shot_fn = Get_one_shot_function(then_one_shot)
+    local else_one_shot_fn = Get_one_shot_function(else_one_shot)
+    local message = string.format("static const if_then_else_bit_map_CFL_t %s = {%d,%d,%s,%s,&%s,&%s};\n",unique_name,source_buf_number,test_bit,
+                                    then_one_shot_fn,else_one_shot_fn,then_one_shot_data,else_one_shot_data)
+    Store_user_code(message)
+    One_shot("IF_THEN_ELSE_BIT_MAP",unique_name)
 
 end    
 
-function shift_bit_map_buffer(source_buffer,offset,shift_direction,fill_bit)
-
-end
-
-function drum_operation_bit_map()
-   --tbd
-end
 
 --[[
 typedef struct s_bit_definition_CFL_t{
@@ -542,12 +609,12 @@ local wait_s_expression_header = [[
 
 
 
-typedef wait_bit_map_s_expr_CFL_t struct{
-    s_bit_definition_CFL_t* definition;
-    void* time_out_message
+typedef struct wait_bit_map_s_expr_CFL_t{
+    const s_bit_definition_CFL_t* definition;
+    const void* time_out_data;
 }wait_bit_map_s_expr_CFL_t;
 
-void wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+bool wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 ]]
 
@@ -555,7 +622,9 @@ local wait_s_expression_body = [[
 
 bool wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
-    wait_bit_map_s_expr_CFL_t* setup = (wait_bit_map_s_expr_CFL_t*)params;   
+    wait_bit_map_s_expr_CFL_t* setup = (wait_bit_map_s_expr_CFL_t*)params;
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    return result;    
 }
 
 ]]
@@ -563,26 +632,31 @@ Store_boolean_function("WAIT_EVALUATE_BIT_MAP","wait_bit_map_s_expr_CFL",wait_s_
 
 
 
-function Wait_s_expression(s_buffer,s_expression, time_out_ms, terminate_flag, one_shot_time_out_fn, time_out_data)
-    local user_data = generate_unique_function_name()
+function Wait_s_expression(source_bit_map,s_expression, time_out_ms, terminate_flag, one_shot_time_out_fn, time_out_data)
+    local message = ""
+    local wait_name = generate_unique_function_name()
     local s_expression_structure = generate_unique_function_name()
     generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
-    local message = string.format("static const wait_bit_map_s_expr_CFL_t %s = {%s,%s};\n",s_expression_structure,"(void *)&"..time_out_data)
+    if time_out_data ~= 'NULL' then
+          message = string.format("static const wait_bit_map_s_expr_CFL_t %s = {&%s,%s};\n",wait_name,s_expression_structure,"(const void *)&"..time_out_data)
+    else
+        message = string.format("static const wait_bit_map_s_expr_CFL_t %s = {&%s,NULL};\n",wait_name,s_expression_structure)
+    end
+    
     Store_user_code(message)
-    Wait("EVALUATE_BIT_MAP", time_out_ms, terminate_flag, one_shot_time_out_fn, user_data)
-
+    Wait("WAIT_EVALUATE_BIT_MAP", time_out_ms, terminate_flag, one_shot_time_out_fn, wait_name)
 end  
 
 local verify_s_expression_header = [[
 
 
 
-typedef verify_bit_map_s_expr_CFL_t struct{
-    s_bit_definition_CFL_t* definition;
-    void* error_message
+typedef struct verify_bit_map_s_expr_CFL_t {
+    const s_bit_definition_CFL_t* definition;
+   const void* error_message;
 }verify_bit_map_s_expr_CFL_t;
 
-void verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+bool verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 ]]
 
@@ -590,43 +664,89 @@ local verify_s_expression_body = [[
 
 bool verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
-    verify_bit_map_s_expr_CFL_t* setup = (verify_bit_map_s_expr_CFL_t*)params;   
+    verify_bit_map_s_expr_CFL_t* setup = (verify_bit_map_s_expr_CFL_t*)params;  
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    return result;  
 }
 
 ]]
 
 Store_boolean_function("VERIFY_EVALUATE_BIT_MAP","verify_bit_map_s_expr_CFL",verify_s_expression_body,verify_s_expression_header)
 
-function  Verify_s_expression(source_bit_map,s_expression, terminate_flag, one_shot_time_out_fn, error_data)
-    local user_data = generate_unique_function_name()
+function  Verify_s_expression(source_bit_map,s_expression, terminate_flag, one_shot_failure_fn, error_data)
+    local verify_name = generate_unique_function_name()
     local s_expression_structure = generate_unique_function_name()
     generate_s_bit_expression(s_expression_structure,source_bit_map,s_expression)
-    local message = string.format("static constverify_bit_map_s_expr_CFL_t %s = {%s,%s};\n",s_expression_structure,"(void *)&"..error_data)
+    if error_data ~= 'NULL' then
+        message = string.format("static const  verify_bit_map_s_expr_CFL_t %s = {&%s,%s};\n",verify_name,s_expression_structure,"(const void *)&"..error_data)
+  else
+      message = string.format("static const  verify_bit_map_s_expr_CFL_t %s = {&%s,NULL};\n",verify_name,s_expression_structure)
+  end
+  
     Store_user_code(message)
-    Verify("VERIFY_EVALUATE_BIT_MAP", terminate_flag, one_shot_time_out_fn, user_data)
+    Verify("VERIFY_EVALUATE_BIT_MAP", terminate_flag, one_shot_failure_fn, verify_name)
 end
 
-function verify_integer(value)
-    if type(value) ~= "number" then
-        print("ERROR: value must be a number",value)
-        os.exit(1)
-    end
-    if value < 0 then
-        print("ERROR: value must be positive",value)
-        os.exit(1)
-    end
-    if math.floor(value) ~= value then
-        print("ERROR: value must be an integer",value)
-        os.exit(1)
-    end
+
+
+local  shift_bit_buffer_body = [[
+
+
+void shift_bit_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    shift_bit_buffer_CFL_t* setup = (shift_bit_buffer_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    unsigned start_bit = setup->start_bit;
+    unsigned ending_bit = setup->ending_bit;
+    int direction = setup->shift_direction;
+  
+    bitmap_shift_bits_CFL(source_bmp, start_bit,ending_bit,direction);
+    
+}
+
+]]
+local  shift_bit_buffer_header = [[
+
+
+
+typedef  struct  shift_bit_buffer_CFL_t{
+    uint16_t source_buffer;
+    uint16_t start_bit;
+    uint16_t ending_bit;
+    int16_t shift_direction;
+  
+}shift_bit_buffer_CFL_t;
+
+void shift_bit_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+Store_one_shot_function("SHIFT_BIT_BUFFER_CFL","shift_bit_buffer_CFL",shift_bit_buffer_body,shift_bit_buffer_header)
+
+
+
+function shift_bit_map_buffer(source_buffer,start,stream_length,shift_direction)
+    local source_buf_number = get_s_bit_buffer_number(source_buffer)
+    local ending = start + stream_length
+    check_s_bit_buffer_parameters(source_buffer,start,stream_length)
+    local unique_name = generate_unique_function_name()
+    local message = string.format("static const shift_bit_buffer_CFL_t %s = {%d,%d,%d,%d};\n",unique_name,source_buf_number,start,ending,shift_direction)
+    Store_user_code(message)
+    One_shot("SHIFT_BIT_BUFFER_CFL",unique_name)
 end
+
+function drum_operation_bit_map()
+   --tbd
+end
+
+
+
 
 local function verify_no_null_entries(s_expression)
     
     for i = 1, #s_expression do
    
         if s_expression[i] == nil then
-            print("ERROR: s_expression must not have nil entries")
+            error("ERROR: s_expression must not have nil entries")
             os.exit(1)
         end
     end
@@ -642,74 +762,6 @@ function isValidInteger(str)
     end
 end
 
-local function extract_buffer_position(position)
-    local first_char = string.sub(position,1,1)
-    if first_char ~= "@" then
-        print("ERROR: string values must start with @",position)
-        os.exit(1)
-    end
-    local remaining = string.sub(position,2)
-    if #remaining == 0 then
-        print("ERROR: string values must have a number after the @",position)
-        os.exit(1)
-    end
-    if isValidInteger(remaining) == false then
-        print("ERROR: string values must have a number after the @",position)
-        os.exit(1)
-    end
-    return tonumber(bp)
-end
-
-function add_buffer_positions_to_s_expression(source_buffer,s_expression,position_index_list)
-    verify_no_null_entries(position_index_list)
-    for i,v in ipairs(position_index_list) do
-        if(type(v) == "string")then
-            local bp = extract_buffer_position(v)
-            verify_integer(bp)
-            check_s_bit_buffer_parameters(source_buffer,bp,1)
-            table.insert(s_expression,v)
-        else
-            verify_boolean(v)
-            table.insert(s_expression,v)
-        end
-    end
-    table.insert(s_expression,")")
-end
-
-
-
-
-
-function s_and_buffer(bit_map,position_indexes)
-    s_expression = {}
-    table.insert( s_expression,"&&" )
-    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
-    return s_expression
-
-end
-
-function s_or_buffer(bit_map,position_indexes)
-    s_expression = {}
-    table.insert( s_expression,"||" )
-    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
-    return s_expression    
-
-end
-
-function s_nor_buffer(bit_map,position_indexes)
-    s_expression = {}
-    table.insert( s_expression,"~~" )
-    add_buffer_positions_to_s_expression(bit_map,s_expression,position_indexes)
-    return s_expression 
-
-end
-
-function check_for_boolean_operator(operator)
-    if type(operator) ~= "boolean" then
-        print("ERROR: operator must be a boolean",operator)
-        os.exit(1)
-    end
-end
 
 function add_table_entries(s_expression,position_list)
     verify_no_null_entries(position_list)
@@ -722,17 +774,7 @@ function add_table_entries(s_expression,position_list)
         end
     end
 end
-function pack_boolean(v)
-    if(type(v) ~= "boolean") then
-        print("ERROR: parameter must be a boolean",v)
-        os.exit(1)
-    end
-    if v == true then
-        table.insert(s_expression,1)
-    else
-        table.insert(s_expression,0)
-    end
-end
+
 
 
 
@@ -746,41 +788,42 @@ function expand_table(s_expr,parameter_list)
 
  end
  
-function expand_table_start(bit_map,s_expression,position_indexes)
+function expand_table_start(s_expression,position_indexes)
     
     verify_no_null_entries(position_indexes)
     for i,v in ipairs(position_indexes) do
         if(type(v) == "table") then
             expand_table(s_expression,v)
         else
-            pack_boolean(v)
+
+            table.insert(s_expression,v)
         end
     end
     table.insert(s_expression,")")
  end
 
 
-function s_and(bit_map,position_indexes)
+function s_and(position_indexes)
 
     s_expression = {}
     table.insert(s_expression, "&&" )
-    expand_table_start(bit_map,s_expression,position_indexes)
+    expand_table_start(s_expression,position_indexes)
     return s_expression
 
 end
 
-function s_or(bit_map,position_indexes)
+function s_or(position_indexes)
     s_expression = {}
     table.insert( s_expression,"||" )
-    expand_table_start(bit_map,s_expression,position_indexes)
+    expand_table_start(s_expression,position_indexes)
     return s_expression
 
 end
 
-function s_nor(bit_map,position_indexes)
+function s_nor(position_indexes)
     s_expression = {}
     table.insert( s_expression,"~~" )
-    expand_table_start(bit_map,s_expression,position_indexes)
+    expand_table_start(s_expression,position_indexes)
     return s_expression
 
 end
@@ -800,3 +843,4 @@ function dump_s_expression(s_expression,tab)
         end
     end
 end
+

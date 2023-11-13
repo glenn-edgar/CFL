@@ -31,7 +31,7 @@ void bit_maps_1(void);
 int main()
 
 {
-  printf("\n\n test bit_maps \n\n");
+  printf("\n\ntest bit_maps \n\n");
   bit_maps_1();
   
   

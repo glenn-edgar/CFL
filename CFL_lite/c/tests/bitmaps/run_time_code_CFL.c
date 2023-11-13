@@ -4,6 +4,58 @@
 
 #include "run_time_code_CFL.h"
 
+  static inline int generate_return_code_verify(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }
+
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    
+
+    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+
+        fn(handle, verify_control->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+
+    if (fn(handle, verify_control->user_data, event_data) == false)
+    {
+        if (verify_control->user_termination_fn != NULL)
+        {
+            verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
+        }
+        return generate_return_code_verify(verify_control->terminate_flag);
+    }
+    return CONTINUE_CFL;
+}
+
+
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+    return DISABLE_CFL;
+  }
+  return DISABLE_CFL;
+}
 
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
@@ -27,21 +79,6 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     return *return_code;
 }
 
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-    return DISABLE_CFL;
-  }
-  return DISABLE_CFL;
-}
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -110,6 +147,132 @@ int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *p
   return CONTINUE_CFL;
 }
 
+void  my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    my_then_one_shot_CFL_t* setup = (my_then_one_shot_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    bitmap_set_bit_CFL(source_bmp,setup->bit_position,true);
+}
+
+
+void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
+    (void)event_data;
+    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    clear_bit_map_CFL_t* setup = (clear_bit_map_CFL_t*)params;
+   
+    Bitmap_CFL* map = get_bitmap_control_CFL(handle,setup->buffer_number);
+    bool state = setup->state;
+
+    for(unsigned i = setup->start; i< setup->ending;i++){
+    
+        bitmap_set_bit_CFL(map,i,state);
+    }
+
+}
+
+
+
+
+void  my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    my_else_one_shot_CFL_t* setup = (my_else_one_shot_CFL_t*)params;
+    Printf_CFL("else branch %s",setup->message);
+}  
+
+
+void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+
+    const s_bit_expression_CFL_t* setup = (const s_bit_expression_CFL_t*)params; 
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    
+    Bitmap_CFL *bmp = get_bitmap_control_CFL(input, setup->buffer_number);
+    bitmap_set_bit_CFL(bmp,setup->offset,result);  
+}
+
+
+void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    if_then_else_bit_map_CFL_t* setup = (if_then_else_bit_map_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->if_bit);
+    if(source_bit == true){
+        setup->then_one_shot(input,(void *)setup->then_data,event_data);
+    }else{
+        setup->else_one_shot(input,(void *)setup->else_data,event_data);
+    }
+
+}
+
+
+void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    bit_map_and_CFL_t* setup = (bit_map_and_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
+    for(unsigned i = 0; i< setup->size;i++){
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = source_bit && destination_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
+    }
+}
+
+
+void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    bit_map_not_CFL_t* setup = (bit_map_not_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
+    for(unsigned i = 0; i< setup->size;i++){
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        
+        bool output_bit = !source_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
+    }
+}
+
+
+void  verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("verify condition triggered \n");
+}  
+
+
+void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    bit_map_or_CFL_t* setup = (bit_map_or_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    
+    for(unsigned i = 0; i< setup->size;i++){
+        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
+        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
+        bool output_bit = source_bit || destination_bit;
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
+    }
+}
+
+
+
+void shift_bit_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    shift_bit_buffer_CFL_t* setup = (shift_bit_buffer_CFL_t*)params;
+    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
+    unsigned start_bit = setup->start_bit;
+    unsigned ending_bit = setup->ending_bit;
+    int direction = setup->shift_direction;
+  
+    bitmap_shift_bits_CFL(source_bmp, start_bit,ending_bit,direction);
+    
+}
+
+
 void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     
     Enable_column_CFL_t *enable_column = (Enable_column_CFL_t *)params;
@@ -138,61 +301,15 @@ void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL
 
 
 
-void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
-    (void)event_data;
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    clear_bit_map_CFL_t* setup = (clear_bit_map_CFL_t*)params;
-   
-    Bitmap_CFL* map = get_bitmap_control_CFL(handle,setup->buffer_number);
-    bool state = setup->state;
-    bitmap_set_all_CFL(map, state);
-
-}
-
-
-
-
-void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void)event_data;
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    dump_buffer_CFL_t* setup = (dump_buffer_CFL_t*)params;
-    uint16_t size = setup->size;
-    
-    uint8_t *bit_map = bitmap_buffer(handle,setup->buffer_number);
-   
-    Printf_CFL("\n\nDumping Buffer %d\n",setup->buffer_number);
-    Printf_CFL("Buffer Size %d\n",size);
-    Printf_CFL("Buffer Bit Map ");
-    for(unsigned i = 0; i< size;i++){
-        Printf_CFL("%02x ",bit_map[i]);
-    }
-    Printf_CFL("\n\n");
-    
-}
-
-
-void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void)event_data;
-
-    const s_bit_expression_CFL_t* setup = (const s_bit_expression_CFL_t*)params; 
-    bool result = process_s_bit_buffer_CFL(input, setup->definition);
-    
-    Bitmap_CFL *bmp = get_bitmap_control_CFL(input, setup->buffer_number);
-    bitmap_set_bit_CFL(bmp,setup->offset,result);  
-}
-
-
-void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void)event_data;
-    bit_map_not_CFL_t* setup = (bit_map_not_CFL_t*)params;
+void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void )event_data;
+    bit_map_copy_CFL_t* setup = (bit_map_copy_CFL_t*)params;
     Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
     Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
     
     for(unsigned i = 0; i< setup->size;i++){
         bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
-        
-        bool output_bit = !source_bit;
-        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
+        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,source_bit);
     }
 }
 
@@ -216,21 +333,13 @@ void log_message_CFL(const void *input, void *params,
               column_index, column_element_number, *message);
 }
 
-
-void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
     (void)event_data;
-    bit_map_and_CFL_t* setup = (bit_map_and_CFL_t*)params;
-    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
-    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
-    
-    for(unsigned i = 0; i< setup->size;i++){
-        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
-        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
-        bool output_bit = source_bit && destination_bit;
-        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
-    }
+    return;
 }
-
 
 void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
@@ -247,40 +356,40 @@ void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_da
 }
 
 
-void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void )event_data;
-    bit_map_copy_CFL_t* setup = (bit_map_copy_CFL_t*)params;
-    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
-    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
-    
-    for(unsigned i = 0; i< setup->size;i++){
-        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
-        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,source_bit);
-    }
-}
-
-
-void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
-    bit_map_or_CFL_t* setup = (bit_map_or_CFL_t*)params;
-    Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
-    Bitmap_CFL* destination_bmp =  get_bitmap_control_CFL(input,setup->destination_buffer);
+    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    dump_buffer_CFL_t* setup = (dump_buffer_CFL_t*)params;
+    uint16_t size = setup->size;
     
-    for(unsigned i = 0; i< setup->size;i++){
-        bool source_bit = bitmap_get_bit_CFL(source_bmp,setup->source_offset + i);
-        bool destination_bit = bitmap_get_bit_CFL(destination_bmp,setup->destination_offset + i);
-        bool output_bit = source_bit || destination_bit;
-        bitmap_set_bit_CFL(destination_bmp,setup->destination_offset + i,output_bit);
+    uint8_t *bit_map = bitmap_buffer(handle,setup->buffer_number);
+   
+    Printf_CFL("\n\nDumping Buffer %d\n",setup->buffer_number);
+    Printf_CFL("Buffer Size %d\n",size);
+    Printf_CFL("Buffer Bit Map ");
+    for(unsigned i = 0; i< size;i++){
+        Printf_CFL("%02x ",bit_map[i]);
     }
+    Printf_CFL("\n\n");
+    
 }
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
+
+void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
     (void)params;
+    Printf_CFL("wait not triggered should not happen");
+}  
+
+
+bool wait_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
-    return;
+    wait_bit_map_s_expr_CFL_t* setup = (wait_bit_map_s_expr_CFL_t*)params;
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    return result;    
 }
+
  
 
 
@@ -309,3 +418,11 @@ bool wait_time_delay_CFL(const void *input, void *params,
 
   return false;
 }
+
+bool verify_bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    verify_bit_map_s_expr_CFL_t* setup = (verify_bit_map_s_expr_CFL_t*)params;  
+    bool result = process_s_bit_buffer_CFL(input, setup->definition);
+    return result;  
+}
+

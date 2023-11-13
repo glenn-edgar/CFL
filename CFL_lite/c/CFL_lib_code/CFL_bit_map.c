@@ -64,3 +64,63 @@ void bitmap_set_all_CFL(Bitmap_CFL* bmp, bool value) {
     }
 }
 
+
+
+
+static void shift_one_time(uint8_t *buffer, size_t size, size_t start, size_t end, int direction) {
+   (void)size;
+
+    size_t startByte = start / 8;
+    size_t endByte = (end - 1) / 8;
+    size_t startBit = start % 8;
+    size_t endBit = (end - 1) % 8;
+   
+    if (direction > 0) {
+        // Sift in the + direction
+        for (size_t i = endByte; i > startByte; --i) {
+            buffer[i] = (buffer[i] << 1) | (buffer[i - 1] >> 7);
+        }
+        buffer[startByte] <<= 1;
+
+        // Handle edge bits if start and end are not byte-aligned
+        if (endBit != 7) {
+            buffer[endByte] &= ~(1 << endBit);
+           
+        }
+       
+    } else {
+        // Sift in the - direction
+        for (size_t i = startByte; i < endByte; ++i) {
+            buffer[i] = (buffer[i] >> 1) | (buffer[i + 1] << 7);
+        }
+        buffer[endByte] >>= 1;
+
+        // Handle edge bits if start and end are not byte-aligned
+        if (startBit != 0) {
+            buffer[startByte] &= ~(1 << (7 - startBit));
+           
+        }
+         
+    }
+}
+
+static void shiftBits(uint8_t *buffer, size_t size, size_t start, size_t end, int number){
+  int shift_direction = number > 0 ? 1 : -1;
+  if(number < 0){
+    number = -number;
+
+  }
+
+  for(int i = 0; i < number; i++){
+    shift_one_time(buffer, size, start, end, shift_direction);
+  }
+
+}
+
+
+
+void bitmap_shift_bits_CFL(Bitmap_CFL* bmp, uint16_t start, uint16_t end, int direction) {
+   
+    shiftBits(bmp->data, bmp->length, start, end, direction);
+}
+

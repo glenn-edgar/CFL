@@ -82,8 +82,9 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
 
   initialize_columns_CFL(handle);
 
-
+ 
   process_event_loop(handle);
+  
 }
 
 
@@ -96,12 +97,14 @@ static void process_event_loop(const Handle_CFL_t *handle)
 
   while (true)
   {
+  
     engine_ctrl->idle_function(handle, handle->time_control, false);
+
     engine_ctrl->calendar_function(handle, handle->time_control, false);
 
     while ( get_queue_number_CFL(handle,0) > 0)
     { 
-      
+  
       
       // Empty event queue
       if (process_single_loop(handle) == false)

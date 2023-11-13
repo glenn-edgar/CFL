@@ -8,7 +8,7 @@
 #define S_BIT_VALUE_CFL 0
 #define S_BIT_BUFFER_POSITION_CFL 1
 #define S_BIT_OPERATOR_CFL  2
-#define S_BIT_OPERATOR_END_CFL 4
+#define S_BIT_OPERATOR_END_CFL 3
 
 // operators
 

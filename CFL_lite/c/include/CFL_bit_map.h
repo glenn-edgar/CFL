@@ -15,6 +15,7 @@ typedef struct {
 void bitmap_set_bit_CFL(Bitmap_CFL* bmp, uint32_t index, bool value);
 bool bitmap_get_bit_CFL(Bitmap_CFL* bmp, uint32_t index);
 void bitmap_set_all_CFL(Bitmap_CFL* bmp, bool value);
+void bitmap_shift_bits_CFL(Bitmap_CFL* bmp, uint16_t start, uint16_t end, int direction);
 
 Bitmap_CFL* get_bitmap_control_CFL(const void *input, unsigned buffer_number);
 
