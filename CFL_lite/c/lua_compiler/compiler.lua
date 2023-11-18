@@ -53,6 +53,7 @@ function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap
     initialize_column_elements()
     reset_code_buffers()
     initialize_bit_maps()
+    initialize_register_maps()
     
 
 end
@@ -89,56 +90,7 @@ function dump_header()
     
     local header_def = [[
     
-    /*
-    --------------------------- Handle definition ------------------------------
-   
-    typedef struct Handle_CFL_t
-    {
-      const unsigned queue_number;
-      const Event_control_ROM_CFL_t *queue_rom;
-      Event_control_RAM_CFL_t *queue_ram;
-      
     
-      unsigned char *column_elements_flags;
-      const Column_element_CFL_t *column_elements_ROM;
-    
-      unsigned char *column_flags;
-      void **column_local_data;
-      unsigned char *column_state;
-      const unsigned short number_of_columns;
-      const Column_ROM_CFL_t *column_rom_data;
-    
-      
-      Watch_dog_struct_CFL_t **watch_dog_struct;
-      unsigned *watch_dog_count;
-     
-      
-      Time_control_CFL_t *time_control;
-      Engine_control_CFL_t *engine_control;
-      Debug_out_CFL_t debug_function;
-      private_heap_malloc_fn malloc;
-      private_heap_free_fn free;
-      allocate_once_fn allocate_once;
-      char **master_heap_starting_location; 
-      const unsigned master_heap_size;             
-      unsigned *remaining_heap_size;  // set by c runtime
-      char **current_heap_location;  // set by c runtime
-      CS_MEMORY_CONTROL *private_heap;      
-      
-      unsigned private_heap_size;
-      unsigned number_of_sm;
-      Sm_control_ROM_CFL_t *sm_rom;
-      Sm_control_RAM_CFL_t *sm_ram;
-    
-    
-    } Handle_CFL_t;
-
-    
-      
-     
-
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*/
 
 
 const struct Handle_CFL_t %s =
@@ -177,15 +129,15 @@ const struct Handle_CFL_t %s =
   .private_heap   = &%s,
   .private_heap_size =   %s,
   .number_of_sm      = %s,
-   .sm_rom     =  %s,
-   .sm_ram     = %s,
-   .number_of_bitmaps = %d,
-    .bitmaps = %s,
+  .sm_rom     =  %s,
+  .sm_ram     = %s,
+  .number_of_bitmaps = %d,
+  .bitmaps = %s,
+  .number_of_registermaps = %d,
+  .registermaps = %s
 } ;
 
-
 ]]
-
 
 local message = string.format(header_def,
                               handle_name,
@@ -221,8 +173,11 @@ local message = string.format(header_def,
                               build_status["sm_rom"],
                               build_status["sm_ram"] ,
                               build_status["number_of_bitmaps"],
-                              build_status["bitmaps"]                              
-                              )
+                              build_status["bitmaps"],
+                              build_status["number_of_register_maps"],
+                              build_status["registermaps"]
+                              )                              
+                              
                               
 write_output(message)
 
@@ -255,6 +210,7 @@ function dump_build()
     dump_columns()
     dump_column_elements()
     dump_bit_maps()
+    dump_register_maps()
     dump_header()
     write_output(header_end)
     

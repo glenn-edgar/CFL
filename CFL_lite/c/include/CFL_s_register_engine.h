@@ -3,6 +3,7 @@
 
 #include <stdint.h> 
 #include <stdbool.h>
+#include "CFL_register_map.h"
 #include "CFL_s_register_stack.h"
 
 
@@ -29,8 +30,12 @@
 
 #define S_REGISTER_LOGICAL_AND_CFL 10
 #define S_REGISTER_LOGICAL_OR_CFL 11
-#define S_REGISTER_LOGICAL_XOR_CFL 12
-#define S_REGISTER_LOGICAL_NOR_CFL 13
+
+#define S_REGISTER_GT_CFL   14 
+#define  S_REGISTER_GE_CFL   15  
+#define S_REGISTER_EQ_CFL   16  
+#define S_REGISTER_LE_CFL  17  
+#define S_REGISTER_LT_CFL  18  
 
 
 
@@ -59,7 +64,7 @@ typedef struct s_register_working_control_CFL_t{
     float                            result;
 }s_register_working_control_CFL_t;
 
-int16_t process_s_register_buffer_CFL(const void *input, const s_register_definition_CFL_t *s_register_buffer_interface);
+int16_t process_s_register_buffer_CFL(const void *input, const  s_register_definition_CFL_t*s_register_buffer_interface);
 
 
 

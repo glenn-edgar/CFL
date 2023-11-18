@@ -120,7 +120,7 @@ function dump_bit_maps()
     write_output(message)
     for i,bit_name in ipairs(bit_map_list) do
         local bit_map = bit_map_definition[bit_name]
-        local bit_array_name = generate_unique_function_name()
+        --local bit_array_name = generate_unique_function_name()
         local array_name = bit_map.array_name
         message = string.format(' {%d, &%s[0]},\n',bit_map.size,array_name)
         write_output(message)
