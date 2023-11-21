@@ -529,7 +529,7 @@ void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_
 
 
 
-Store_one_shot_function("IF_THEN_ELSE_BIT_MAP","if_then_else_CFL",if_then_else_body, if_then_else_header,then_data,else_data)
+Store_one_shot_function("IF_THEN_ELSE_BIT_MAP","if_then_else_CFL",if_then_else_body, if_then_else_header)
 
 function if_then_else_bit_map(source_buffer,test_bit,then_one_shot,then_one_shot_data, else_one_shot,else_one_shot_data)
  

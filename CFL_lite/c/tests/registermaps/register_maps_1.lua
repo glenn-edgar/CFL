@@ -18,11 +18,12 @@ end
 define_register_map("reg_map_1",32,0)
 define_register_map("reg_map_2",32,32767)
 
-define_columns({"start_column","configure_register_maps","s_expression_reg_map"})
+define_columns({"start_column","configure_register_maps","s_expression_reg_map","s_complex_expression_reg_map","if_then_else_test","reg_wait_test","reg_verify_test",
+                           "reg_verify_fail_trigger"})
 
 define_column("start_column",true,nil)
     Log_msg('start column')
-    Enable_columns({"configure_register_maps","s_expression_reg_map"},true)
+    Enable_columns({"configure_register_maps","s_expression_reg_map","s_complex_expression_reg_map","if_then_else_test","reg_wait_test"},true)
     Wait_delay(10000)
     Log_msg('terminating system')
     terminate_column()
@@ -30,8 +31,7 @@ end_column()
 
 define_column("configure_register_maps",false,nil)
     
-    Log_msg('configure bit maps')
-    --clear_register_map("bit_map_1",true)
+    Log_msg('configure reg maps')
     dump_register_map_buffer("reg_map_1")
     dump_register_map_buffer("reg_map_2")
     clear_register_map("reg_map_1",10,10,20)
@@ -97,8 +97,6 @@ local sub_test = reg_sub({p1,p2})
 local mod_test = reg_mod(p1,p2)
 local div_test = reg_div(p1,p2)
 
-local shift_test_1 = reg_shift(p1,1)
-local shift_test_2 = reg_shift(p1,-1)
 
 local reg_bit_and_test = reg_bit_and({p1,p2})
 local reg_bit_or_test = reg_bit_or({p1,p2})
@@ -107,6 +105,10 @@ local reg_bit_nor_test = reg_bit_nor({p1,p2})
 
 local reg_logical_and_test = reg_logical_and({p1,p2})
 local reg_logical_or_test = reg_logical_or({p1,p2})
+
+local shift_test_1 = reg_shift(p1,1)
+local shift_test_2 = reg_shift(p1,-1)
+
 
 local reg_gt_test_1 = reg_gt(5,5)
 local reg_gt_test_2 = reg_gt(5,4)
@@ -123,8 +125,9 @@ local reg_le_test_2 = reg_le(4,5)
 local reg_lt_test_1 = reg_lt(5,5)
 local reg_lt_test_2 = reg_lt(4,5)
 
-
-
+local reg_complex_1 = reg_add({ reg_mul({3,4}), reg_mul({5,6}) })
+local reg_complex_2  = reg_mul({reg_complex_1,reg_complex_1})
+local reg_complex_3  = reg_add({reg_complex_2,reg_complex_2})
 
 
 define_column("s_expression_reg_map",false,nil)
@@ -212,284 +215,187 @@ define_column("s_expression_reg_map",false,nil)
     terminate_column()
 end_column()
 
-
-dump_build()
---[[
-
-bs_expression_1 = s_and({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
-
-bs_expression_2 = s_or({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
-
-bs_expression_3 = s_nor({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
---dump_s_expression(bs_expression_1)
-s_expression_1 = s_and({true,true,true,true,true,true,true,true,true,true})
-s_expression_2 = s_or({false,false,false,false,false,false,false,false,false,true})
-s_expression_3 = s_nor({false,false,false,false,false,false,false,false,false,false})
---dump_s_expression(s_expression_1)
-
-cs_expression_1 = s_and({s_expression_1,true,s_expression_2,false})
-cs_expression_2 = s_and({s_expression_1,true,s_expression_2,true})
---,bs_expression_1,bs_expression_2,bs_expression_3
-cs_expression_3 = s_and({s_expression_1,s_expression_2,cs_expression_2,bs_expression_1,bs_expression_2})
-define_column("s_expression_bit_map",false,nil)
-    Log_msg('s expression bit map')
-    clear_bit_map("bit_map_1",false)
-   
-    clear_bit_map("bit_map_2",true)
-   
-    Log_msg("bs expression 1")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_1)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("bs expression 2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("bs expression 3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_3)
-    dump_bit_map_buffer("bit_map_1")
-
-    Log_msg("s expression 1")  
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_1)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("s expression 2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("s expression 3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_3)
-    dump_bit_map_buffer("bit_map_1")
-
-
-    Log_msg('terminating s expression bit map')
+define_column("s_complex_expression_reg_map",false,nil)
+    Log_msg('terminating complex s expression reg map')
+    s_reg_expression("reg_map_1",0, "reg_map_1",reg_complex_1)
+    dump_register_map_buffer("reg_map_1")
+    s_reg_expression("reg_map_1",0, "reg_map_1",reg_complex_2)
+    dump_register_map_buffer("reg_map_1")
+    s_reg_expression("reg_map_1",0, "reg_map_1",reg_complex_3)
+    dump_register_map_buffer("reg_map_1")
     terminate_column()
 end_column()
 
 
-
-
-define_column("complex_expression_bit_map",false,nil)
-    Log_msg('s expression bit map')
-    clear_bit_map("bit_map_1",false)
-    
-    clear_bit_map("bit_map_2",true)
-   
-    Log_msg("cs_expression_1")
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_1)
-    clear_bit_map("bit_map_1",false)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("cs_expression_2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("cs_expression_3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_3)
-    dump_bit_map_buffer("bit_map_1")   
-    
-    Log_msg('terminating s expression bit map')
-    terminate_column()
-end_column()
+local this_should_not_happen_header = [[
 
 
 
+void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
-dump_build()
---[[
-define_bit_map("bit_map_1",152,true)
+]]
+
+local  this_should_not_happen_body = [[
+
+void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("wait not triggered should not happen");
+}  
+
+]]
 
 
 
+Store_one_shot_function( "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT","this_should_not_happen_fn",this_should_not_happen_body, this_should_not_happen_header)
 
-define_bit_map("bit_map_2",63,false)
-define_bit_map("bit_map_3",75)
+wait_test_s_exp = reg_logical_and({p0,p1})
 
-define_columns({"start_column","configure_bit_maps","shift_bit_map","s_expression_bit_map","complex_expression_bit_map","if_then_else_test","wait_trigger","wait_test","verify_test","verify_fail_trigger"})
-
-define_column("start_column",true,nil)
-    Log_msg('start column')
-    Enable_columns({"configure_bit_maps","shift_bit_map","s_expression_bit_map","complex_expression_bit_map","if_then_else_test","wait_trigger","wait_test"},true)
+define_column("reg_wait_test",false,nil)
+    Log_msg('wait test')
+    clear_register_map("reg_map_1",1,0,32)
+    Wait_s_reg_expression("reg_map_1",wait_test_s_exp,4000, true, "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT", 'NULL')
+    Log_msg("wait triggered")
+    Enable_columns({"reg_verify_test","reg_verify_fail_trigger"},true)
     Wait_delay(10000)
-    Log_msg('terminating system')
     terminate_column()
 end_column()
 
-define_column("configure_bit_maps",false,nil)
-    Log_msg('configure bit maps')
-    clear_bit_map("bit_map_1",true)
-    Log_msg("clear bit map 1 true")
-    dump_bit_map_buffer("bit_map_1")
-
-    clear_bit_map("bit_map_1",false)
-    clear_bit_map("bit_map_1",true,16,64)
-    Log_msg("clear bit map 1 true 16,64")
-    dump_bit_map_buffer("bit_map_1")
-
-
-    clear_bit_map("bit_map_1",false)
-    Log_msg("clear bit map 1 false")
-    dump_bit_map_buffer("bit_map_1")
-    clear_bit_map("bit_map_2",true)
-    Log_msg("clear bit map 2 true")
-    dump_bit_map_buffer("bit_map_2")
-    cp_buffer("bit_map_2","bit_map_1",0,5,63)
-    Log_msg("cp buffer 2 to 1 0,5,63")
-    dump_bit_map_buffer("bit_map_1")
-
-    and_bit_map_buffer("bit_map_2","bit_map_1",0,0,63)
-    Log_msg("and buffer 2 to 1 0,0,63")
-    dump_bit_map_buffer("bit_map_1")
-
-    or_bit_map_buffer("bit_map_2","bit_map_1",0,0,63)
-    Log_msg("or buffer 2 to 1 0,0,63")
-    dump_bit_map_buffer("bit_map_1")
-
-
-    xor_bit_map_buffer("bit_map_2","bit_map_1",0,0,63)
-    Log_msg("xor buffer 2 to 1 0,0,63")
-    dump_bit_map_buffer("bit_map_1")
-
-    not_bit_map_buffer("bit_map_1","bit_map_1",0,0,128)
-    Log_msg("not buffer 1 to bit buffer 1 0,0,128")
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg('terminating bit map configuration')
-    terminate_column()
-end_column()
-
-define_column("shift_bit_map",false,nil)
-    Log_msg('shift bit maps')
-    clear_bit_map("bit_map_1",false)
-    clear_bit_map("bit_map_1",true,16,64)
-    Log_msg("clear bit map 1 true 16,64")
-    dump_bit_map_buffer("bit_map_1")
-   
-    for i = 1,8 do 
-        clear_bit_map("bit_map_1",false)
-        clear_bit_map("bit_map_1",true,16,64)
-        shift_bit_map_buffer("bit_map_1",16,80,i)
-        Log_msg("shift bit map "..tostring(i).." bit to the right")
-        dump_bit_map_buffer("bit_map_1")
-    end
-
-   
-    for i = 1,8 do 
-        clear_bit_map("bit_map_1",false)
-        clear_bit_map("bit_map_1",true,16,64)
-        shift_bit_map_buffer("bit_map_1",0,64,-i)
-        Log_msg("shift bit map "..tostring(-i).." bit to the right")
-        dump_bit_map_buffer("bit_map_1")
-    end
-
-    
-
-    terminate_column()
-
-end_column()
-p0 = '@0'
-p1 = '@1'
-p2 = '@2'
-p3 = '@3'
-p4 = '@4'
-p5 = '@5'
-p6 = '@6'
-p7 = '@7'
-p8 = '@8'
-p9 = '@9'
-p10 = '@10'
-p11 = '@11'
-p12 = '@12'
-p13 = '@13'
-p14 = '@14'
-p15 = '@15'
-p16 = '@16'
-p17 = '@17'
-p18 = '@18'
-p19 = '@19'
+local reg_verify_trigger_fn_header = [[
 
 
 
-bs_expression_1 = s_and({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
+void reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
-bs_expression_2 = s_or({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
+]]
 
-bs_expression_3 = s_nor({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16})
---dump_s_expression(bs_expression_1)
-s_expression_1 = s_and({true,true,true,true,true,true,true,true,true,true})
-s_expression_2 = s_or({false,false,false,false,false,false,false,false,false,true})
-s_expression_3 = s_nor({false,false,false,false,false,false,false,false,false,false})
---dump_s_expression(s_expression_1)
+local  reg_verify_trigger_fn_body = [[
 
-cs_expression_1 = s_and({s_expression_1,true,s_expression_2,false})
-cs_expression_2 = s_and({s_expression_1,true,s_expression_2,true})
---,bs_expression_1,bs_expression_2,bs_expression_3
-cs_expression_3 = s_and({s_expression_1,s_expression_2,cs_expression_2,bs_expression_1,bs_expression_2})
-define_column("s_expression_bit_map",false,nil)
-    Log_msg('s expression bit map')
-    clear_bit_map("bit_map_1",false)
-   
-    clear_bit_map("bit_map_2",true)
-   
-    Log_msg("bs expression 1")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_1)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("bs expression 2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("bs expression 3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",bs_expression_3)
-    dump_bit_map_buffer("bit_map_1")
+void  reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("verify condition triggered \n");
+}  
 
-    Log_msg("s expression 1")  
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_1)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("s expression 2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("s expression 3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_3)
-    dump_bit_map_buffer("bit_map_1")
+]]
 
 
-    Log_msg('terminating s expression bit map')
-    terminate_column()
+
+Store_one_shot_function("REG_VERIFY_FAIL_RESULT","reg_verify_trigger_fn",reg_verify_trigger_fn_body, reg_verify_trigger_fn_header)
+
+
+verify_test_s_reg_exp = reg_bit_nor({p0,p1})
+define_column("reg_verify_test",false,nil)
+   Log_msg('verify test started')
+   clear_register_map("reg_map_1",0,0,32)
+   dump_register_map_buffer("reg_map_1")
+   Verify_s_register_expression("reg_map_1",verify_test_s_reg_exp, true,"REG_VERIFY_FAIL_RESULT",'NULL')
+   Wait_delay(15000)
+   Log_msg('This step should not occur as column would be terminated by verify fail')
+   terminate_column()
 end_column()
 
 
-
-
-define_column("complex_expression_bit_map",false,nil)
-    Log_msg('s expression bit map')
-    clear_bit_map("bit_map_1",false)
-    
-    clear_bit_map("bit_map_2",true)
+define_column("reg_verify_fail_trigger",false,nil)
    
-    Log_msg("cs_expression_1")
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_1)
-    clear_bit_map("bit_map_1",false)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("cs_expression_2")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_2)
-    dump_bit_map_buffer("bit_map_1")
-    Log_msg("cs_expression_3")
-    clear_bit_map("bit_map_1",false)
-    s_bit_expression("bit_map_1", 0,"bit_map_2",cs_expression_3)
-    dump_bit_map_buffer("bit_map_1")   
-    
-    Log_msg('terminating s expression bit map')
+   Wait_delay(3000)
+   Log_msg("triggering verify fail")
+   array_1 = {1}
+   set_register_buffer_fn("reg_map_1",0,array_1)
+   terminate_column()
+end_column()
+
+--- defining user one shot functions
+
+local my_then_one_shot_header = [[
+
+typedef struct reg_my_then_one_shot_CFL_t{
+    uint16_t source_buffer;
+    uint16_t reg_position;
+    int16_t result;
+}reg_my_then_one_shot_CFL_t;
+
+
+void reg_my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local  my_then_one_shot_body = [[
+
+void  reg_my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    reg_my_then_one_shot_CFL_t* setup = (reg_my_then_one_shot_CFL_t*)params;
+    Registermap_CFL_t* bmp      =   get_registermap_control_CFL(input,setup->source_buffer);
+    registermap_set_value_CFL(bmp,setup->reg_position,setup->result);  
+}
+
+]]
+
+
+
+Store_one_shot_function("REG_MY_ONE_SHOT_THEN_FN",'reg_my_then_one_shot_fn', my_then_one_shot_body, my_then_one_shot_header)
+
+
+
+local reg_my_else_one_shot_header = [[
+
+typedef struct reg_my_else_one_shot_CFL_t{
+    const char* message;
+}reg_my_else_one_shot_CFL_t;
+
+
+void reg_my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local  reg_my_else_one_shot_body = [[
+
+void  reg_my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    reg_my_else_one_shot_CFL_t* setup = (reg_my_else_one_shot_CFL_t*)params;
+    Printf_CFL("else branch %s",setup->message);
+}  
+
+]]
+
+
+Store_one_shot_function("REG_MY_ONE_SHOT_ELSE_FN"," reg_my_else_one_shot_fn", reg_my_else_one_shot_body, reg_my_else_one_shot_header)
+
+local then_data_name = generate_unique_function_name()
+local reg_map_1_number =  get_s_register_buffer_number("reg_map_1")
+local re_then_data = string.format("static const reg_my_then_one_shot_CFL_t %s = {%d,%d,%d};\n",then_data_name,reg_map_1_number,0,700) 
+
+Store_user_code(re_then_data)
+
+local else_data_name = generate_unique_function_name()
+local else_data = string.format('static const reg_my_else_one_shot_CFL_t %s = {"This is the message from else one shot\\n"};\n',else_data_name)
+
+Store_user_code(else_data)
+
+
+define_column("if_then_else_test",false,nil)
+    Log_msg('if then else test')
+
+    Log_msg("then test") 
+    clear_register_map("reg_map_1",1,0,32)    
+    if_then_else_reg_map("reg_map_1",0,"REG_MY_ONE_SHOT_THEN_FN",then_data_name,"REG_MY_ONE_SHOT_ELSE_FN",else_data_name)   
+    dump_register_map_buffer("reg_map_1")
+    clear_register_map("reg_map_1",0,0,32)    
+    if_then_else_reg_map("reg_map_1",0,"REG_MY_ONE_SHOT_THEN_FN",then_data_name,"REG_MY_ONE_SHOT_ELSE_FN",else_data_name)   
+    dump_register_map_buffer("reg_map_1")
     terminate_column()
 end_column()
 
+dump_build()
 
 
 
-]]--
+
+
+
+
+
+

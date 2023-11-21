@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Werror -g
 SRCS = $(wildcard *.c)
 OBJS = $(addprefix obj/,$(notdir $(SRCS:.c=.o)))
 EXEC = test_CFL
-LIBS = ../../lib/CFL.a
+LIBS = ../../lib/CFL.a -lm
 
 all: obj $(EXEC)
 

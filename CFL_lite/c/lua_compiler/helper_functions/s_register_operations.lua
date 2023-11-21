@@ -116,36 +116,7 @@ end
 ]]--
 
 
-function flatten_register_s_expression(input,return_value)
-    if return_value ==  nil then
-        return_value = {}
-    end
 
-    for i, v in ipairs(input) do
-        if type(v) == "table" then
-            assemble_register_s_expression(v)
-        else
-            table.insert(return_value,v)
-        end
-    end
-    return return_value
-end
-
-function dump_flatten_register_expression(s_expression,tab)
-    if tab == nil then
-        tab = "->"
-    end
-    for i,v in ipairs(s_expression) do
-        if(type(v) == "table") then
-           
-            dump_s_expression(v,"----"..tab)
-           
-            
-        else
-            print(tab,i,v)
-        end
-    end
-end
 
 --[[
 
@@ -231,7 +202,7 @@ end
 
 
 local function handle_string(return_value,v,buffer_length)
-   
+
     if register_operators[v] ~= nil then
        
         if v == "end" then
@@ -270,12 +241,47 @@ local function handle_string(return_value,v,buffer_length)
     end
 end
 
+local function flatten_register_s_expression(stream_input,return_value)
+    if return_value ==  nil then
+        return_value = {}
+    end
+  
+    for i, v in ipairs(stream_input) do
+        if type(v) == "table" then
+            return_value = flatten_register_s_expression(v,return_value)
+        else
+            table.insert(return_value,v)
+        end
+    end
+     
+    return return_value
+end
 
+local function dump_flatten_register_expression(s_expression,tab)
+    if tab == nil then
+        tab = "->"
+    end
+    for i,v in ipairs(s_expression) do
+        if(type(v) == "table") then
+           
+            dump_flatten_register_expression(v,"----"..tab)
+           
+            
+        else
+            local message = string.format("%s %s",tab,tostring(v))
+            print(message)
+        end
+    end
+end
 
-function assemble_flattened_s_expression(stream_input,buffer_length)
-   
+local function assemble_flattened_s_expression(stream_input,buffer_length)
+    flatten_input = {}
     return_value = {}
-    for i,v in ipairs(stream_input) do
+     
+    --dump_flatten_register_expression(stream_input)
+    flatten_input = flatten_register_s_expression(stream_input,flatten_input)
+    --dump_flatten_register_expression(flatten_input)
+    for i,v in ipairs(flatten_input) do
 
         if type(v) == "string" then
             return_value = handle_string(return_value,v,buffer_length)

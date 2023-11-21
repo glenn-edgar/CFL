@@ -4,6 +4,29 @@
 
 #include "run_time_code_CFL.h"
 
+
+const int reset_buffer[1] = { RESET_CFL };
+const int halt_buffer[1] = { HALT_CFL };
+const int terminate_buffer[1] = { TERMINATE_CFL };
+const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
+
+
+
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)aux_fn;
+    int *return_code;
+    return_code = (int *)params;
+    
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+   
+    return *return_code;
+}
+
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -54,6 +77,43 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 }
 
 
+  static inline int generate_return_code_verify(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }
+
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    
+
+    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+
+        fn(handle, verify_control->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+
+    if (fn(handle, verify_control->user_data, event_data) == false)
+    {
+        if (verify_control->user_termination_fn != NULL)
+        {
+            verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
+        }
+        return generate_return_code_verify(verify_control->terminate_flag);
+    }
+    return CONTINUE_CFL;
+}
+
 
 int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
@@ -87,37 +147,17 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   return DISABLE_CFL;
 }
 
-const int reset_buffer[1] = { RESET_CFL };
-const int halt_buffer[1] = { HALT_CFL };
-const int terminate_buffer[1] = { TERMINATE_CFL };
-const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
-
-
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)aux_fn;
-    int *return_code;
-    return_code = (int *)params;
-    
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-   
-    return *return_code;
-}
-
-
-void reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)event_data;
+    if_then_else_reg_map_CFL_t* setup = (if_then_else_reg_map_CFL_t* )params;
+    Registermap_CFL_t* source_bmp      =  get_registermap_control_CFL(input,setup->source_buffer);
+    bool source_reg =  registermap_get_value_CFL(source_bmp,setup->if_reg);
+    if(source_reg == true){
+        setup->then_one_shot(input,(void *)setup->then_data,event_data);
+    }else{
+        setup->else_one_shot(input,(void *)setup->else_data,event_data);
+    }
 
-    const  s_reg_expression_CFL_t* setup = (const  s_reg_expression_CFL_t*)params; 
-    int16_t result =  process_s_register_buffer_CFL(input, setup->definition);
-    
-    Registermap_CFL_t* bmp =  get_registermap_control_CFL(input, setup->buffer_number);
-    registermap_set_value_CFL(bmp,setup->offset,result);  
 }
 
 
@@ -132,68 +172,6 @@ void register_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *ev
         registermap_set_value_CFL(destination_bmp,setup->destination_offset + i,source_register);
     }
 }
-
-
-void dump_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void)event_data;
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    dump_register_buffer_CFL_t* setup = (dump_register_buffer_CFL_t*)params;
-    uint16_t size = setup->size;
-    
-    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
-   
-    Printf_CFL("\n\nDumping Register Buffer %d\n",setup->buffer_number);
-    Printf_CFL("Register Buffer Size %d\n",size);
-    Printf_CFL("Buffer register Map ");
-    for(unsigned i = 0; i< size;i++){
-        Printf_CFL("%d ",register_map[i]);
-    }
-    Printf_CFL("\n\n");
-    
-}
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
-
-void clear_register_map_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
-    (void)event_data;
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    clear_register_map_CFL_t* setup = (clear_register_map_CFL_t*)params;
-   
-    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
-    
-    
-    for(unsigned i = setup->start; i< setup->number+setup->start;i++){
-    
-        register_map[i] = setup->state;
-    }
-
-}
-
-
-
-
-void set_register_buffer_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
-    (void)event_data;
-    Handle_CFL_t* handle = (Handle_CFL_t*)input;
-    set_register_buffer_CFL_t* setup = (set_register_buffer_CFL_t *)params;
-   
-    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
-    
-    
-    for(unsigned i = 0; i< setup->register_array_size;i++){
-    
-        register_map[i+setup->start] = setup->register_array[i];
-    }
-
-}
-
-
 
 
 void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
@@ -224,6 +202,81 @@ void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL
 
 
 
+void clear_register_map_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
+    (void)event_data;
+    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    clear_register_map_CFL_t* setup = (clear_register_map_CFL_t*)params;
+   
+    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
+    
+    
+    for(unsigned i = setup->start; i< setup->number+setup->start;i++){
+    
+        register_map[i] = setup->state;
+    }
+
+}
+
+
+
+
+void  reg_my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    reg_my_then_one_shot_CFL_t* setup = (reg_my_then_one_shot_CFL_t*)params;
+    Registermap_CFL_t* bmp      =   get_registermap_control_CFL(input,setup->source_buffer);
+    registermap_set_value_CFL(bmp,setup->reg_position,setup->result);  
+}
+
+
+void set_register_buffer_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
+    (void)event_data;
+    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    set_register_buffer_CFL_t* setup = (set_register_buffer_CFL_t *)params;
+   
+    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
+    
+    
+    for(unsigned i = 0; i< setup->register_array_size;i++){
+    
+        register_map[i+setup->start] = setup->register_array[i];
+    }
+
+}
+
+
+
+
+void  reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("verify condition triggered \n");
+}  
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
+
+void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("wait not triggered should not happen");
+}  
+
+
+void  reg_my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    reg_my_else_one_shot_CFL_t* setup = (reg_my_else_one_shot_CFL_t*)params;
+    Printf_CFL("else branch %s",setup->message);
+}  
+
+
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
 {
@@ -241,6 +294,44 @@ void log_message_CFL(const void *input, void *params,
   column_element_number = get_current_column_element_index_CFL(input);
   Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
               column_index, column_element_number, *message);
+}
+
+
+void dump_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    Handle_CFL_t* handle = (Handle_CFL_t*)input;
+    dump_register_buffer_CFL_t* setup = (dump_register_buffer_CFL_t*)params;
+    uint16_t size = setup->size;
+    
+    int16_t *register_map = registermap_buffer_CFL(handle,setup->buffer_number);
+   
+    Printf_CFL("\n\nDumping Register Buffer %d\n",setup->buffer_number);
+    Printf_CFL("Register Buffer Size %d\n",size);
+    Printf_CFL("Buffer register Map ");
+    for(unsigned i = 0; i< size;i++){
+        Printf_CFL("%d ",register_map[i]);
+    }
+    Printf_CFL("\n\n");
+    
+}
+
+
+void reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+
+    const  s_reg_expression_CFL_t* setup = (const  s_reg_expression_CFL_t*)params; 
+    int16_t result =  process_s_register_buffer_CFL(input, setup->definition);
+    
+    Registermap_CFL_t* bmp =  get_registermap_control_CFL(input, setup->buffer_number);
+    registermap_set_value_CFL(bmp,setup->offset,result);  
+}
+
+
+bool wait_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    wait_reg_map_s_expr_CFL_t* setup = (wait_reg_map_s_expr_CFL_t*)params;
+    bool result = process_s_register_buffer_CFL(input, setup->definition);
+    return result;    
 }
 
  
@@ -271,3 +362,11 @@ bool wait_time_delay_CFL(const void *input, void *params,
 
   return false;
 }
+
+bool verify_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    verify_reg_map_s_expr_CFL_t* setup = (verify_reg_map_s_expr_CFL_t*)params;  
+    bool result = process_s_register_buffer_CFL(input, setup->definition);
+    return result;  
+}
+

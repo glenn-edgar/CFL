@@ -401,6 +401,140 @@ end
 
 
 
+local wait_s_reg_expression_header = [[
+
+
+
+typedef struct wait_reg_map_s_expr_CFL_t{
+    const s_register_definition_CFL_t* definition;
+    const void* time_out_data;
+}wait_reg_map_s_expr_CFL_t;
+
+bool wait_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local wait_s_reg_expression_body = [[
+
+bool wait_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    wait_reg_map_s_expr_CFL_t* setup = (wait_reg_map_s_expr_CFL_t*)params;
+    bool result = process_s_register_buffer_CFL(input, setup->definition);
+    return result;    
+}
+
+]]
+Store_boolean_function("WAIT_EVALUATE_REG_MAP","wait_reg_map_s_expr_CFL",wait_s_reg_expression_body,wait_s_reg_expression_header)
+
+
+
+function Wait_s_reg_expression(source_reg_map,s_expression, time_out_ms, terminate_flag, one_shot_time_out_fn, time_out_data)
+    local message = ""
+    local wait_name = generate_unique_function_name()
+    local s_expression_structure = generate_unique_function_name()
+   
+    generate_s_reg_expression(s_expression_structure,source_reg_map,s_expression)
+    if time_out_data ~= 'NULL' then
+          message = string.format("static const wait_reg_map_s_expr_CFL_t %s = {&%s,%s};\n",wait_name,s_expression_structure,"(const void *)&"..time_out_data)
+    else
+        message = string.format("static const wait_reg_map_s_expr_CFL_t %s = {&%s,NULL};\n",wait_name,s_expression_structure)
+    end
     
-    
+    Store_user_code(message)
+    Wait("WAIT_EVALUATE_REG_MAP", time_out_ms, terminate_flag, one_shot_time_out_fn, wait_name)
+end  
+
+local verify_s_reg_expression_header = [[
+
+
+
+typedef struct verify_reg_map_s_expr_CFL_t {
+    const s_register_definition_CFL_t* definition;
+   const void* error_message;
+}verify_reg_map_s_expr_CFL_t;
+
+bool verify_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local verify_s_reg_expression_body = [[
+
+bool verify_reg_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    verify_reg_map_s_expr_CFL_t* setup = (verify_reg_map_s_expr_CFL_t*)params;  
+    bool result = process_s_register_buffer_CFL(input, setup->definition);
+    return result;  
+}
+
+]]
+
+Store_boolean_function("VERIFY_EVALUATE_REG_MAP","verify_reg_map_s_expr_CFL",verify_s_reg_expression_body,verify_s_reg_expression_header)
+
+function  Verify_s_register_expression(source_reg_map,s_expression, terminate_flag, one_shot_failure_fn, error_data)
+    local verify_name = generate_unique_function_name()
+    local s_expression_structure = generate_unique_function_name()
+
+    generate_s_reg_expression(s_expression_structure,source_reg_map,s_expression)
+    if error_data ~= 'NULL' then
+        message = string.format("static const  verify_reg_map_s_expr_CFL_t %s = {&%s,%s};\n",verify_name,s_expression_structure,"(const void *)&"..error_data)
+  else
+      message = string.format("static const  verify_reg_map_s_expr_CFL_t %s = {&%s,NULL};\n",verify_name,s_expression_structure)
+  end
+  
+    Store_user_code(message)
+    Verify("VERIFY_EVALUATE_REG_MAP", terminate_flag, one_shot_failure_fn, verify_name)
+end
+
+
+local if_then_else_header = [[
+
+typedef struct if_then_else_reg_map_CFL_t{
+    uint8_t source_buffer;
+    uint16_t if_reg;
+    One_shot_function_CFL_t then_one_shot;
+    One_shot_function_CFL_t else_one_shot;
+    const void* then_data;
+    const void* else_data;
+} if_then_else_reg_map_CFL_t;
+
+
+void if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local if_then_else_body = [[
+
+void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    if_then_else_reg_map_CFL_t* setup = (if_then_else_reg_map_CFL_t* )params;
+    Registermap_CFL_t* source_bmp      =  get_registermap_control_CFL(input,setup->source_buffer);
+    bool source_reg =  registermap_get_value_CFL(source_bmp,setup->if_reg);
+    if(source_reg == true){
+        setup->then_one_shot(input,(void *)setup->then_data,event_data);
+    }else{
+        setup->else_one_shot(input,(void *)setup->else_data,event_data);
+    }
+
+}
+
+]]
+
+
+
+Store_one_shot_function("IF_THEN_ELSE_REG_MAP","if_then_else_CFL",if_then_else_body, if_then_else_header)
+
+function if_then_else_reg_map(source_buffer,test_reg,then_one_shot,then_one_shot_data, else_one_shot,else_one_shot_data)
+ 
+    local source_buf_number = get_s_register_buffer_number(source_buffer)
+    check_s_register_buffer_parameters(source_buffer,test_reg,1)
+    unique_name = generate_unique_function_name()
+    local then_one_shot_fn = Get_one_shot_function(then_one_shot)
+    local else_one_shot_fn = Get_one_shot_function(else_one_shot)
+    local message = string.format("static const if_then_else_reg_map_CFL_t %s = {%d,%d,%s,%s,&%s,&%s};\n",unique_name,source_buf_number,test_reg,
+                                    then_one_shot_fn,else_one_shot_fn,then_one_shot_data,else_one_shot_data)
+    Store_user_code(message)
+    One_shot("IF_THEN_ELSE_REG_MAP",unique_name)
+
+end    
+
   
