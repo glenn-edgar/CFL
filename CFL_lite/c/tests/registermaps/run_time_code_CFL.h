@@ -12,6 +12,10 @@ extern "C" {
 //----------Ref function header code ----
 
 
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
+
+
 extern const int reset_buffer[1];
 extern const int halt_buffer[1];
 extern const int terminate_buffer[1];
@@ -21,6 +25,22 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     void *params, Event_data_CFL_t *event_data);
 
     
+
+typedef struct Verify_control_ROM_CFL_t
+{
+   bool terminate_flag;
+   void* user_data;
+   One_shot_function_CFL_t user_termination_fn;
+} Verify_control_ROM_CFL_t;
+
+
+
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
+
+
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -40,24 +60,56 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
+typedef struct clear_register_map_CFL_t{
+    uint16_t buffer_number;
+    int16_t state;
+    uint16_t start;
+    uint16_t  number;
+}clear_register_map_CFL_t;
 
-typedef struct Verify_control_ROM_CFL_t
-{
-   bool terminate_flag;
-   void* user_data;
-   One_shot_function_CFL_t user_termination_fn;
-} Verify_control_ROM_CFL_t;
-
-
-
-int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
+void clear_register_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
+typedef struct set_register_buffer_CFL_t{
+    uint16_t buffer_number;
+    uint16_t start;
+    uint16_t register_array_size;
+    const int16_t *register_array;
+}set_register_buffer_CFL_t;
+
+void set_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+typedef struct Enable_column_CFL_t {
+    const bool    terminate_flag;
+    const unsigned short number_of_columns;
+    const unsigned short *column_list;
+} Enable_column_CFL_t;
+
+void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+
+typedef struct register_map_copy_CFL_t{
+    uint16_t source_buffer;
+    uint16_t destination_buffer;
+    uint16_t source_offset;
+    uint16_t destination_offset;
+    uint16_t size;
+}register_map_copy_CFL_t;
+
+void register_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+typedef struct dump_register_buffer_CFL_t{
+    uint16_t buffer_number;
+    uint16_t size;
+}dump_register_buffer_CFL_t;
+
+void dump_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
 typedef struct if_then_else_reg_map_CFL_t{
@@ -73,35 +125,10 @@ typedef struct if_then_else_reg_map_CFL_t{
 void if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-typedef struct register_map_copy_CFL_t{
-    uint16_t source_buffer;
-    uint16_t destination_buffer;
-    uint16_t source_offset;
-    uint16_t destination_offset;
-    uint16_t size;
-}register_map_copy_CFL_t;
 
-void register_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data);
 
-
-typedef struct Enable_column_CFL_t {
-    const bool    terminate_flag;
-    const unsigned short number_of_columns;
-    const unsigned short *column_list;
-} Enable_column_CFL_t;
-
-void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-
-typedef struct clear_register_map_CFL_t{
-    uint16_t buffer_number;
-    int16_t state;
-    uint16_t start;
-    uint16_t  number;
-}clear_register_map_CFL_t;
-
-void clear_register_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 typedef struct reg_my_then_one_shot_CFL_t{
     uint16_t source_buffer;
@@ -113,27 +140,6 @@ typedef struct reg_my_then_one_shot_CFL_t{
 void reg_my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-typedef struct set_register_buffer_CFL_t{
-    uint16_t buffer_number;
-    uint16_t start;
-    uint16_t register_array_size;
-    const int16_t *register_array;
-}set_register_buffer_CFL_t;
-
-void set_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-
-void reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-
-
-
-void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
 typedef struct reg_my_else_one_shot_CFL_t{
     const char* message;
 }reg_my_else_one_shot_CFL_t;
@@ -143,17 +149,11 @@ void reg_my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *
 
 
 
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data);
 
+void reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
-typedef struct dump_register_buffer_CFL_t{
-    uint16_t buffer_number;
-    uint16_t size;
-}dump_register_buffer_CFL_t;
-
-void dump_register_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
 typedef struct s_reg_expression_CFL_t{
 
     uint8_t buffer_number;

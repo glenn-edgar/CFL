@@ -1,5 +1,5 @@
-#ifndef __CFL_S_FLOAT_OPERATIONS_H__
-#define __CFL_S_FLOAT_OPERATIONS_H__
+#ifndef __CFL_S_REGISTER_OPERATIONS_H__
+#define __CFL_S_REGISTER_OPERATIONS_H__
 
 #include "CFL_inner_engine.h"
 #include "CFL_s_float_engine.h"
@@ -10,5 +10,6 @@ void process_float_operator_CFL(const void *input, s_float_working_control_CFL_t
 
 
 
+#endif // __CFL_S_REGISTER_OPERATIONS_H__
 
-#endif // __CFL_S_FLOAT_OPERATIONS_H__
+

@@ -40,9 +40,7 @@ void register_push_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_con
 }
 
 s_register_parameter_type_CFL_t *register_pop_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_control){
-    if(stack_control->s_p_stack_top == 0){
-         ASSERT_PRINT_F("s_stack parameter stack underflow stack size %d\n",stack_control->s_p_stack_size);
-    }
+    
  
     stack_control->s_p_stack_top--;
 
@@ -52,7 +50,7 @@ s_register_parameter_type_CFL_t *register_pop_parameter_stack_CFL(register_s_sta
 
 s_register_parameter_type_CFL_t  *register_s_get_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_control ,uint16_t stack_start){
     
-    if(stack_start >= stack_control->s_p_stack_top){
+    if(stack_start > stack_control->s_p_stack_top){
       ASSERT_PRINT_F("s_stack parameter stack start is not valid %d\n",stack_control->s_p_stack_size);
     }
    

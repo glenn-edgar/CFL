@@ -15,7 +15,7 @@ int16_t process_s_register_buffer_CFL(const void *input, const s_register_defini
         working_control->instruction_index = 0;
         working_control->result = 0;
 
-        working_control->regmap = get_registermap_control_CFL(input, s_register_buffer_interface->bit_map_number);
+        working_control->regmap = get_registermap_control_CFL(input, s_register_buffer_interface->reg_map_number);
 
         working_control->stack_control = register_initialize_s_stack_CFL(input, s_register_buffer_interface->parameter_stack_size,
                                                                          s_register_buffer_interface->operator_stack_size);
@@ -32,7 +32,7 @@ static int16_t pop_last_instruction(s_register_working_control_CFL_t *working_co
         int16_t stack_number = register_parameter_stack_size_CFL(working_control->stack_control);
         if (stack_number != 1)
         {
-                ASSERT_PRINT_F("s_register_engine: parameter stack size is not equal to %d\n", stack_number);
+                ASSERT_PRINT_F("s_register_engine: parameter stack size is not equal to 1 %d\n", stack_number);
         }
         s_register_parameter_type_CFL_t *parameter = register_pop_parameter_stack_CFL(working_control->stack_control);
 

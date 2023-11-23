@@ -9,12 +9,12 @@
 
 
 
-Registermap_CFL_t *get_registermap_control_CFL(const void *input, unsigned bit_map_number){
+Registermap_CFL_t *get_registermap_control_CFL(const void *input, unsigned reg_map_number){
    Handle_CFL_t *handle = (Handle_CFL_t *)input;
-   if(bit_map_number >= handle->number_of_registermaps){
-     ASSERT_PRINT_F("bit_map_number is out of range got %d, max %d\n", bit_map_number, handle->number_of_registermaps);
+   if(reg_map_number >= handle->number_of_registermaps){
+     ASSERT_PRINT_F("reg_map_number is out of range got %d, max %d\n", reg_map_number, handle->number_of_registermaps);
    }
-  return &handle->registermaps[bit_map_number];
+  return &handle->registermaps[reg_map_number];
 
 }
 
@@ -30,7 +30,7 @@ int16_t *registermap_buffer_CFL(const void *input, unsigned buffer_number){
 
 void registermap_set_value_CFL(Registermap_CFL_t* bmp, unsigned index, int16_t value) {
     if (index >= bmp->length) {
-        // Handle error, for example:
+       ASSERT_PRINT_F("registermap_set_value_CFL: index %d is out of range\n", index);
         return;
     }
     bmp->data[index] = value;

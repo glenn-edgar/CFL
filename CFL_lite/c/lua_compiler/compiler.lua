@@ -134,7 +134,9 @@ const struct Handle_CFL_t %s =
   .number_of_bitmaps = %d,
   .bitmaps = %s,
   .number_of_registermaps = %d,
-  .registermaps = %s
+  .registermaps = %s,
+  .number_of_floatmaps = %d,
+  .floatmaps = %s,
 } ;
 
 ]]
@@ -175,7 +177,10 @@ local message = string.format(header_def,
                               build_status["number_of_bitmaps"],
                               build_status["bitmaps"],
                               build_status["number_of_register_maps"],
-                              build_status["registermaps"]
+                              build_status["registermaps"],
+                              build_status["number_of_float_maps"],
+                              build_status["floatmaps"]
+                  
                               )                              
                               
                               
@@ -211,6 +216,7 @@ function dump_build()
     dump_column_elements()
     dump_bit_maps()
     dump_register_maps()
+    dump_float_maps()
     dump_header()
     write_output(header_end)
     

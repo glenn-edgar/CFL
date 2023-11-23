@@ -48,7 +48,7 @@ typedef struct s_register_operator_CFL_t{
 }s_register_operator_CFL_t;
 
  typedef struct s_register_definition_CFL_t{
-    uint8_t bit_map_number;
+    uint8_t reg_map_number;
     uint8_t parameter_stack_size;
     uint8_t operator_stack_size;
     uint8_t stream_length;
