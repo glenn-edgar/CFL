@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../registermaps"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../floatmaps"
+		}
+	],
+	"settings": {}
+}

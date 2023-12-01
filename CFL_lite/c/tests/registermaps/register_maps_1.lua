@@ -23,9 +23,8 @@ define_columns({"start_column","configure_register_maps","s_expression_reg_map",
 
 define_column("start_column",true,nil)
     Log_msg('start column')
-    Enable_columns({"configure_register_maps","s_expression_reg_map","s_complex_expression_reg_map","if_then_else_test","reg_wait_test"},true)
-    Wait_delay(10000)
-    Log_msg('terminating system')
+    Enable_columns({"configure_register_maps","s_expression_reg_map","s_complex_expression_reg_map","if_then_else_test","reg_wait_test"},false)
+ 
     terminate_column()
 end_column()
 
@@ -46,8 +45,8 @@ define_column("configure_register_maps",false,nil)
     clear_register_map("reg_map_2",0,0,32)
     dump_register_map_buffer("reg_map_1")
     dump_register_map_buffer("reg_map_2")
-    array_1 = {-5,-4,-3,-2,-1,0,1,2,3,4,5}
-    array_2 = {0,1,2,3,4,5,6,7,8,9,10}
+    local array_1 = {-5,-4,-3,-2,-1,0,1,2,3,4,5}
+    local array_2 = {0,1,2,3,4,5,6,7,8,9,10}
     set_register_buffer_fn("reg_map_1",5,array_1)
     set_register_buffer_fn("reg_map_2",10,array_2)
     dump_register_map_buffer("reg_map_1")
@@ -58,36 +57,38 @@ define_column("configure_register_maps",false,nil)
     terminate_column()
 end_column()
 
-p0 = '@0'
-p1 = '@1'
-p2 = '@2'
-p3 = '@3'
-p4 = '@4'
-p5 = '@5'
-p6 = '@6'
-p7 = '@7'
-p8 = '@8'
-p9 = '@9'
-p10 = '@10'
-p11 = '@11'
-p12 = '@12'
-p13 = '@13'
-p14 = '@14'
-p15 = '@15'
-p16 = '@16'
-p17 = '@17'
-p18 = '@18'
-p19 = '@19'
-p20 = '@20'
-p21 = '@21'
-p22 = '@22'
-p23 = '@23'
-p24 = '@24'
-p25 = '@25'
-p26 = '@26'
-p27 = '@27'
-p28 = '@28'
-p29 = '@29'
+local p0 = '@0'
+local p1 = '@1'
+local p2 = '@2'
+local p3 = '@3'
+local p4 = '@4'
+local p5 = '@5'
+local p6 = '@6'
+local p7 = '@7'
+local p8 = '@8'
+local p9 = '@9'
+local p10 = '@10'
+local p11 = '@11'
+local p12 = '@12'
+local p13 = '@13'
+local p14 = '@14'
+local p15 = '@15'
+local p16 = '@16'
+local p17 = '@17'
+local p18 = '@18'
+local p19 = '@19'
+local p20 = '@20'
+local p21 = '@21'
+local p22 = '@22'
+local p23 = '@23'
+local p24 = '@24'
+local p25 = '@25'
+local p26 = '@26'
+local p27 = '@27'
+local p28 = '@28'
+local p29 = '@29'
+local p30 = '@0'
+local p31 = '@1'
 
 
 local mul_test = reg_mul({p1,p2,p3,p4})
@@ -134,7 +135,7 @@ define_column("s_expression_reg_map",false,nil)
     
     Log_msg('s expression reg map')
     clear_register_map("reg_map_1",0,0,32)
-    array_1 = {0,1,2,3,4}
+    local array_1 = {0,1,2,3,4}
     set_register_buffer_fn("reg_map_1",0,array_1)
     dump_register_map_buffer("reg_map_1")
     s_reg_expression("reg_map_1",0, "reg_map_1",add_test)
@@ -144,7 +145,7 @@ define_column("s_expression_reg_map",false,nil)
     s_reg_expression("reg_map_1",0, "reg_map_1",mul_test)
     dump_register_map_buffer("reg_map_1")
 
-    array_1 = {5,2}
+    local array_1 = {5,2}
     set_register_buffer_fn("reg_map_1",1,array_1)
     dump_register_map_buffer("reg_map_1")
 
@@ -250,15 +251,15 @@ void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_
 
 Store_one_shot_function( "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT","this_should_not_happen_fn",this_should_not_happen_body, this_should_not_happen_header)
 
-wait_test_s_exp = reg_logical_and({p0,p1})
+local wait_test_s_exp = reg_logical_and({p0,p1})
 
 define_column("reg_wait_test",false,nil)
     Log_msg('wait test')
     clear_register_map("reg_map_1",1,0,32)
     Wait_s_reg_expression("reg_map_1",wait_test_s_exp,4000, true, "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT", 'NULL')
     Log_msg("wait triggered")
-    Enable_columns({"reg_verify_test","reg_verify_fail_trigger"},true)
-    Wait_delay(10000)
+    Enable_columns({"reg_verify_test","reg_verify_fail_trigger"},false)
+
     terminate_column()
 end_column()
 
@@ -276,7 +277,7 @@ void  reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *e
     (void)input;
     (void)event_data;
     (void)params;
-    Printf_CFL("verify condition triggered \n");
+    Printf_CFL("**************************** verify condition triggered **********************************************\n");
 }  
 
 ]]
@@ -286,10 +287,10 @@ void  reg_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *e
 Store_one_shot_function("REG_VERIFY_FAIL_RESULT","reg_verify_trigger_fn",reg_verify_trigger_fn_body, reg_verify_trigger_fn_header)
 
 
-verify_test_s_reg_exp = reg_bit_nor({p0,p1})
+local verify_test_s_reg_exp = reg_add({p0,p1})
 define_column("reg_verify_test",false,nil)
    Log_msg('verify test started')
-   clear_register_map("reg_map_1",0,0,32)
+   clear_register_map("reg_map_1",1,0,32)
    dump_register_map_buffer("reg_map_1")
    Verify_s_register_expression("reg_map_1",verify_test_s_reg_exp, true,"REG_VERIFY_FAIL_RESULT",'NULL')
    Wait_delay(15000)
@@ -299,11 +300,13 @@ end_column()
 
 
 define_column("reg_verify_fail_trigger",false,nil)
-   
+   Log_msg('verify fail trigger started')
    Wait_delay(3000)
    Log_msg("triggering verify fail")
-   array_1 = {1}
+   local array_1 = {0,0}
    set_register_buffer_fn("reg_map_1",0,array_1)
+   dump_register_map_buffer("reg_map_1")
+   Log_msg("verify fail terminated")
    terminate_column()
 end_column()
 

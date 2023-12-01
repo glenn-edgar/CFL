@@ -19,10 +19,13 @@ end
 define_float_map("float_map_1",32,-1.)
 define_float_map("float_map_2",32,1)
 
-enable_columns = {}
+local enable_columns = {}
 table.insert(enable_columns,"configure_float_maps")
-table.insert(enable_columns,"s_expression_reg_map")
-
+table.insert(enable_columns,"s_expression_float_map")
+table.insert(enable_columns,"float_if_then_else_test")
+table.insert(enable_columns,"float_wait_test")
+table.insert(enable_columns,"float_verify_test")
+table.insert(enable_columns,"float_verify_fail_trigger")
 
 def_columns = {"start_column",table.unpack(enable_columns)}
 
@@ -38,15 +41,15 @@ end_column()
 
 define_column("configure_float_maps",false,nil)
     
-    Log_msg('configure reg maps')
+    Log_msg('configure float maps')
     dump_float_map_buffer("float_map_1")
     dump_float_map_buffer("float_map_2")
     clear_float_map("float_map_1",10.14,10,20)
     clear_float_map("float_map_2",-10.95,10,20)
     dump_float_map_buffer("float_map_1")
     dump_float_map_buffer("float_map_2")
-    array_1 = {-5.1,-4.1,-3.1,-2.1,-1.1,0.1,1.1,2.1,3.1,4.1,5.1}
-    array_2 = {0.2,1.2,2.2,3.2,4.2,5.2,6.2,7.2,8.2,9.2,10.2}
+    local array_1 = {-5.1,-4.1,-3.1,-2.1,-1.1,0.1,1.1,2.1,3.1,4.1,5.1}
+    local array_2 = {0.2,1.2,2.2,3.2,4.2,5.2,6.2,7.2,8.2,9.2,10.2}
     set_float_buffer_fn("float_map_1",5,array_1)
     set_float_buffer_fn("float_map_2",10,array_2)
     dump_float_map_buffer("float_map_1")
@@ -175,11 +178,11 @@ local float_add_1 = float_add({1,2,3,4,5})
 local float_add_2 = float_add({p15,p16,p17,p18,p19})
 
 
-define_column("s_expression_reg_map",false,nil)
+define_column("s_expression_float_map",false,nil)
     
-    Log_msg('s expression reg map')
+    Log_msg('s expression float map')
     clear_float_map("float_map_1",0,0,32)
-    array_1 = {1,2,3,4,5}
+    local array_1 = {1,2,3,4,5}
     
     set_float_buffer_fn("float_map_1",5,array_1)
     set_float_buffer_fn("float_map_1",15,array_1)
@@ -240,12 +243,143 @@ end_column()
 
 
 
--- if then else
 
--- wait
+
+local float_my_if_then_else_one_shot_header = [[
+
+typedef struct float_my_if_then_else_one_shot_CFL_t{
+    const char* message;
+}float_my_if_then_else_one_shot_CFL_t;
+
+
+void float_my_if_then_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local  float_my_if_then_else_one_shot_body = [[
+
+void  float_my_if_then_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    float_my_if_then_else_one_shot_CFL_t *setup = (float_my_if_then_else_one_shot_CFL_t *)params;
+    Printf_CFL("%s \n",setup->message);
+}  
+
+]]
+
+
+Store_one_shot_function("FLOAT_MY_ONE_SHOT_IF_THEN_ELSE_FN","float_my_if_then_else_one_shot_fn", float_my_if_then_else_one_shot_body, float_my_if_then_else_one_shot_header)
+
+local then_data_name = generate_unique_function_name()
+local then_data = string.format('static const float_my_if_then_else_one_shot_CFL_t %s = {"This is the message from then one shot\\n"};\n',then_data_name)
+Store_user_code(then_data)
+
+local else_data_name = generate_unique_function_name()
+local else_data = string.format('static const float_my_if_then_else_one_shot_CFL_t %s = {"This is the message from else one shot\\n"};\n',else_data_name)
+
+Store_user_code(else_data)
+
+
+define_column("float_if_then_else_test",false,nil)
+    Log_msg('if then else test')
+
+    Log_msg("then test") 
+    clear_float_map("float_map_1",1.0,0,32)
+    if_then_else_float_map("float_map_1",0,"FLOAT_MY_ONE_SHOT_IF_THEN_ELSE_FN",then_data_name,"FLOAT_MY_ONE_SHOT_IF_THEN_ELSE_FN",else_data_name)   
+    
+    clear_float_map("float_map_1",0.0,0,32)   
+    if_then_else_float_map("float_map_1",0,"FLOAT_MY_ONE_SHOT_IF_THEN_ELSE_FN",then_data_name,"FLOAT_MY_ONE_SHOT_IF_THEN_ELSE_FN",else_data_name)  
+    
+    terminate_column()
+end_column()
+
+
+
+
+local this_should_not_happen_header = [[
+
+
+
+void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local  this_should_not_happen_body = [[
+
+void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("wait not triggered should not happen");
+}  
+
+]]
+
+
+
+Store_one_shot_function( "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT","this_should_not_happen_fn",this_should_not_happen_body, this_should_not_happen_header)
+
+local wait_test_s_exp = float_add({p0,p1})
+
+define_column("float_wait_test",false,nil)
+    Log_msg('wait test')
+    clear_float_map("float_map_1",1.0,0,32)
+    Wait_s_float_expression("float_map_1",wait_test_s_exp,4000, true, "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT", 'NULL')
+    Log_msg("wait triggered")
+    Enable_columns({"float_verify_test","float_verify_fail_trigger"},false)
+   
+    terminate_column()
+end_column()
+
 
 -- verify
 
+local float_verify_trigger_fn_header = [[
+
+
+
+void float_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+]]
+
+local  float_verify_trigger_fn_body = [[
+
+void  float_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("------------- verify condition triggered  --------------- \n");
+}  
+
+]]
+
+
+
+Store_one_shot_function("FLOAT_VERIFY_FAIL_RESULT","float_verify_trigger_fn",float_verify_trigger_fn_body, float_verify_trigger_fn_header)
+
+
+local verify_test_s_float_exp = float_add({p0,p1})
+define_column("float_verify_test",false,nil)
+   Log_msg('verify test started')
+   clear_float_map("float_map_1",1.0,0,32)
+   dump_float_map_buffer("float_map_1")
+   Verify_s_float_expression("float_map_1",verify_test_s_float_exp, true,"FLOAT_VERIFY_FAIL_RESULT",'NULL')
+   Wait_delay(15000)
+   Log_msg('This step should not occur as column would be terminated by verify fail')
+   terminate_column()
+end_column()
+
+
+define_column("float_verify_fail_trigger",false,nil)
+   
+   Wait_delay(3000)
+   Log_msg("triggering verify fail")
+   
+   clear_float_map("float_map_1",0.0,0,32)
+   Wait_delay(1000)
+   Log_msg("float_verify_fail_trigger terminating column")
+   terminate_column()
+end_column()
 
 
 

@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../tests/while_verify/while_user_function"
+		}
+	],
+	"settings": {}
+}

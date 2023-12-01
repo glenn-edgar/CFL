@@ -44,9 +44,6 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
                             Event_data_CFL_t *event_data);
 
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
-
-
 
 typedef struct Verify_control_ROM_CFL_t
 {
@@ -60,39 +57,7 @@ typedef struct Verify_control_ROM_CFL_t
 int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data);
-
-
-
-
-void verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-typedef struct my_then_one_shot_CFL_t{
-    uint16_t source_buffer;
-    uint16_t bit_position;
-}my_then_one_shot_CFL_t;
-
-
-void my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-
-
-void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-typedef struct bit_map_xor_CFL_t{
-    uint8_t source_buffer;
-    uint8_t destination_buffer;
-    uint16_t source_offset;
-    uint16_t destination_offset;
-    uint16_t size;
-}bit_map_xor_CFL_t;
-
-void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
 typedef struct Enable_column_CFL_t {
@@ -105,12 +70,94 @@ void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL
 
 
 
+
+
+typedef  struct  shift_bit_buffer_CFL_t{
+    uint16_t source_buffer;
+    uint16_t start_bit;
+    uint16_t ending_bit;
+    int16_t shift_direction;
+  
+}shift_bit_buffer_CFL_t;
+
+void shift_bit_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+typedef struct clear_bit_map_CFL_t{
+    uint16_t buffer_number;
+    bool state;
+    uint16_t start;
+    uint16_t ending;
+}clear_bit_map_CFL_t;
+
+void clear_bit_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
+
+typedef struct bit_map_or_CFL_t{
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
+    uint16_t source_offset;
+    uint16_t destination_offset;
+    uint16_t size;
+}bit_map_or_CFL_t;
+
+void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+
+
+void this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+typedef struct dump_buffer_CFL_t{
+    uint16_t buffer_number;
+    uint16_t size;
+}dump_buffer_CFL_t;
+
+void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+typedef struct s_bit_expression_CFL_t{
+
+    uint8_t buffer_number;
+    uint16_t offset;
+    const s_bit_definition_CFL_t* definition;
+} s_bit_expression_CFL_t;
+
+void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+typedef struct bit_map_and_CFL_t{
+    uint8_t source_buffer;
+    uint8_t destination_buffer;
+    uint16_t source_offset;
+    uint16_t destination_offset;
+    uint16_t size;
+}bit_map_and_CFL_t;
+
+void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+typedef struct my_then_one_shot_CFL_t{
+    uint16_t source_buffer;
+    uint16_t bit_position;
+}my_then_one_shot_CFL_t;
+
+
+void my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
 typedef struct my_else_one_shot_CFL_t{
     const char* message;
 }my_else_one_shot_CFL_t;
 
 
 void my_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data);
+
+
+
+
+void verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
 typedef struct if_then_else_bit_map_CFL_t{
@@ -127,24 +174,8 @@ void if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_d
 
 
 
-
-typedef  struct  shift_bit_buffer_CFL_t{
-    uint16_t source_buffer;
-    uint16_t start_bit;
-    uint16_t ending_bit;
-    int16_t shift_direction;
-  
-}shift_bit_buffer_CFL_t;
-
-void shift_bit_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-typedef struct dump_buffer_CFL_t{
-    uint16_t buffer_number;
-    uint16_t size;
-}dump_buffer_CFL_t;
-
-void dump_buffer_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data);
 
 
 typedef struct bit_map_copy_CFL_t{
@@ -158,26 +189,6 @@ typedef struct bit_map_copy_CFL_t{
 void bit_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-typedef struct clear_bit_map_CFL_t{
-    uint16_t buffer_number;
-    bool state;
-    uint16_t start;
-    uint16_t ending;
-}clear_bit_map_CFL_t;
-
-void clear_bit_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-typedef struct s_bit_expression_CFL_t{
-
-    uint8_t buffer_number;
-    uint16_t offset;
-    const s_bit_definition_CFL_t* definition;
-} s_bit_expression_CFL_t;
-
-void bit_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-
 typedef struct bit_map_not_CFL_t{
     uint8_t source_buffer;
     uint8_t destination_buffer;
@@ -190,26 +201,15 @@ typedef struct bit_map_not_CFL_t{
 void bit_map_not_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
-typedef struct bit_map_or_CFL_t{
+typedef struct bit_map_xor_CFL_t{
     uint8_t source_buffer;
     uint8_t destination_buffer;
     uint16_t source_offset;
     uint16_t destination_offset;
     uint16_t size;
-}bit_map_or_CFL_t;
+}bit_map_xor_CFL_t;
 
-void bit_map_or_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-typedef struct bit_map_and_CFL_t{
-    uint8_t source_buffer;
-    uint8_t destination_buffer;
-    uint16_t source_offset;
-    uint16_t destination_offset;
-    uint16_t size;
-}bit_map_and_CFL_t;
-
-void bit_map_and_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
+void bit_map_xor_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
 
 
      

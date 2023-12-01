@@ -1,6 +1,6 @@
 
-bit_map_definition = {}
-bit_map_list = {}
+local bit_map_definition = {}
+local bit_map_list = {}
 
 function initialize_bit_maps()
 
@@ -752,15 +752,7 @@ local function verify_no_null_entries(s_expression)
     end
 end
 
-function isValidInteger(str)
-    local num = tonumber(str)
-    -- Check if 'num' is a number and an integer
-    if num and num == math.floor(num) then
-        return true
-    else
-        return false
-    end
-end
+
 
 
 function add_table_entries(s_expression,position_list)

@@ -1,6 +1,6 @@
 
-float_map_definition = {}
-float_map_list = {}
+local float_map_definition = {}
+local float_map_list = {}
 
 function initialize_float_maps()
 

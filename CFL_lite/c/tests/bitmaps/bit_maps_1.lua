@@ -20,9 +20,7 @@ define_columns({"start_column","configure_bit_maps","shift_bit_map","s_expressio
 
 define_column("start_column",true,nil)
     Log_msg('start column')
-    Enable_columns({"configure_bit_maps","shift_bit_map","s_expression_bit_map","complex_expression_bit_map","if_then_else_test","wait_trigger","wait_test"},true)
-    Wait_delay(10000)
-    Log_msg('terminating system')
+    Enable_columns({"configure_bit_maps","shift_bit_map","s_expression_bit_map","complex_expression_bit_map","if_then_else_test","wait_trigger","wait_test"},false)
     terminate_column()
 end_column()
 
@@ -219,6 +217,7 @@ void  my_then_one_shot_fn(const void *input, void *params, Event_data_CFL_t *eve
     my_then_one_shot_CFL_t* setup = (my_then_one_shot_CFL_t*)params;
     Bitmap_CFL* source_bmp      =  get_bitmap_control_CFL(input,setup->source_buffer);
     bitmap_set_bit_CFL(source_bmp,setup->bit_position,true);
+    Printf_CFL("then branch passed");
 }
 
 ]]
@@ -322,8 +321,7 @@ define_column("wait_test",false,nil)
     Log_msg('wait test')
     Wait_s_expression("bit_map_1",wait_test_s_exp,4000, true, "THIS_SHOULD_NOT_HAPPEN_ONE_SHOT", 'NULL')
     Log_msg("wait triggered")
-    Enable_columns({"verify_test","verify_fail_trigger"},true)
-    Wait_delay(10000)
+    Enable_columns({"verify_test","verify_fail_trigger"},false)
     terminate_column()
 end_column()
 
@@ -341,7 +339,7 @@ void  verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event
     (void)input;
     (void)event_data;
     (void)params;
-    Printf_CFL("verify condition triggered \n");
+    Printf_CFL("****************************** verify condition triggered  ************************** \n");
 }  
 
 ]]

@@ -223,7 +223,7 @@ end
 
 
 --[[
-
+L
    take flatten s expression and convert to register op array
 
 ]]--
@@ -233,43 +233,43 @@ local operator_number = 0
 
 
 -- operator types
-S_FLOAT_VALUE_CFL   = 0
-S_FLOAT_BUFFER_POSITION_CFL = 1
-S_FLOAT_OPERATOR_CFL   =2
-S_FLOAT_OPERATOR_END_CFL = 3
+local S_FLOAT_VALUE_CFL   = 0
+local S_FLOAT_BUFFER_POSITION_CFL = 1
+local S_FLOAT_OPERATOR_CFL   =2
+local S_FLOAT_OPERATOR_END_CFL = 3
 
--- S_FLOAT_OPERATOR_CFL operators
-S_FLOAT_MULTIPLY_CFL = 0
-S_FLOAT_DIVIDE_CFL = 1
-S_FLOAT_ADD_CFL  = 2
-S_FLOAT_SUBTRACT_CFL = 3
-S_MODULUS_CFL = 4
-S_POWER_CFL  = 5
-S_EXP_CFL    = 6
-S_LN_CFL     = 7
-S_10_x_CFL   = 8
-S_LOG_CFL    = 9
-S_SIN_CFL    = 10
-S_COS_CFL    = 11
-S_TAN_CFL    = 12
-S_ASIN_CFL   = 13
-S_ACOS_CFL   = 14
-S_ATAN_CFL   = 15
-S_SINH_CFL   = 16
-S_COSH_CFL   = 17
-S_TANH_CFL   = 18
-S_ASINH_CFL  = 19
-S_ACOSH_CFL  = 20
-S_ATANH_CFL  = 21
-S_SQRT_CFL   = 22
-S_ABS_CFL    = 23
-S_FLOOR_CFL  = 24
-S_CEIL_CFL   = 25
-S_ROUND_CFL  = 26
-S_TRUNC_CFL  = 27
-S_PI_CFL     =  28
-S_DEGREE_CFL = 29
-S_RADIAN_CFL = 30
+-- lS_FLOAT_OPERATOR_CFL operators
+local S_FLOAT_MULTIPLY_CFL = 0
+local S_FLOAT_DIVIDE_CFL = 1
+local S_FLOAT_ADD_CFL  = 2
+local S_FLOAT_SUBTRACT_CFL = 3
+local S_MODULUS_CFL = 4
+local S_POWER_CFL  = 5
+local S_EXP_CFL    = 6
+local S_LN_CFL     = 7
+local S_10_x_CFL   = 8
+local S_LOG_CFL    = 9
+local S_SIN_CFL    = 10
+local S_COS_CFL    = 11
+local S_TAN_CFL    = 12
+local S_ASIN_CFL   = 13
+local S_ACOS_CFL   = 14
+local S_ATAN_CFL   = 15
+local S_SINH_CFL   = 16
+local S_COSH_CFL   = 17
+local S_TANH_CFL   = 18
+local S_ASINH_CFL  = 19
+local S_ACOSH_CFL  = 20
+local S_ATANH_CFL  = 21
+local S_SQRT_CFL   = 22
+local S_ABS_CFL    = 23
+local S_FLOOR_CFL  = 24
+local S_CEIL_CFL   = 25
+local S_ROUND_CFL  = 26
+local S_TRUNC_CFL  = 27
+local S_PI_CFL     =  28
+local S_DEGREE_CFL = 29
+local S_RADIAN_CFL = 30
 
 local float_operators = {}
 float_operators["*"]        =S_FLOAT_MULTIPLY_CFL 

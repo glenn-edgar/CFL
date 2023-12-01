@@ -4,21 +4,43 @@
 
 #include "run_time_code_CFL.h"
 
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
+  static inline int generate_return_code_verify(bool termination_flag)
   {
-    fn(handle, params, event_data);
-    return DISABLE_CFL;
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
   }
-  return DISABLE_CFL;
+
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    
+
+    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+
+        fn(handle, verify_control->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+
+    if (fn(handle, verify_control->user_data, event_data) == false)
+    {
+        if (verify_control->user_termination_fn != NULL)
+        {
+            verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
+        }
+        return generate_return_code_verify(verify_control->terminate_flag);
+    }
+    return CONTINUE_CFL;
 }
+
 
 int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
@@ -36,6 +58,56 @@ int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *p
 
   return CONTINUE_CFL;
 }
+  static inline int generate_return_code_while(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }  
+int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Handle_CFL_t *handle = (Handle_CFL_t *)input;
+    Bool_function_CFL_t bool_fn = (Bool_function_CFL_t)aux_fn;
+    
+    const While_control_ROM_CFL_t *while_ctrl = (While_control_ROM_CFL_t *)params;
+    While_control_RAM_CFL_t *while_ctrl_ram = while_ctrl->while_control_ram;
+    
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+       
+        
+        while_ctrl_ram->current_count = 0;
+        bool_fn(handle,(void *) while_ctrl->user_data, event_data);
+        
+        return CONTINUE_CFL;
+    }
+    
+    if (bool_fn(handle, (void *)while_ctrl->user_data, event_data) == true)
+    {
+        return DISABLE_CFL;
+    }
+    if (while_ctrl->time_out_ms <= 0)
+    {
+        return HALT_CFL;
+    }
+    if (event_data->event_index != TIMER_TICK_CFL)
+    {
+        return HALT_CFL;
+    }
+    while_ctrl_ram->current_count += *(unsigned short *)event_data->params;
+    if (while_ctrl_ram->current_count < while_ctrl->time_out_ms)
+    {
+        return HALT_CFL;
+    }
+    // Time out at this point
+    while_ctrl->user_time_out_fn(handle, (void *)while_ctrl->user_data, event_data);
+    
+    return generate_return_code_while(while_ctrl->terminate_flag);
+}
+
+
 
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
@@ -59,6 +131,21 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     return *return_code;
 }
 
+
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+    return DISABLE_CFL;
+  }
+  return DISABLE_CFL;
+}
 
 void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
     
@@ -86,6 +173,25 @@ void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL
 }
 
 
+
+
+void  this_should_not_happen_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("wait not triggered should not happen");
+}  
+
+
+void float_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+
+    const  s_float_expression_CFL_t* setup = (const  s_float_expression_CFL_t*)params; 
+    float result =  process_s_float_buffer_CFL(input, setup->definition);
+    
+    Floatmap_CFL_t* bmp =  get_floatmap_control_CFL(input, setup->buffer_number);
+    floatmap_set_value_CFL(bmp,setup->offset,result);  
+}
 
 
 void clear_float_map_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
@@ -125,19 +231,6 @@ void dump_float_buffer_CFL(const void *input, void *params, Event_data_CFL_t *ev
 }
 
 
-void float_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void )event_data;
-    float_map_copy_CFL_t* setup = (float_map_copy_CFL_t*)params;
-    Floatmap_CFL_t* source_bmp      =   get_floatmap_control_CFL(input,setup->source_buffer);
-    Floatmap_CFL_t* destination_bmp =  get_floatmap_control_CFL(input,setup->destination_buffer);
-    
-    for(unsigned i = 0; i< setup->size;i++){
-        float source_float = floatmap_get_value_CFL(source_bmp,setup->source_offset + i);
-        floatmap_set_value_CFL(destination_bmp,setup->destination_offset + i,source_float);
-    }
-}
-
-
 void set_float_buffer_CFL(const void *input,void *params,Event_data_CFL_t *event_data){
     (void)event_data;
     Handle_CFL_t* handle = (Handle_CFL_t*)input;
@@ -156,14 +249,16 @@ void set_float_buffer_CFL(const void *input,void *params,Event_data_CFL_t *event
 
 
 
-void float_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    (void)event_data;
-
-    const  s_float_expression_CFL_t* setup = (const  s_float_expression_CFL_t*)params; 
-    float result =  process_s_float_buffer_CFL(input, setup->definition);
+void float_map_copy_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void )event_data;
+    float_map_copy_CFL_t* setup = (float_map_copy_CFL_t*)params;
+    Floatmap_CFL_t* source_bmp      =   get_floatmap_control_CFL(input,setup->source_buffer);
+    Floatmap_CFL_t* destination_bmp =  get_floatmap_control_CFL(input,setup->destination_buffer);
     
-    Floatmap_CFL_t* bmp =  get_floatmap_control_CFL(input, setup->buffer_number);
-    floatmap_set_value_CFL(bmp,setup->offset,result);  
+    for(unsigned i = 0; i< setup->size;i++){
+        float source_float = floatmap_get_value_CFL(source_bmp,setup->source_offset + i);
+        floatmap_set_value_CFL(destination_bmp,setup->destination_offset + i,source_float);
+    }
 }
 
 
@@ -184,5 +279,86 @@ void log_message_CFL(const void *input, void *params,
   column_element_number = get_current_column_element_index_CFL(input);
   Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
               column_index, column_element_number, *message);
+}
+
+
+void  float_my_if_then_else_one_shot_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    float_my_if_then_else_one_shot_CFL_t *setup = (float_my_if_then_else_one_shot_CFL_t *)params;
+    Printf_CFL("%s \n",setup->message);
+}  
+
+
+void  float_verify_trigger_fn(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)input;
+    (void)event_data;
+    (void)params;
+    Printf_CFL("------------- verify condition triggered  --------------- \n");
+}  
+
+
+void  if_then_else_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    if_then_else_float_map_CFL_t* setup = (if_then_else_float_map_CFL_t* )params;
+    Floatmap_CFL_t* source_bmp      =  get_floatmap_control_CFL(input,setup->source_buffer);
+    bool source_reg =  floatmap_get_value_CFL(source_bmp,setup->if_reg);
+    if(source_reg == true){
+        setup->then_one_shot(input,(void *)setup->then_data,event_data);
+    }else{
+        setup->else_one_shot(input,(void *)setup->else_data,event_data);
+    }
+
+}
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
+
+bool wait_float_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    wait_float_map_s_expr_CFL_t* setup = (wait_float_map_s_expr_CFL_t*)params;
+    bool result = process_s_float_buffer_CFL(input, setup->definition);
+    return result;    
+}
+
+ 
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
+                            Event_data_CFL_t *event_data)
+{
+  
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
+  
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    
+    *while_time_control->start_time = handle->time_control->current_millis;
+    
+    return false;
+  }
+  if (event_data->event_index == TIMER_TICK_CFL)
+  {
+    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
+    if (timeElasped >= while_time_control->time_delay)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool verify_float_map_s_expr_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    (void)event_data;
+    verify_float_map_s_expr_CFL_t* setup = (verify_float_map_s_expr_CFL_t*)params;  
+    bool result = process_s_float_buffer_CFL(input, setup->definition);
+    return result;  
 }
 

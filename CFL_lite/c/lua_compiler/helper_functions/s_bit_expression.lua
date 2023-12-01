@@ -30,7 +30,7 @@ local  S_BIT_NOR_CFL =2
 
 
 
-operator_def = {}
+local operator_def = {}
 operator_def["&&"] = {S_BIT_AND_CFL}
 operator_def["||"] = {S_BIT_OR_CFL}
 operator_def["~~"] = {S_BIT_NOR_CFL}
@@ -46,13 +46,24 @@ local function error_r(text,value)
     error(value)
 end
 
+
+function isValidInteger(str)
+    local num = tonumber(str)
+    -- Check if 'num' is a number and an integer
+    if num and num == math.floor(num) then
+        return true
+    else
+        return false
+    end
+end
+
 function add_to_stream(stream_type,stream_value)
     table.insert(encoded_stream,{stream_type,stream_value})
 end
 
 
 
-function parse_stream_value(op)
+local function parse_stream_value(op)
  
   if type(op) == "boolean" then
       return S_BIT_VALUE_CFL,op
@@ -102,7 +113,7 @@ end
 
 
 
-function start_s_bit_stack_encoding(s_expression)
+local function start_s_bit_stack_encoding(s_expression)
     
     
     parameter_stack = #s_expression+5
