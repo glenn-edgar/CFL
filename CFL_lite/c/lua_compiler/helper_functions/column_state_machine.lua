@@ -22,7 +22,7 @@ int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event
     unsigned short *new_state = (unsigned short *)params;
        
     change_local_column_state_CFL(input, *new_state);
-    return DISABLE_CFL;
+    return HALT_CFL;
  }
 
 ]]

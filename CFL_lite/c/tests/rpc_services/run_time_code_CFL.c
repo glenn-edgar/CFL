@@ -5,34 +5,6 @@
 #include "run_time_code_CFL.h"
 
 
-  
-  
-  
-  int rpc_client_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
-    Client_Process_RPC_event_CFL_t client_process_rpc_event = (Client_Process_RPC_event_CFL_t)aux_fn;
-    if(event_data->event_index == RPC_EVENT_CFL){
-      
-      rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
-      if(rpc_message->unique_id != RPC_MESSAGE_ID_CFL){
-          ASSERT_PRINT_F("unique id is not valid expected %x got %x\n",RPC_MESSAGE_ID_CFL,rpc_message->unique_id);
-      }
-      client_process_rpc_event(input,params,rpc_message->ram_message);
-      if(rpc_message->ram_message->sent_event.malloc_flag == true){
-        private_heap_free_CFL(input,rpc_message->ram_message->sent_event.params);
-      }
-      if(rpc_message->ram_message->received_event.malloc_flag == true){
-        private_heap_free_CFL(input,rpc_message->ram_message->received_event.params);
-      }
-      return DISABLE_CFL;
-    }
-    return HALT_CFL;
-
-
-  }
-  
-
-
-
 
 int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
                             Event_data_CFL_t *event_data)
@@ -46,6 +18,23 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
     return DISABLE_CFL;
   }
   return DISABLE_CFL;
+}
+
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
 }
   static inline int generate_return_code_while(bool termination_flag)
   {
@@ -98,44 +87,61 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 
 
 
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
+int rpc_server_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
 
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+  Server_Process_RPC_event_CFL_t  server_process_rpc_event = (Server_Process_RPC_event_CFL_t)aux_fn;
+  rpc_server_event_processor_CFL_t *rpc_server_event_processor = (rpc_server_event_processor_CFL_t *)params;
+  
+  if(event_data->event_index == RPC_EVENT_CFL){
+    
+    rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
+    for(unsigned i = 0; i< rpc_server_event_processor->rpc_request_number; i++){
+      if(rpc_message->rpc_request_id == rpc_server_event_processor->rpc_request_list[i]){
+    
+        
+        if(rpc_message->unique_id != RPC_MESSAGE_ID_CFL){
+          ASSERT_PRINT_F("unique id is not valid expected %x got %x\n",RPC_MESSAGE_ID_CFL,rpc_message->unique_id);
+        }
 
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
+        server_process_rpc_event(input,rpc_server_event_processor->user_data,rpc_message);
+        enqueue_event_CFL(input,rpc_message->receieved_queue, event_data);
+        return HALT_CFL;
+        
+
+      }
+    }
   }
 
   return CONTINUE_CFL;
 }
 
-const int reset_buffer[1] = { RESET_CFL };
-const int halt_buffer[1] = { HALT_CFL };
-const int terminate_buffer[1] = { TERMINATE_CFL };
-const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
 
-
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)aux_fn;
-    int *return_code;
-    return_code = (int *)params;
-    
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        return CONTINUE_CFL;
+  
+  
+  
+  int rpc_client_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
+    Client_Process_RPC_event_CFL_t client_process_rpc_event = (Client_Process_RPC_event_CFL_t)aux_fn;
+    if(event_data->event_index == RPC_EVENT_CFL){
+      
+      rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
+      if(rpc_message->unique_id != RPC_MESSAGE_ID_CFL){
+          ASSERT_PRINT_F("unique id is not valid expected %x got %x\n",RPC_MESSAGE_ID_CFL,rpc_message->unique_id);
+      }
+      client_process_rpc_event(input,params,rpc_message->ram_message);
+      if(rpc_message->ram_message->sent_event.malloc_flag == true){
+        private_heap_free_CFL(input,rpc_message->ram_message->sent_event.params);
+      }
+      if(rpc_message->ram_message->received_event.malloc_flag == true){
+        private_heap_free_CFL(input,rpc_message->ram_message->received_event.params);
+      }
+      return DISABLE_CFL;
     }
-   
-    return *return_code;
-}
+    return HALT_CFL;
+
+
+  }
+  
+
 
 
 int rpc_server_event_clean_up_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
@@ -171,34 +177,55 @@ int rpc_client_event_generator_CFL(const void *input,void *aux_fn, void *params,
 }
 
 
-int rpc_server_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data){
+const int reset_buffer[1] = { RESET_CFL };
+const int halt_buffer[1] = { HALT_CFL };
+const int terminate_buffer[1] = { TERMINATE_CFL };
+const int terminate_engine_buffer[1] = { ENGINE_TERMINATE_CFL };
 
-  Server_Process_RPC_event_CFL_t  server_process_rpc_event = (Server_Process_RPC_event_CFL_t)aux_fn;
-  rpc_server_event_processor_CFL_t *rpc_server_event_processor = (rpc_server_event_processor_CFL_t *)params;
-  
-  if(event_data->event_index == RPC_EVENT_CFL){
+
+
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)aux_fn;
+    int *return_code;
+    return_code = (int *)params;
     
-    rpc_rom_message_CFL_t *rpc_message = (rpc_rom_message_CFL_t *)event_data->params;
-    for(unsigned i = 0; i< rpc_server_event_processor->rpc_request_number; i++){
-      if(rpc_message->rpc_request_id == rpc_server_event_processor->rpc_request_list[i]){
-    
-        
-        if(rpc_message->unique_id != RPC_MESSAGE_ID_CFL){
-          ASSERT_PRINT_F("unique id is not valid expected %x got %x\n",RPC_MESSAGE_ID_CFL,rpc_message->unique_id);
-        }
-
-        server_process_rpc_event(input,rpc_server_event_processor->user_data,rpc_message);
-        enqueue_event_CFL(input,rpc_message->receieved_queue, event_data);
-        return HALT_CFL;
-        
-
-      }
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+        return CONTINUE_CFL;
     }
-  }
-
-  return CONTINUE_CFL;
+   
+    return *return_code;
 }
 
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+
+ 
+  char **message;
+  
+  unsigned column_index;
+  int column_element_number;
+  message = (char **)params;
+
+  column_index = get_current_column_index_CFL(input);
+  column_element_number = get_current_column_element_index_CFL(input);
+  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
+              column_index, column_element_number, *message);
+}
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
+}
 
 
 int rpc_clean_up_one_shot(const void *input, void *params, Event_data_CFL_t *event_data){
@@ -243,26 +270,6 @@ void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL
 
 
 
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-
- 
-  char **message;
-  
-  unsigned column_index;
-  int column_element_number;
-  message = (char **)params;
-
-  column_index = get_current_column_index_CFL(input);
-  column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
-              column_index, column_element_number, *message);
-}
-
     void rpc_client_1_time_out(const void *input,void *user_data, Event_data_CFL_t *data){
        (void)input;
        (void)user_data;
@@ -270,41 +277,6 @@ void log_message_CFL(const void *input, void *params,
        Printf_CFL("unexpected one second time out %s \n",(const char *)user_data);
     }   
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
- 
-
-
-bool wait_time_delay_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data)
-{
-  
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
-  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
-  
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    
-    *while_time_control->start_time = handle->time_control->current_millis;
-    
-    return false;
-  }
-  if (event_data->event_index == TIMER_TICK_CFL)
-  {
-    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
-    if (timeElasped >= while_time_control->time_delay)
-    {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 
 bool wait_event_handler(const void *handle, void *params,
@@ -330,6 +302,34 @@ bool wait_event_handler(const void *handle, void *params,
     if (*current_count >= while_event_control_rom->number_of_events)
     {
     
+      return true;
+    }
+  }
+
+  return false;
+}
+ 
+
+
+bool wait_time_delay_CFL(const void *input, void *params,
+                            Event_data_CFL_t *event_data)
+{
+  
+  Handle_CFL_t *handle = (Handle_CFL_t *)input;
+  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
+  
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    
+    *while_time_control->start_time = handle->time_control->current_millis;
+    
+    return false;
+  }
+  if (event_data->event_index == TIMER_TICK_CFL)
+  {
+    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
+    if (timeElasped >= while_time_control->time_delay)
+    {
       return true;
     }
   }

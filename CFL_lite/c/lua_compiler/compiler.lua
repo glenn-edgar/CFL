@@ -2,7 +2,7 @@
 
 dofile("template_processor.lua")
 --- to test preprocessor
----- dofile("test_preprocessor.lua")
+--dofile("test_preprocessor.lua")
 
 PXT.cwd("core_assembler_functions")
 dofile("io.lua")

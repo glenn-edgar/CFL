@@ -16,294 +16,294 @@ extern "C" {
 
 //----------RAM data structures for event queues ----
 
-static Event_control_RAM_CFL_t ccmqoczlny[1];
-static Event_data_CFL_t plrnsornoj[10];
+static Event_control_RAM_CFL_t pczvalbiua[1];
+static Event_data_CFL_t rglyspnwad[10];
 
 
 //------  ROM data structures for event queues ----
 
-static const Event_control_ROM_CFL_t xnddstesjk[] = { 
-     {  10, plrnsornoj },
+static const Event_control_ROM_CFL_t tgpuafvnkb[] = { 
+     {  10, rglyspnwad },
 };
-static const char *xwaaoucikp = "start column";
-static const unsigned short qcvnojitkt[] = { 1,2,3,4,5,6,7};
-const Enable_column_CFL_t zmupdbcinv = { false, 7, qcvnojitkt };
-static const char *wznojvwibq = "configure bit maps";
-static const clear_bit_map_CFL_t nqsvvrgawl = {0,true,0,152};
-static const char *ihtaiitcfs = "clear bit map 1 true";
-static const dump_buffer_CFL_t pvutnicwli = {0,19};
-static const clear_bit_map_CFL_t vluztlbxtb = {0,false,0,152};
-static const clear_bit_map_CFL_t zggnquclpy = {0,true,16,64};
-static const char *gptzciarav = "clear bit map 1 true 16,64";
-static const dump_buffer_CFL_t qfpsvcpxtt = {0,19};
-static const clear_bit_map_CFL_t rbhgsijmnz = {0,false,0,152};
-static const char *exewsxsshh = "clear bit map 1 false";
-static const dump_buffer_CFL_t bkclyfytfr = {0,19};
-static const clear_bit_map_CFL_t ejzzefthpp = {1,true,0,63};
-static const char *xsglffnooh = "clear bit map 2 true";
-static const dump_buffer_CFL_t slpkyicxjf = {1,8};
-static const bit_map_copy_CFL_t fgdwjubzeq = {1,0,0,5,63};
-static const char *zltqauwegl = "cp buffer 2 to 1 0,5,63";
-static const dump_buffer_CFL_t jrifaweurg = {0,19};
-static const bit_map_and_CFL_t czwrmqdjdx = {1,0,0,0,63};
-static const char *ponejxjfsl = "and buffer 2 to 1 0,0,63";
-static const dump_buffer_CFL_t sypdxxwaoi = {0,19};
-static const bit_map_or_CFL_t zhkzzihvii = {1,0,0,0,63};
-static const char *enwswhbwis = "or buffer 2 to 1 0,0,63";
-static const dump_buffer_CFL_t dpyztkzxwj = {0,19};
-static const bit_map_xor_CFL_t kvwzirmirp = {1,0,0,0,63};
-static const char *dludwmrxlf = "xor buffer 2 to 1 0,0,63";
-static const dump_buffer_CFL_t kxqndynazu = {0,19};
-static const bit_map_not_CFL_t wtgvdplbqy = {0,0,0,0,128};
-static const char *yeqvbxlyye = "not buffer 1 to bit buffer 1 0,0,128";
-static const dump_buffer_CFL_t tyxqvslhjq = {0,19};
-static const char *konwnqljlv = "terminating bit map configuration";
-static const char *qpbetsnuyj = "shift bit maps";
-static const clear_bit_map_CFL_t ahkrrazjtp = {0,false,0,152};
-static const clear_bit_map_CFL_t okvavwlldp = {0,true,16,64};
-static const char *iwjtayzdfh = "clear bit map 1 true 16,64";
-static const dump_buffer_CFL_t tyweztjybr = {0,19};
-static const clear_bit_map_CFL_t ftasdjaytu = {0,false,0,152};
-static const clear_bit_map_CFL_t spvkqokmdq = {0,true,16,64};
-static const shift_bit_buffer_CFL_t qhmuwfyffa = {0,16,96,1};
-static const char *mzftrbodoz = "shift bit map 1 bit to the right";
-static const dump_buffer_CFL_t vsfqupmbgt = {0,19};
-static const clear_bit_map_CFL_t qfximgreyj = {0,false,0,152};
-static const clear_bit_map_CFL_t glmizxsdrv = {0,true,16,64};
-static const shift_bit_buffer_CFL_t lkrcpoawfr = {0,16,96,2};
-static const char *bylfuvwwqa = "shift bit map 2 bit to the right";
-static const dump_buffer_CFL_t nmlnojiuyq = {0,19};
-static const clear_bit_map_CFL_t kzmsmqjgyy = {0,false,0,152};
-static const clear_bit_map_CFL_t sehgddxdln = {0,true,16,64};
-static const shift_bit_buffer_CFL_t vgerlaiyvs = {0,16,96,3};
-static const char *mjzrsxptus = "shift bit map 3 bit to the right";
-static const dump_buffer_CFL_t tttbbnehhf = {0,19};
-static const clear_bit_map_CFL_t tcbmorqaev = {0,false,0,152};
-static const clear_bit_map_CFL_t evumfchdmu = {0,true,16,64};
-static const shift_bit_buffer_CFL_t fdjpcmpudh = {0,16,96,4};
-static const char *fhsqutkvmh = "shift bit map 4 bit to the right";
-static const dump_buffer_CFL_t ycsypmbhkz = {0,19};
-static const clear_bit_map_CFL_t pfhemxzxhu = {0,false,0,152};
-static const clear_bit_map_CFL_t ggmcwgieza = {0,true,16,64};
-static const shift_bit_buffer_CFL_t vlvtthawrm = {0,16,96,5};
-static const char *ixffosrflq = "shift bit map 5 bit to the right";
-static const dump_buffer_CFL_t agheoulwya = {0,19};
-static const clear_bit_map_CFL_t aidsevtrre = {0,false,0,152};
-static const clear_bit_map_CFL_t mgdbjuikpe = {0,true,16,64};
-static const shift_bit_buffer_CFL_t idmdhrzegq = {0,16,96,6};
-static const char *lajrtguqba = "shift bit map 6 bit to the right";
-static const dump_buffer_CFL_t whrxzilvng = {0,19};
-static const clear_bit_map_CFL_t mwyoemvkoe = {0,false,0,152};
-static const clear_bit_map_CFL_t qybqfeaskh = {0,true,16,64};
-static const shift_bit_buffer_CFL_t mqgcrusbcx = {0,16,96,7};
-static const char *gkmpfrevql = "shift bit map 7 bit to the right";
-static const dump_buffer_CFL_t myujplvcgz = {0,19};
-static const clear_bit_map_CFL_t nfdmoyznyv = {0,false,0,152};
-static const clear_bit_map_CFL_t iwovhgvfdy = {0,true,16,64};
-static const shift_bit_buffer_CFL_t tpfzsoofhu = {0,16,96,8};
-static const char *zgdhqtncpd = "shift bit map 8 bit to the right";
-static const dump_buffer_CFL_t fdrawjarpa = {0,19};
-static const clear_bit_map_CFL_t ytnqpfivpr = {0,false,0,152};
-static const clear_bit_map_CFL_t aipiqgtdlz = {0,true,16,64};
-static const shift_bit_buffer_CFL_t ebbexluoru = {0,0,64,-1};
-static const char *gfhmfiicyq = "shift bit map -1 bit to the right";
-static const dump_buffer_CFL_t vfdwmtmdvt = {0,19};
-static const clear_bit_map_CFL_t gpfflihuvl = {0,false,0,152};
-static const clear_bit_map_CFL_t nmcsundhbt = {0,true,16,64};
-static const shift_bit_buffer_CFL_t vwpmrbakbf = {0,0,64,-2};
-static const char *qyzzigkwfo = "shift bit map -2 bit to the right";
-static const dump_buffer_CFL_t kygrddblwl = {0,19};
-static const clear_bit_map_CFL_t etsailvufv = {0,false,0,152};
-static const clear_bit_map_CFL_t yzdydthbsp = {0,true,16,64};
-static const shift_bit_buffer_CFL_t jjmsnhuisc = {0,0,64,-3};
-static const char *ozpqgwaxfc = "shift bit map -3 bit to the right";
-static const dump_buffer_CFL_t potnnyfbvd = {0,19};
-static const clear_bit_map_CFL_t umhfwlrdqu = {0,false,0,152};
-static const clear_bit_map_CFL_t rcgozhibwf = {0,true,16,64};
-static const shift_bit_buffer_CFL_t dvaxwafpdg = {0,0,64,-4};
-static const char *wkkducctzn = "shift bit map -4 bit to the right";
-static const dump_buffer_CFL_t wylefvvzge = {0,19};
-static const clear_bit_map_CFL_t ssyjjveggn = {0,false,0,152};
-static const clear_bit_map_CFL_t zqowyijtde = {0,true,16,64};
-static const shift_bit_buffer_CFL_t esxfdibhiw = {0,0,64,-5};
-static const char *kcwsukfvzf = "shift bit map -5 bit to the right";
-static const dump_buffer_CFL_t akcmyeytrb = {0,19};
-static const clear_bit_map_CFL_t kxwypyrhym = {0,false,0,152};
-static const clear_bit_map_CFL_t xsxhvjkqvx = {0,true,16,64};
-static const shift_bit_buffer_CFL_t qxwftrmudm = {0,0,64,-6};
-static const char *mfgonlahmn = "shift bit map -6 bit to the right";
-static const dump_buffer_CFL_t agycyhnquj = {0,19};
-static const clear_bit_map_CFL_t lhikvtjpne = {0,false,0,152};
-static const clear_bit_map_CFL_t rupfkmyyyk = {0,true,16,64};
-static const shift_bit_buffer_CFL_t jyjilitgoc = {0,0,64,-7};
-static const char *tmgooxjriz = "shift bit map -7 bit to the right";
-static const dump_buffer_CFL_t ctkapvskzx = {0,19};
-static const clear_bit_map_CFL_t vvzunygtvj = {0,false,0,152};
-static const clear_bit_map_CFL_t hipzqwvrjn = {0,true,16,64};
-static const shift_bit_buffer_CFL_t skzgzqglsg = {0,0,64,-8};
-static const char *oknurtgork = "shift bit map -8 bit to the right";
-static const dump_buffer_CFL_t jarjohgqty = {0,19};
-static const char *peoyomawow = "s expression bit map";
-static const clear_bit_map_CFL_t nczpwjwica = {0,false,0,152};
-static const clear_bit_map_CFL_t gfkchyiezu = {1,true,0,63};
-static const char *xwaouojygx = "bs expression 1";
-static const clear_bit_map_CFL_t twjerqymjr = {0,false,0,152};
-const s_operator_CFL_t wtpesxzytd[18] = {{2,0},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
-const s_bit_definition_CFL_t unidcbcpqj = {1,23,1,18,wtpesxzytd};
-static const s_bit_expression_CFL_t kzqhdweasd = {0,0,&unidcbcpqj};
-static const dump_buffer_CFL_t fhurdymxck = {0,19};
-static const char *yxvsqzlmzd = "bs expression 2";
-static const clear_bit_map_CFL_t dozvcpziue = {0,false,0,152};
-const s_operator_CFL_t hdhzwtueyz[18] = {{2,1},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
-const s_bit_definition_CFL_t ibquixaprp = {1,23,2,18,hdhzwtueyz};
-static const s_bit_expression_CFL_t uoipmvnjzi = {0,0,&ibquixaprp};
-static const dump_buffer_CFL_t iteaeigxob = {0,19};
-static const char *uikvyhaweg = "bs expression 3";
-static const clear_bit_map_CFL_t tmxjotjtks = {0,false,0,152};
-const s_operator_CFL_t ohgflaamqu[18] = {{2,2},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
-const s_bit_definition_CFL_t cnphxnqjle = {1,23,3,18,ohgflaamqu};
-static const s_bit_expression_CFL_t kkwwvuqhgq = {0,0,&cnphxnqjle};
-static const dump_buffer_CFL_t gdhbihpaig = {0,19};
-static const char *xieybxfaaj = "s expression 1";
-static const clear_bit_map_CFL_t akinavyune = {0,false,0,152};
-const s_operator_CFL_t avkgtcukdb[12] = {{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},};
-const s_bit_definition_CFL_t yupfyxfodb = {1,17,4,12,avkgtcukdb};
-static const s_bit_expression_CFL_t tjmokrtjap = {0,0,&yupfyxfodb};
-static const dump_buffer_CFL_t zhfiggkwng = {0,19};
-static const char *bgssydzlbw = "s expression 2";
-static const clear_bit_map_CFL_t enksknyoiv = {0,false,0,152};
-const s_operator_CFL_t bpgdbdqcam[12] = {{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},};
-const s_bit_definition_CFL_t hrzumsqxor = {1,17,5,12,bpgdbdqcam};
-static const s_bit_expression_CFL_t wmzyioybre = {0,0,&hrzumsqxor};
-static const dump_buffer_CFL_t byveddnbnw = {0,19};
-static const char *kpbxrlyglw = "s expression 3";
-static const clear_bit_map_CFL_t npavikidpf = {0,false,0,152};
-const s_operator_CFL_t kpkgwcbjch[12] = {{2,2},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0},};
-const s_bit_definition_CFL_t aqygjafxyn = {1,17,6,12,kpkgwcbjch};
-static const s_bit_expression_CFL_t ekuwggpveu = {0,0,&aqygjafxyn};
-static const dump_buffer_CFL_t drspbwslhl = {0,19};
-static const char *clchtugymj = "terminating s expression bit map";
-static const char *qmprumbljp = "s expression bit map";
-static const clear_bit_map_CFL_t rdanpyifgs = {0,false,0,152};
-static const clear_bit_map_CFL_t ekodnjznxi = {1,true,0,63};
-static const char *vhqamiprjj = "cs_expression_1";
-const s_operator_CFL_t jwebjojmkk[28] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,0},{3,0},};
-const s_bit_definition_CFL_t hnilsdpglr = {1,33,9,28,jwebjojmkk};
-static const s_bit_expression_CFL_t tabvazumzx = {0,0,&hnilsdpglr};
-static const clear_bit_map_CFL_t aqupchuwmc = {0,false,0,152};
-static const dump_buffer_CFL_t jffdhwlpmr = {0,19};
-static const char *eqeqrxtpla = "cs_expression_2";
-static const clear_bit_map_CFL_t rmoevajpoc = {0,false,0,152};
-const s_operator_CFL_t cbqbfmuwpu[28] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,1},{3,0},};
-const s_bit_definition_CFL_t eyqxosaubq = {1,33,12,28,cbqbfmuwpu};
-static const s_bit_expression_CFL_t amitowmpya = {0,0,&eyqxosaubq};
-static const dump_buffer_CFL_t vsodxvixxe = {0,19};
-static const char *tlvoqydvzu = "cs_expression_3";
-static const clear_bit_map_CFL_t emotgwibqz = {0,false,0,152};
-const s_operator_CFL_t vrjcorqxrm[90] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,1},{3,0},{2,0},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},{2,1},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},{3,0},};
-const s_bit_definition_CFL_t hasbkygmak = {1,95,20,90,vrjcorqxrm};
-static const s_bit_expression_CFL_t vlpvyujhtw = {0,0,&hasbkygmak};
-static const dump_buffer_CFL_t xywjdyebvc = {0,19};
-static const char *uekdsmncbs = "terminating s expression bit map";
-static const my_then_one_shot_CFL_t neypkywchg = {0,16};
-static const my_else_one_shot_CFL_t sngacmyuhc = {"This is the message from else one shot\n"};
-static const char *nvwqwwpbas = "if then else test";
-static const clear_bit_map_CFL_t lbdcrjehxs = {0,false,0,152};
-static const clear_bit_map_CFL_t lbsekcifvr = {0,true,0,1};
-static const char *thumemljsr = "then test";
-static const if_then_else_bit_map_CFL_t romskdqsex = {0,0,my_then_one_shot_fn, my_else_one_shot_fn,&neypkywchg,&sngacmyuhc};
-static const dump_buffer_CFL_t ocaxxbivvx = {0,19};
-static const clear_bit_map_CFL_t jrsybblcto = {0,false,0,152};
-static const char *vyhethqome = "else test";
-static const if_then_else_bit_map_CFL_t pkmakhupsc = {0,0,my_then_one_shot_fn, my_else_one_shot_fn,&neypkywchg,&sngacmyuhc};
-static const dump_buffer_CFL_t kpnohcxeci = {0,19};
-static const clear_bit_map_CFL_t xibrzxlpos = {0,false,0,152};
-static const char *plcgvqwoic = "wait trigger";
-static const dump_buffer_CFL_t zeaiethkjb = {0,19};
+static const char *ofhkhidrzp = "start column";
+static const unsigned short emvwdwadgm[] = { 1,2,3,4,5,6,7};
+const Enable_column_CFL_t jkzywtxlzo = { false, 7, emvwdwadgm };
+static const char *fthmiagtnn = "configure bit maps";
+static const clear_bit_map_CFL_t szbdbifhyf = {0,true,0,152};
+static const char *rworodopxc = "clear bit map 1 true";
+static const dump_buffer_CFL_t xsaeuuwdws = {0,19};
+static const clear_bit_map_CFL_t jjtontvpgx = {0,false,0,152};
+static const clear_bit_map_CFL_t xziysdfdfz = {0,true,16,64};
+static const char *bvnmectktl = "clear bit map 1 true 16,64";
+static const dump_buffer_CFL_t jaqrbjbddk = {0,19};
+static const clear_bit_map_CFL_t xivcaaizhc = {0,false,0,152};
+static const char *alfrdmlbte = "clear bit map 1 false";
+static const dump_buffer_CFL_t crobwhulhk = {0,19};
+static const clear_bit_map_CFL_t nfqzgofjhr = {1,true,0,63};
+static const char *dpohfcnsty = "clear bit map 2 true";
+static const dump_buffer_CFL_t gpuckduxkf = {1,8};
+static const bit_map_copy_CFL_t qefknaycig = {1,0,0,5,63};
+static const char *thnzlydoyd = "cp buffer 2 to 1 0,5,63";
+static const dump_buffer_CFL_t owhybozhpw = {0,19};
+static const bit_map_and_CFL_t vorivvkspy = {1,0,0,0,63};
+static const char *wozshnapqs = "and buffer 2 to 1 0,0,63";
+static const dump_buffer_CFL_t oonxsmnokt = {0,19};
+static const bit_map_or_CFL_t xregiyzcgr = {1,0,0,0,63};
+static const char *vqjtegmvti = "or buffer 2 to 1 0,0,63";
+static const dump_buffer_CFL_t lbjvvzrdmy = {0,19};
+static const bit_map_xor_CFL_t xqsybujxlf = {1,0,0,0,63};
+static const char *cutgrbfqkm = "xor buffer 2 to 1 0,0,63";
+static const dump_buffer_CFL_t vmxfzjhxnb = {0,19};
+static const bit_map_not_CFL_t hgofmwbzuk = {0,0,0,0,128};
+static const char *luytlmmpcr = "not buffer 1 to bit buffer 1 0,0,128";
+static const dump_buffer_CFL_t ussldrewkc = {0,19};
+static const char *xuohanmgby = "terminating bit map configuration";
+static const char *qneydrcaay = "shift bit maps";
+static const clear_bit_map_CFL_t rarqfdtifc = {0,false,0,152};
+static const clear_bit_map_CFL_t ycxyecvwdw = {0,true,16,64};
+static const char *bkzfufpudw = "clear bit map 1 true 16,64";
+static const dump_buffer_CFL_t anbrohridm = {0,19};
+static const clear_bit_map_CFL_t qsupgdmyyx = {0,false,0,152};
+static const clear_bit_map_CFL_t lbqrwxhbaw = {0,true,16,64};
+static const shift_bit_buffer_CFL_t otvulsobwi = {0,16,96,1};
+static const char *sxnvgvxmoc = "shift bit map 1 bit to the right";
+static const dump_buffer_CFL_t ivqrkdvkcj = {0,19};
+static const clear_bit_map_CFL_t kffbziyvjo = {0,false,0,152};
+static const clear_bit_map_CFL_t gczirqsfzo = {0,true,16,64};
+static const shift_bit_buffer_CFL_t smwzzzhfvt = {0,16,96,2};
+static const char *bafunbrhsv = "shift bit map 2 bit to the right";
+static const dump_buffer_CFL_t opmuasbrkp = {0,19};
+static const clear_bit_map_CFL_t fxgggmaigu = {0,false,0,152};
+static const clear_bit_map_CFL_t jmlmhcfwyy = {0,true,16,64};
+static const shift_bit_buffer_CFL_t ffwhsgeexa = {0,16,96,3};
+static const char *npxlkzdgub = "shift bit map 3 bit to the right";
+static const dump_buffer_CFL_t dtkvflgwkp = {0,19};
+static const clear_bit_map_CFL_t bbbpxzmtot = {0,false,0,152};
+static const clear_bit_map_CFL_t nbcmasbrbk = {0,true,16,64};
+static const shift_bit_buffer_CFL_t lbcdcwsfmy = {0,16,96,4};
+static const char *huofdhniya = "shift bit map 4 bit to the right";
+static const dump_buffer_CFL_t xhprjezgxf = {0,19};
+static const clear_bit_map_CFL_t vktfkuhnfn = {0,false,0,152};
+static const clear_bit_map_CFL_t yhjifdawlb = {0,true,16,64};
+static const shift_bit_buffer_CFL_t qvlqdgpapd = {0,16,96,5};
+static const char *leskxqfmiw = "shift bit map 5 bit to the right";
+static const dump_buffer_CFL_t lpxxuysxru = {0,19};
+static const clear_bit_map_CFL_t diznvrbupc = {0,false,0,152};
+static const clear_bit_map_CFL_t sacttwotqn = {0,true,16,64};
+static const shift_bit_buffer_CFL_t cybsutkkml = {0,16,96,6};
+static const char *ysdqfgoigq = "shift bit map 6 bit to the right";
+static const dump_buffer_CFL_t xsyewsidhv = {0,19};
+static const clear_bit_map_CFL_t ntqqgsuadw = {0,false,0,152};
+static const clear_bit_map_CFL_t jszcfqostf = {0,true,16,64};
+static const shift_bit_buffer_CFL_t xbojwomxgv = {0,16,96,7};
+static const char *cgjumfnivp = "shift bit map 7 bit to the right";
+static const dump_buffer_CFL_t gwsgpvimvl = {0,19};
+static const clear_bit_map_CFL_t smgoventco = {0,false,0,152};
+static const clear_bit_map_CFL_t azzngxghna = {0,true,16,64};
+static const shift_bit_buffer_CFL_t vqtlyvqmlc = {0,16,96,8};
+static const char *hvfaawhcna = "shift bit map 8 bit to the right";
+static const dump_buffer_CFL_t suifbkerpw = {0,19};
+static const clear_bit_map_CFL_t opwaslgubf = {0,false,0,152};
+static const clear_bit_map_CFL_t liwqgwtioh = {0,true,16,64};
+static const shift_bit_buffer_CFL_t rtveswgdgj = {0,0,64,-1};
+static const char *afxjxczjvq = "shift bit map -1 bit to the right";
+static const dump_buffer_CFL_t rjlvfniuml = {0,19};
+static const clear_bit_map_CFL_t dtwsfnxcfk = {0,false,0,152};
+static const clear_bit_map_CFL_t plogajpioa = {0,true,16,64};
+static const shift_bit_buffer_CFL_t amnynqphwj = {0,0,64,-2};
+static const char *yydvqbdqfc = "shift bit map -2 bit to the right";
+static const dump_buffer_CFL_t gvbbalqfcg = {0,19};
+static const clear_bit_map_CFL_t jsgrgqxqwz = {0,false,0,152};
+static const clear_bit_map_CFL_t xqztlugskm = {0,true,16,64};
+static const shift_bit_buffer_CFL_t eflzfkkoud = {0,0,64,-3};
+static const char *kcwqbkzowb = "shift bit map -3 bit to the right";
+static const dump_buffer_CFL_t xdzqdpuwpf = {0,19};
+static const clear_bit_map_CFL_t icblpqftcn = {0,false,0,152};
+static const clear_bit_map_CFL_t odsynhvaya = {0,true,16,64};
+static const shift_bit_buffer_CFL_t scmmsobffe = {0,0,64,-4};
+static const char *wsxsbwomiw = "shift bit map -4 bit to the right";
+static const dump_buffer_CFL_t pyzaxqnisu = {0,19};
+static const clear_bit_map_CFL_t cqdveydgul = {0,false,0,152};
+static const clear_bit_map_CFL_t tqqbjbmsfs = {0,true,16,64};
+static const shift_bit_buffer_CFL_t unpblwgqmy = {0,0,64,-5};
+static const char *mexrcxcxxs = "shift bit map -5 bit to the right";
+static const dump_buffer_CFL_t hcvenepplm = {0,19};
+static const clear_bit_map_CFL_t itefnhywef = {0,false,0,152};
+static const clear_bit_map_CFL_t vodaancgmb = {0,true,16,64};
+static const shift_bit_buffer_CFL_t nvmpxafjkn = {0,0,64,-6};
+static const char *dqckzksymp = "shift bit map -6 bit to the right";
+static const dump_buffer_CFL_t qkcjqbevja = {0,19};
+static const clear_bit_map_CFL_t wmlewteoto = {0,false,0,152};
+static const clear_bit_map_CFL_t vfkzyomixd = {0,true,16,64};
+static const shift_bit_buffer_CFL_t fllgrgmaeh = {0,0,64,-7};
+static const char *btdkejlxqe = "shift bit map -7 bit to the right";
+static const dump_buffer_CFL_t pqxtrhujrn = {0,19};
+static const clear_bit_map_CFL_t tlahmrptip = {0,false,0,152};
+static const clear_bit_map_CFL_t ahfggcrawf = {0,true,16,64};
+static const shift_bit_buffer_CFL_t gdwfdcewvv = {0,0,64,-8};
+static const char *zugitsgxvz = "shift bit map -8 bit to the right";
+static const dump_buffer_CFL_t qesuzuwysj = {0,19};
+static const char *sfmtknqmbx = "s expression bit map";
+static const clear_bit_map_CFL_t rrugmdmxof = {0,false,0,152};
+static const clear_bit_map_CFL_t fuzuzfkzek = {1,true,0,63};
+static const char *vnwwieqiye = "bs expression 1";
+static const clear_bit_map_CFL_t evlxdwqyht = {0,false,0,152};
+const s_operator_CFL_t twpvgfoksy[18] = {{2,0},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
+const s_bit_definition_CFL_t lcicjkruow = {1,23,1,18,twpvgfoksy};
+static const s_bit_expression_CFL_t lpojsrifwc = {0,0,&lcicjkruow};
+static const dump_buffer_CFL_t pnsrdxsvzg = {0,19};
+static const char *jjxxoxytkz = "bs expression 2";
+static const clear_bit_map_CFL_t qqlynjcukp = {0,false,0,152};
+const s_operator_CFL_t lammkunynj[18] = {{2,1},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
+const s_bit_definition_CFL_t slsnogetsu = {1,23,2,18,lammkunynj};
+static const s_bit_expression_CFL_t jcxuctvqvf = {0,0,&slsnogetsu};
+static const dump_buffer_CFL_t pwoicyibgd = {0,19};
+static const char *lxuiiryqcw = "bs expression 3";
+static const clear_bit_map_CFL_t wfxvnkqxul = {0,false,0,152};
+const s_operator_CFL_t zmwrnzhesx[18] = {{2,2},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},};
+const s_bit_definition_CFL_t ortabjytih = {1,23,3,18,zmwrnzhesx};
+static const s_bit_expression_CFL_t krhdlvhgyw = {0,0,&ortabjytih};
+static const dump_buffer_CFL_t ybnhyospcr = {0,19};
+static const char *azvplbjvcz = "s expression 1";
+static const clear_bit_map_CFL_t twswzrhzpn = {0,false,0,152};
+const s_operator_CFL_t wzahrhqdmj[12] = {{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},};
+const s_bit_definition_CFL_t hrdwmpmjdw = {1,17,4,12,wzahrhqdmj};
+static const s_bit_expression_CFL_t uaqyfgncqi = {0,0,&hrdwmpmjdw};
+static const dump_buffer_CFL_t rcodbynhhk = {0,19};
+static const char *ksxclbxknf = "s expression 2";
+static const clear_bit_map_CFL_t wdaujaapgu = {0,false,0,152};
+const s_operator_CFL_t yfhhsuuwvn[12] = {{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},};
+const s_bit_definition_CFL_t sthylnxiji = {1,17,5,12,yfhhsuuwvn};
+static const s_bit_expression_CFL_t exspgstznt = {0,0,&sthylnxiji};
+static const dump_buffer_CFL_t mnymmezkty = {0,19};
+static const char *qmgwvbkngy = "s expression 3";
+static const clear_bit_map_CFL_t ygpolxvdnm = {0,false,0,152};
+const s_operator_CFL_t dhyhhnudea[12] = {{2,2},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{3,0},};
+const s_bit_definition_CFL_t tzeqmdlngt = {1,17,6,12,dhyhhnudea};
+static const s_bit_expression_CFL_t xtiphnwqdv = {0,0,&tzeqmdlngt};
+static const dump_buffer_CFL_t tezugvdeke = {0,19};
+static const char *irmeovskzg = "terminating s expression bit map";
+static const char *abpehuakir = "s expression bit map";
+static const clear_bit_map_CFL_t pfhqpzhrnd = {0,false,0,152};
+static const clear_bit_map_CFL_t uyfidavgps = {1,true,0,63};
+static const char *nkhpbbtorb = "cs_expression_1";
+const s_operator_CFL_t apxtemssne[28] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,0},{3,0},};
+const s_bit_definition_CFL_t mxdiuuafci = {1,33,9,28,apxtemssne};
+static const s_bit_expression_CFL_t lgkjuwliqb = {0,0,&mxdiuuafci};
+static const clear_bit_map_CFL_t ghkfpixyhf = {0,false,0,152};
+static const dump_buffer_CFL_t zkzesklkja = {0,19};
+static const char *xxlsmlwyhy = "cs_expression_2";
+static const clear_bit_map_CFL_t ulxqawkydi = {0,false,0,152};
+const s_operator_CFL_t dzavvyvwiq[28] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,1},{3,0},};
+const s_bit_definition_CFL_t jddrnlctup = {1,33,12,28,dzavvyvwiq};
+static const s_bit_expression_CFL_t lotrhoivjh = {0,0,&jddrnlctup};
+static const dump_buffer_CFL_t loslfylnvp = {0,19};
+static const char *xmxrgguqed = "cs_expression_3";
+static const clear_bit_map_CFL_t rugglovvji = {0,false,0,152};
+const s_operator_CFL_t epehlzxrbh[90] = {{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{2,0},{2,0},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{0,1},{3,0},{0,1},{2,1},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,1},{3,0},{0,1},{3,0},{2,0},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},{2,1},{1,1},{1,2},{1,3},{1,4},{1,5},{1,6},{1,7},{1,8},{1,9},{1,10},{1,11},{1,12},{1,13},{1,14},{1,15},{1,16},{3,0},{3,0},};
+const s_bit_definition_CFL_t swwptaweff = {1,95,20,90,epehlzxrbh};
+static const s_bit_expression_CFL_t xcqpkmhlpx = {0,0,&swwptaweff};
+static const dump_buffer_CFL_t pcmlcnzive = {0,19};
+static const char *whqvodwize = "terminating s expression bit map";
+static const my_then_one_shot_CFL_t ilrztoyzqq = {0,16};
+static const my_else_one_shot_CFL_t igpurvfxyl = {"This is the message from else one shot\n"};
+static const char *qhnubvmumx = "if then else test";
+static const clear_bit_map_CFL_t vgshyzqyby = {0,false,0,152};
+static const clear_bit_map_CFL_t zyeycxndok = {0,true,0,1};
+static const char *ejubaikgeo = "then test";
+static const if_then_else_bit_map_CFL_t fgvvozfxpg = {0,0,my_then_one_shot_fn, my_else_one_shot_fn,&ilrztoyzqq,&igpurvfxyl};
+static const dump_buffer_CFL_t yifgsqqnvu = {0,19};
+static const clear_bit_map_CFL_t oyrvjckyug = {0,false,0,152};
+static const char *njjgphhegt = "else test";
+static const if_then_else_bit_map_CFL_t uzrhssswkn = {0,0,my_then_one_shot_fn, my_else_one_shot_fn,&ilrztoyzqq,&igpurvfxyl};
+static const dump_buffer_CFL_t pnmvgbjcax = {0,19};
+static const clear_bit_map_CFL_t qezcwibuau = {0,false,0,152};
+static const char *niwrembxrw = "wait trigger";
+static const dump_buffer_CFL_t gytgwibvvf = {0,19};
 
 
-unsigned  iymawyzqqj;
-const While_time_control_ROM_CFL_t zbwzszzrjt = { 3000,&iymawyzqqj };
+unsigned  hbjtsutroi;
+const While_time_control_ROM_CFL_t tjqsxwugpx = { 3000,&hbjtsutroi };
 
 
 
-static While_control_RAM_CFL_t wwwnczgwxy_ram = { 0 };  // current count 
-
-
-  
-
-static const While_control_ROM_CFL_t oyerqwtgkw_rom = { 0 ,true, &zbwzszzrjt,&wwwnczgwxy_ram,null_function};
-
-    
-static const char *nzywuvqtgw = "triggering bit map 1";
-static const clear_bit_map_CFL_t ywrbkwopxg = {0,true,0,2};
-static const dump_buffer_CFL_t trjahtehwg = {0,19};
-static const char *mcvunmaspc = "wait test";
-const s_operator_CFL_t xfaymurryb[4] = {{2,0},{1,0},{1,1},{3,0},};
-const s_bit_definition_CFL_t emfyytwdpm = {0,9,21,4,xfaymurryb};
-static const wait_bit_map_s_expr_CFL_t qoyoszirrt = {&emfyytwdpm,NULL};
-
-static While_control_RAM_CFL_t blmxhagidd_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t nxigzvomul_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t slhnpoilui_rom = { 4000 ,true, &qoyoszirrt,&blmxhagidd_ram,this_should_not_happen_fn};
+static const While_control_ROM_CFL_t xnykziyumu_rom = { 0 ,true, &tjqsxwugpx,&nxigzvomul_ram,null_function};
 
     
-static const char *yrtdpblrev = "wait triggered";
-static const unsigned short cilnryaswo[] = { 8,9};
-const Enable_column_CFL_t dldyxqulnc = { false, 2, cilnryaswo };
-static const char *eqfetxirla = "verify test started";
-static const clear_bit_map_CFL_t oyrandsrdm = {0,false,0,152};
-static const dump_buffer_CFL_t ifcorpzbwg = {0,19};
-const s_operator_CFL_t uidwjntclg[4] = {{2,2},{1,0},{1,1},{3,0},};
-const s_bit_definition_CFL_t tweedvftgt = {0,9,22,4,uidwjntclg};
-static const  verify_bit_map_s_expr_CFL_t mdfivlbvsa = {&tweedvftgt,NULL};
-    static Verify_control_ROM_CFL_t oexfjsqlij_rom = { true, (void *)&mdfivlbvsa, verify_trigger_fn };  // terminate flag,user data,one shot function
+static const char *nbprwtiify = "triggering bit map 1";
+static const clear_bit_map_CFL_t jyfbffncry = {0,true,0,2};
+static const dump_buffer_CFL_t sfdtgtwbyi = {0,19};
+static const char *hlbzyqaxvm = "wait test";
+const s_operator_CFL_t jrcfzkgqbq[4] = {{2,0},{1,0},{1,1},{3,0},};
+const s_bit_definition_CFL_t nniwbftjyf = {0,9,21,4,jrcfzkgqbq};
+static const wait_bit_map_s_expr_CFL_t egevpssjhk = {&nniwbftjyf,NULL};
 
-
-unsigned  wngspmzdot;
-const While_time_control_ROM_CFL_t fvyswoiypv = { 15000,&wngspmzdot };
-
-
-
-static While_control_RAM_CFL_t uukiurnyss_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t dejnrwhzsp_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t dkykimshry_rom = { 0 ,true, &fvyswoiypv,&uukiurnyss_ram,null_function};
+static const While_control_ROM_CFL_t pieytjpzng_rom = { 4000 ,true, &egevpssjhk,&dejnrwhzsp_ram,this_should_not_happen_fn};
 
     
-static const char *qsxntomiof = "This step should not occur as column would be terminated by verify fail";
+static const char *zhufbzyrtt = "wait triggered";
+static const unsigned short vcwgoljnkj[] = { 8,9};
+const Enable_column_CFL_t vxgapdecve = { false, 2, vcwgoljnkj };
+static const char *qbcgeppbes = "verify test started";
+static const clear_bit_map_CFL_t mayxuvzkjn = {0,false,0,152};
+static const dump_buffer_CFL_t ghrlaiixdw = {0,19};
+const s_operator_CFL_t jzmrhvahpq[4] = {{2,2},{1,0},{1,1},{3,0},};
+const s_bit_definition_CFL_t zetnmvakbl = {0,9,22,4,jzmrhvahpq};
+static const  verify_bit_map_s_expr_CFL_t tsatrdtisk = {&zetnmvakbl,NULL};
+    static Verify_control_ROM_CFL_t obubdqabry_rom = { true, (void *)&tsatrdtisk, verify_trigger_fn };  // terminate flag,user data,one shot function
 
 
-unsigned  owdunlbogf;
-const While_time_control_ROM_CFL_t rmtlzyyjhw = { 3000,&owdunlbogf };
+unsigned  vvuroatywk;
+const While_time_control_ROM_CFL_t nmnodfpcoh = { 15000,&vvuroatywk };
 
 
 
-static While_control_RAM_CFL_t hnttlijmyk_ram = { 0 };  // current count 
+static While_control_RAM_CFL_t rqahwxzzig_ram = { 0 };  // current count 
 
 
   
 
-static const While_control_ROM_CFL_t xraglrvqzb_rom = { 0 ,true, &rmtlzyyjhw,&hnttlijmyk_ram,null_function};
+static const While_control_ROM_CFL_t wiuumqwzdl_rom = { 0 ,true, &nmnodfpcoh,&rqahwxzzig_ram,null_function};
 
     
-static const char *ouhepvdjjd = "triggering verify fail";
-static const clear_bit_map_CFL_t lywzcaqppm = {0,true,0,2};
-static const dump_buffer_CFL_t qdqsagdthc = {0,19};
+static const char *dmuigosxdr = "This step should not occur as column would be terminated by verify fail";
+
+
+unsigned  wqervqcjsj;
+const While_time_control_ROM_CFL_t xqhtiknfdh = { 3000,&wqervqcjsj };
+
+
+
+static While_control_RAM_CFL_t kbeoejawlk_ram = { 0 };  // current count 
+
+
+  
+
+static const While_control_ROM_CFL_t norylwoshs_rom = { 0 ,true, &xqhtiknfdh,&kbeoejawlk_ram,null_function};
+
+    
+static const char *viczqhkwyv = "triggering verify fail";
+static const clear_bit_map_CFL_t espsbjcfpi = {0,true,0,2};
+static const dump_buffer_CFL_t tuknonqgxs = {0,19};
 
 
 //----------RAM data structures for columns ----
 
-unsigned tvvbmrlkzg[10];
-Watch_dog_struct_CFL_t * svstbrxnkg[10];
-unsigned char decvbbbskz[10];
-unsigned char otyvvllnir[10];
-void* kqdweekizh[10];
+unsigned hrovihvoyy[10];
+Watch_dog_struct_CFL_t * ubutqyzfou[10];
+unsigned char jkckllnqpc[10];
+unsigned char ysbhdfsexq[10];
+void* jqcipninlq[10];
 /*
 ------------------------ ROM data structures for columns --------------------------
 typedef struct Column_ROM_CFL_t
@@ -324,7 +324,7 @@ typedef struct Column_ROM_CFL_t
 
 //----------ROM data structures for columns ----
 
-static const Column_ROM_CFL_t ohbaldqpuw[] = {
+static const Column_ROM_CFL_t bqioxaeskp[] = {
   { -1,true, 0, 3, 0, -1, -1 },
   { -1,false, 1, 31, 3, -1, -1 },
   { -1,false, 2, 86, 34, -1, -1 },
@@ -342,7 +342,7 @@ static const Column_ROM_CFL_t ohbaldqpuw[] = {
 
 
 
-static unsigned char lucxhxulce[202];
+static unsigned char rlhauqzuqm[202];
 
 
   /* 
@@ -361,299 +361,299 @@ static unsigned char lucxhxulce[202];
 
 //----------Column elements Flash structures----
 
-static const Column_element_CFL_t fsxdabewhp[] = {
-    {one_shot_handler_CFL,log_message_CFL,(void *)&xwaaoucikp},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&zmupdbcinv},
+static const Column_element_CFL_t lhopbfxbsi[] = {
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ofhkhidrzp},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&jkzywtxlzo},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&wznojvwibq},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nqsvvrgawl},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ihtaiitcfs},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pvutnicwli},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vluztlbxtb},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&zggnquclpy},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&gptzciarav},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&qfpsvcpxtt},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rbhgsijmnz},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&exewsxsshh},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&bkclyfytfr},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ejzzefthpp},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&xsglffnooh},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&slpkyicxjf},
-    {one_shot_handler_CFL,bit_map_copy_CFL,(void *)&fgdwjubzeq},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&zltqauwegl},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&jrifaweurg},
-    {one_shot_handler_CFL,bit_map_and_CFL,(void *)&czwrmqdjdx},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ponejxjfsl},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&sypdxxwaoi},
-    {one_shot_handler_CFL,bit_map_or_CFL,(void *)&zhkzzihvii},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&enwswhbwis},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&dpyztkzxwj},
-    {one_shot_handler_CFL,bit_map_xor_CFL,(void *)&kvwzirmirp},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&dludwmrxlf},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&kxqndynazu},
-    {one_shot_handler_CFL,bit_map_not_CFL,(void *)&wtgvdplbqy},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&yeqvbxlyye},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&tyxqvslhjq},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&konwnqljlv},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&fthmiagtnn},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&szbdbifhyf},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&rworodopxc},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xsaeuuwdws},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jjtontvpgx},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&xziysdfdfz},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&bvnmectktl},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&jaqrbjbddk},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&xivcaaizhc},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&alfrdmlbte},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&crobwhulhk},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nfqzgofjhr},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&dpohfcnsty},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&gpuckduxkf},
+    {one_shot_handler_CFL,bit_map_copy_CFL,(void *)&qefknaycig},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&thnzlydoyd},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&owhybozhpw},
+    {one_shot_handler_CFL,bit_map_and_CFL,(void *)&vorivvkspy},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&wozshnapqs},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&oonxsmnokt},
+    {one_shot_handler_CFL,bit_map_or_CFL,(void *)&xregiyzcgr},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&vqjtegmvti},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&lbjvvzrdmy},
+    {one_shot_handler_CFL,bit_map_xor_CFL,(void *)&xqsybujxlf},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&cutgrbfqkm},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&vmxfzjhxnb},
+    {one_shot_handler_CFL,bit_map_not_CFL,(void *)&hgofmwbzuk},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&luytlmmpcr},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ussldrewkc},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&xuohanmgby},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&qpbetsnuyj},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ahkrrazjtp},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&okvavwlldp},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&iwjtayzdfh},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&tyweztjybr},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ftasdjaytu},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&spvkqokmdq},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&qhmuwfyffa},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mzftrbodoz},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&vsfqupmbgt},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&qfximgreyj},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&glmizxsdrv},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&lkrcpoawfr},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&bylfuvwwqa},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&nmlnojiuyq},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&kzmsmqjgyy},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&sehgddxdln},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&vgerlaiyvs},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mjzrsxptus},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&tttbbnehhf},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&tcbmorqaev},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&evumfchdmu},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&fdjpcmpudh},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&fhsqutkvmh},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ycsypmbhkz},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&pfhemxzxhu},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ggmcwgieza},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&vlvtthawrm},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ixffosrflq},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&agheoulwya},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&aidsevtrre},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&mgdbjuikpe},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&idmdhrzegq},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&lajrtguqba},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&whrxzilvng},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&mwyoemvkoe},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&qybqfeaskh},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&mqgcrusbcx},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&gkmpfrevql},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&myujplvcgz},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nfdmoyznyv},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&iwovhgvfdy},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&tpfzsoofhu},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&zgdhqtncpd},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&fdrawjarpa},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ytnqpfivpr},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&aipiqgtdlz},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&ebbexluoru},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&gfhmfiicyq},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&vfdwmtmdvt},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&gpfflihuvl},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nmcsundhbt},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&vwpmrbakbf},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&qyzzigkwfo},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&kygrddblwl},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&etsailvufv},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&yzdydthbsp},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&jjmsnhuisc},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ozpqgwaxfc},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&potnnyfbvd},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&umhfwlrdqu},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rcgozhibwf},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&dvaxwafpdg},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&wkkducctzn},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&wylefvvzge},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ssyjjveggn},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&zqowyijtde},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&esxfdibhiw},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&kcwsukfvzf},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&akcmyeytrb},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&kxwypyrhym},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&xsxhvjkqvx},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&qxwftrmudm},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mfgonlahmn},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&agycyhnquj},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&lhikvtjpne},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rupfkmyyyk},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&jyjilitgoc},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&tmgooxjriz},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ctkapvskzx},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vvzunygtvj},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&hipzqwvrjn},
-    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&skzgzqglsg},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&oknurtgork},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&jarjohgqty},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&qneydrcaay},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rarqfdtifc},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ycxyecvwdw},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&bkzfufpudw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&anbrohridm},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&qsupgdmyyx},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&lbqrwxhbaw},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&otvulsobwi},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&sxnvgvxmoc},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ivqrkdvkcj},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&kffbziyvjo},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&gczirqsfzo},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&smwzzzhfvt},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&bafunbrhsv},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&opmuasbrkp},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&fxgggmaigu},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jmlmhcfwyy},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&ffwhsgeexa},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&npxlkzdgub},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&dtkvflgwkp},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&bbbpxzmtot},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nbcmasbrbk},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&lbcdcwsfmy},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&huofdhniya},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xhprjezgxf},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vktfkuhnfn},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&yhjifdawlb},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&qvlqdgpapd},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&leskxqfmiw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&lpxxuysxru},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&diznvrbupc},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&sacttwotqn},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&cybsutkkml},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ysdqfgoigq},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xsyewsidhv},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ntqqgsuadw},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jszcfqostf},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&xbojwomxgv},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&cgjumfnivp},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&gwsgpvimvl},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&smgoventco},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&azzngxghna},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&vqtlyvqmlc},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&hvfaawhcna},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&suifbkerpw},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&opwaslgubf},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&liwqgwtioh},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&rtveswgdgj},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&afxjxczjvq},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&rjlvfniuml},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&dtwsfnxcfk},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&plogajpioa},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&amnynqphwj},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&yydvqbdqfc},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&gvbbalqfcg},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jsgrgqxqwz},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&xqztlugskm},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&eflzfkkoud},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&kcwqbkzowb},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xdzqdpuwpf},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&icblpqftcn},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&odsynhvaya},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&scmmsobffe},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&wsxsbwomiw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pyzaxqnisu},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&cqdveydgul},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&tqqbjbmsfs},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&unpblwgqmy},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&mexrcxcxxs},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&hcvenepplm},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&itefnhywef},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vodaancgmb},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&nvmpxafjkn},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&dqckzksymp},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&qkcjqbevja},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&wmlewteoto},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vfkzyomixd},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&fllgrgmaeh},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&btdkejlxqe},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pqxtrhujrn},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&tlahmrptip},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ahfggcrawf},
+    {one_shot_handler_CFL,shift_bit_buffer_CFL,(void *)&gdwfdcewvv},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&zugitsgxvz},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&qesuzuwysj},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&peoyomawow},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&nczpwjwica},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&gfkchyiezu},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&xwaouojygx},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&twjerqymjr},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&kzqhdweasd},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&fhurdymxck},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&yxvsqzlmzd},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&dozvcpziue},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&uoipmvnjzi},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&iteaeigxob},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&uikvyhaweg},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&tmxjotjtks},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&kkwwvuqhgq},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&gdhbihpaig},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&xieybxfaaj},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&akinavyune},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&tjmokrtjap},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&zhfiggkwng},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&bgssydzlbw},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&enksknyoiv},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&wmzyioybre},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&byveddnbnw},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&kpbxrlyglw},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&npavikidpf},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&ekuwggpveu},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&drspbwslhl},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&clchtugymj},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&sfmtknqmbx},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rrugmdmxof},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&fuzuzfkzek},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&vnwwieqiye},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&evlxdwqyht},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&lpojsrifwc},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pnsrdxsvzg},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&jjxxoxytkz},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&qqlynjcukp},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&jcxuctvqvf},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pwoicyibgd},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&lxuiiryqcw},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&wfxvnkqxul},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&krhdlvhgyw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ybnhyospcr},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&azvplbjvcz},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&twswzrhzpn},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&uaqyfgncqi},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&rcodbynhhk},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ksxclbxknf},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&wdaujaapgu},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&exspgstznt},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&mnymmezkty},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&qmgwvbkngy},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ygpolxvdnm},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&xtiphnwqdv},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&tezugvdeke},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&irmeovskzg},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&qmprumbljp},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rdanpyifgs},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ekodnjznxi},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&vhqamiprjj},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&tabvazumzx},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&aqupchuwmc},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&jffdhwlpmr},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&eqeqrxtpla},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rmoevajpoc},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&amitowmpya},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&vsodxvixxe},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&tlvoqydvzu},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&emotgwibqz},
-    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&vlpvyujhtw},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&xywjdyebvc},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&uekdsmncbs},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&abpehuakir},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&pfhqpzhrnd},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&uyfidavgps},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&nkhpbbtorb},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&lgkjuwliqb},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ghkfpixyhf},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&zkzesklkja},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&xxlsmlwyhy},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ulxqawkydi},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&lotrhoivjh},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&loslfylnvp},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&xmxrgguqed},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&rugglovvji},
+    {one_shot_handler_CFL, bit_map_s_expr_CFL,(void *)&xcqpkmhlpx},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pcmlcnzive},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&whqvodwize},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&nvwqwwpbas},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&lbdcrjehxs},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&lbsekcifvr},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&thumemljsr},
-    {one_shot_handler_CFL,if_then_else_CFL,(void *)&romskdqsex},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ocaxxbivvx},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jrsybblcto},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&vyhethqome},
-    {one_shot_handler_CFL,if_then_else_CFL,(void *)&pkmakhupsc},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&kpnohcxeci},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&qhnubvmumx},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&vgshyzqyby},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&zyeycxndok},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&ejubaikgeo},
+    {one_shot_handler_CFL,if_then_else_CFL,(void *)&fgvvozfxpg},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&yifgsqqnvu},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&oyrvjckyug},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&njjgphhegt},
+    {one_shot_handler_CFL,if_then_else_CFL,(void *)&uzrhssswkn},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&pnmvgbjcax},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&xibrzxlpos},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&plcgvqwoic},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&zeaiethkjb},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&oyerqwtgkw_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&nzywuvqtgw},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&ywrbkwopxg},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&trjahtehwg},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&qezcwibuau},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&niwrembxrw},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&gytgwibvvf},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&xnykziyumu_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&nbprwtiify},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&jyfbffncry},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&sfdtgtwbyi},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&mcvunmaspc},
-    {while_handler_CFL,wait_bit_map_s_expr_CFL,(void *)&slhnpoilui_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&yrtdpblrev},
-    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&dldyxqulnc},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&hlbzyqaxvm},
+    {while_handler_CFL,wait_bit_map_s_expr_CFL,(void *)&pieytjpzng_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&zhufbzyrtt},
+    {bidirectional_one_shot_handler_CFL,enable_columns_function_CFL,(void *)&vxgapdecve},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&eqfetxirla},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&oyrandsrdm},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ifcorpzbwg},
-    {verify_handler_CFL,verify_bit_map_s_expr_CFL,(void *)&oexfjsqlij_rom},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&dkykimshry_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&qsxntomiof},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&qbcgeppbes},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&mayxuvzkjn},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&ghrlaiixdw},
+    {verify_handler_CFL,verify_bit_map_s_expr_CFL,(void *)&obubdqabry_rom},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&wiuumqwzdl_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&dmuigosxdr},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
-    {while_handler_CFL,wait_time_delay_CFL,(void *)&xraglrvqzb_rom},
-    {one_shot_handler_CFL,log_message_CFL,(void *)&ouhepvdjjd},
-    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&lywzcaqppm},
-    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&qdqsagdthc},
+    {while_handler_CFL,wait_time_delay_CFL,(void *)&norylwoshs_rom},
+    {one_shot_handler_CFL,log_message_CFL,(void *)&viczqhkwyv},
+    {one_shot_handler_CFL,clear_bit_map_CFL,(void *)&espsbjcfpi},
+    {one_shot_handler_CFL,dump_buffer_CFL,(void *)&tuknonqgxs},
     {return_condition_code_CFL,NULL,(void *)terminate_buffer},
 };
-static uint8_t raeltvkymc[19]= {255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
-static uint8_t eeivekqpht[8]= {0,0,0,0,0,0,0,0};
-static uint8_t kwlzdaibqn[10]= {0,0,0,0,0,0,0,0,0,0};
-Bitmap_CFL gsqwctvkrj[3] = {
- {152, &raeltvkymc[0]},
- {63, &eeivekqpht[0]},
- {75, &kwlzdaibqn[0]},
+static uint8_t isyobqfajg[19]= {255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255};
+static uint8_t geiuwehmnc[8]= {0,0,0,0,0,0,0,0};
+static uint8_t widxzxitog[10]= {0,0,0,0,0,0,0,0,0,0};
+Bitmap_CFL cfqzrtdajf[3] = {
+ {152, &isyobqfajg[0]},
+ {63, &geiuwehmnc[0]},
+ {75, &widxzxitog[0]},
 };
-Registermap_CFL_t dqnnysgqui[0];
-Floatmap_CFL_t vleihcwsoj[0];
-const Sm_control_ROM_CFL_t wsvzowzhqt[0];
-Sm_control_RAM_CFL_t seozvyayuh[0];
+Registermap_CFL_t smowazuwsy[0];
+Floatmap_CFL_t kdcpbhmwic[0];
+const Sm_control_ROM_CFL_t yqszvelbiz[0];
+Sm_control_RAM_CFL_t dagbjezkdo[0];
 
 
-static Time_control_CFL_t bdbxlpdusg;
+static Time_control_CFL_t wkmikhoceh;
 
 
 
 
-static Engine_control_CFL_t vlhmsldnxp;
+static Engine_control_CFL_t nljwzcbvni;
 
 
 /* remaining allocate heap size */
 
-static unsigned ngpmyuyitp;
+static unsigned aeopwkpwol;
 
 
 /* current heap pointer */
 
-static char* qpjscehuly;
+static char* ukutqjjeyd;
 
 
 /* heap block area */
 
-static CS_MEMORY_CONTROL yhhovoofll;
+static CS_MEMORY_CONTROL vymipnniye;
 
 
     
     
 
 
-const struct Handle_CFL_t yvxrwcukpo =
+const struct Handle_CFL_t zmfgmucgqw =
 {
 
   .queue_number = 1,
-  .queue_rom = xnddstesjk,
-  .queue_ram = ccmqoczlny,
+  .queue_rom = tgpuafvnkb,
+  .queue_ram = pczvalbiua,
 
-  .column_elements_flags =lucxhxulce,
-  .column_elements_ROM = fsxdabewhp,
+  .column_elements_flags =rlhauqzuqm,
+  .column_elements_ROM = lhopbfxbsi,
 
-  .watch_dog_struct = svstbrxnkg,
-  .watch_dog_count  = tvvbmrlkzg,
+  .watch_dog_struct = ubutqyzfou,
+  .watch_dog_count  = hrovihvoyy,
    
    
-  .column_flags = decvbbbskz,
-  .column_local_data = kqdweekizh,
-  .column_state = otyvvllnir,
+  .column_flags = jkckllnqpc,
+  .column_local_data = jqcipninlq,
+  .column_state = ysbhdfsexq,
   .number_of_columns = 10,
-  .column_rom_data = ohbaldqpuw,
+  .column_rom_data = bqioxaeskp,
 
   
   
   
-  .time_control = &bdbxlpdusg,
-  .engine_control =&vlhmsldnxp,
+  .time_control = &wkmikhoceh,
+  .engine_control =&nljwzcbvni,
   .debug_function = debug_write,
   .malloc = private_heap_malloc_CFL,
   .free = private_heap_free_CFL,
   .allocate_once = allocate_once_CFL,
   .master_heap_starting_location = &allocate_once_memory,
   .master_heap_size = 10000,
-  .remaining_heap_size = &ngpmyuyitp,
-  .current_heap_location = &qpjscehuly,
-  .private_heap   = &yhhovoofll,
+  .remaining_heap_size = &aeopwkpwol,
+  .current_heap_location = &ukutqjjeyd,
+  .private_heap   = &vymipnniye,
   .private_heap_size =   1000,
   .number_of_sm      = 0,
-  .sm_rom     =  wsvzowzhqt,
-  .sm_ram     = seozvyayuh,
+  .sm_rom     =  yqszvelbiz,
+  .sm_ram     = dagbjezkdo,
   .number_of_bitmaps = 3,
-  .bitmaps = gsqwctvkrj,
+  .bitmaps = cfqzrtdajf,
   .number_of_registermaps = 0,
-  .registermaps = dqnnysgqui,
+  .registermaps = smowazuwsy,
   .number_of_floatmaps = 0,
-  .floatmaps = vleihcwsoj,
+  .floatmaps = kdcpbhmwic,
 } ;
 
 const Handle_CFL_t*  bit_maps_1_handle(){
-    return &yvxrwcukpo;
+    return &zmfgmucgqw;
 }
    
 

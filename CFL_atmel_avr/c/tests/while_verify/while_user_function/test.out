@@ -1,0 +1,111 @@
+typedef struct While_User_Data_t {
+
+  short target_event;
+  unsigned target_event_count;
+  unsigned current_event_count;
+  const char* message;
+} While_User_Data_t;
+
+static void while_end(void* input, void* params, Event_data_CFL_t* event_data) {
+  While_User_Data_t* user_data;
+  user_data = (While_User_Data_t*)params;
+  Printf_CFL("---------------->while end %s \n", user_data->message);
+}
+
+static bool while_test(void* input, void* params,
+  Event_data_CFL_t* event_data) {
+  While_User_Data_t* user_data;
+  user_data = (While_User_Data_t*)params;
+
+  if (event_data->event_index == EVENT_INIT_CFL) {
+    user_data->current_event_count = 0;
+   
+  }
+  if (event_data->event_index == user_data->target_event) {
+
+    user_data->current_event_count += 1;
+
+    if (user_data->current_event_count >= user_data->target_event_count) {
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static void test_while_opcode(Handle_config_CFL_t* config_handle) {
+
+  void* input = Configure_engine_CFL(config_handle, 50000, 2500);
+  //const char* for_array[1] = { "event_generator" };
+  const char* column_names[] = { "terminate_engine", "event_generator",
+                                "while_terminate", "while_reset",
+                                "while_normal" };
+  Event_data_CFL_t my_event_data = { 23, 45, NULL };
+
+  While_User_Data_t while_user_data_reset;
+  while_user_data_reset.target_event = 23;
+  while_user_data_reset.target_event_count = 10;
+  while_user_data_reset.message = "-----------------> reset event";
+
+  While_User_Data_t while_user_data_terminate;
+  while_user_data_terminate.target_event = 23;
+  while_user_data_terminate.target_event_count = 5;
+  while_user_data_terminate.message = "-------------> termination event";
+
+  While_User_Data_t while_user_data_normal;
+  while_user_data_normal.target_event = 23;
+  while_user_data_normal.target_event_count = 13;
+  while_user_data_terminate.message = "-------------> termination event";
+
+
+  Store_bool_function_CFL(input, "while_test", while_test);
+  Store_one_shot_function_CFL(input, "while_end", while_end);
+
+  Asm_columns_CFL(input, NAME_SIZE_CFL(column_names), column_names);
+
+  Asm_start_column_CFL(input, "terminate_engine", true);
+  Asm_log_message_CFL(input, "terminate engine");
+  Asm_wait_time_delay_CFL(input, 50000);
+  Asm_log_message_CFL(input, "time delay done");
+  Asm_log_message_CFL(input, "terminate_engine");
+  Asm_engine_terminate_CFL(input);
+  Asm_end_column_CFL(input);
+
+  Asm_start_column_CFL(input, "event_generator", true);
+  Asm_wait_time_delay_CFL(input, 1000);
+  Asm_log_message_CFL(input, "generate_event");
+  Asm_send_event_CFL(input, &my_event_data);
+  Asm_reset_CFL(input);
+  Asm_end_column_CFL(input);
+
+  Asm_start_column_CFL(input, "while_terminate", true);
+  Asm_log_message_CFL(input, "verify_terminate");
+  Asm_wait_CFL(input, "FALSE", 1000, true, "while_end",
+    &while_user_data_terminate);
+  Asm_log_message_CFL(input, "this message should not happen");
+  Asm_end_column_CFL(input);
+
+  Asm_start_column_CFL(input, "while_reset", true);
+  Asm_log_message_CFL(input, "while_reset");
+  Asm_wait_CFL(input, "FALSE", 7000, false, "while_end",
+    &while_user_data_reset);
+  Asm_log_message_CFL(input, "this message should not happen");
+  Asm_end_column_CFL(input);
+
+  Asm_start_column_CFL(input, "while_normal", true);
+  Asm_log_message_CFL(input, "while_normal");
+  Asm_wait_CFL(input, "while_test", NO_TIME_OUT_CFL, false, NULL,
+    &while_user_data_normal);
+  Asm_log_message_CFL(input, "This message will hapen");
+  Asm_end_column_CFL(input);
+  
+  Printf_CFL("starting engine");
+  Start_engine_CFL(input, 100, 30, default_idle_function, default_calendar_function);
+
+  Printf_CFL("Engine Done \n");
+  Destroy_engine_CFL(input);
+ 
+}
+]])
+

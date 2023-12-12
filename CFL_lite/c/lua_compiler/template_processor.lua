@@ -3,7 +3,13 @@ function_table = {}
 variable_table = {}
 --print("loading template_processor.lua")
 
+local template_start_marker = '<<'
+local template_end_marker = '>>'
 
+function set_template_marker(start,ending)
+  template_start_marker = start
+  template_end_marker = ending
+end
 
 
 function reset_template_tables()
@@ -116,7 +122,7 @@ local function expand_s_expression(str)
     local index = {}
     local pat_array = {}
     local expand = false    
-    if find_markers(str,'<<',true,index,pat_array) > 0  then
+    if find_markers(str,template_start_marker,true,index,pat_array) > 0  then
        
        str = Expand_text_stream_a(str)
        expand = true      
@@ -171,17 +177,17 @@ function Expand_text_stream_a(input_text)
     local index= {}
     local pat_array ={}
 
-    start_number = find_markers( input_text,'<<',true,index,pat_array)
+    start_number = find_markers( input_text,template_start_marker,true,index,pat_array)
     if start_number == 0 then
        
         return input_text
     end
    
-    end_number = find_markers(input_text, '>>',false,index,pat_array)
+    end_number = find_markers(input_text,template_end_marker,false,index,pat_array)
     
     
     if start_number ~= end_number then
-        print("Error: unbalanced << >> tokens",start_number,end_number,input_text)
+        print("Error: unbalanced template start end tokens",start_number,end_number,input_text)
         assert(false)
     end
    
@@ -208,7 +214,7 @@ function scan_for_order(index,pat_array,input)
         if i==1 then
            
             if k[3]==false then
-                print("Error: first token is >>",j,input)
+                print("Error: first token template end token",j,input)
                 assert(false)
             end
             level = 1
@@ -219,14 +225,14 @@ function scan_for_order(index,pat_array,input)
                 level = level -1
             end
             if(level < 0) then
-                print("Error: unbalanced << >> tokens",j,input)
+                print("Error: unbalanced template start end tokens",j,input)
                 assert(false)
             end
         end
        
     end
     if level ~= 0 then
-        print("Error: unbalanced << >> tokens",level,input)
+        print("Error: unbalanced template start end tokens",level,input)
         assert(false)
     end
    

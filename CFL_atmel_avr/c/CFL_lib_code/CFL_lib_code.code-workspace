@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../include"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cfl_definitions.h": "c"
+		}
+	}
+}
