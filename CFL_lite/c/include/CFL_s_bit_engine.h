@@ -15,6 +15,8 @@
 #define S_BIT_AND_CFL 0
 #define S_BIT_OR_CFL 1
 #define S_BIT_NOR_CFL 2
+#define S_BIT_XOR_CFL 3
+#define S_BIT_NOT_CFL 4
 
 
 

@@ -31,7 +31,7 @@ define_column("configure_bit_maps",false,nil)
     dump_bit_map_buffer("bit_map_1")
 
     clear_bit_map("bit_map_1",false)
-    clear_bit_map("bit_map_1",true,16,64)
+    clear_bit_map("bit_map_1",true,16,64-16)
     Log_msg("clear bit map 1 true 16,64")
     dump_bit_map_buffer("bit_map_1")
 
@@ -69,13 +69,13 @@ end_column()
 define_column("shift_bit_map",false,nil)
     Log_msg('shift bit maps')
     clear_bit_map("bit_map_1",false)
-    clear_bit_map("bit_map_1",true,16,64)
+    clear_bit_map("bit_map_1",true,16,64-16)
     Log_msg("clear bit map 1 true 16,64")
     dump_bit_map_buffer("bit_map_1")
    
     for i = 1,8 do 
         clear_bit_map("bit_map_1",false)
-        clear_bit_map("bit_map_1",true,16,64)
+        clear_bit_map("bit_map_1",true,16,64-16)
         shift_bit_map_buffer("bit_map_1",16,80,i)
         Log_msg("shift bit map "..tostring(i).." bit to the right")
         dump_bit_map_buffer("bit_map_1")
@@ -84,9 +84,9 @@ define_column("shift_bit_map",false,nil)
    
     for i = 1,8 do 
         clear_bit_map("bit_map_1",false)
-        clear_bit_map("bit_map_1",true,16,64)
+        clear_bit_map("bit_map_1",true,16,64-16)
         shift_bit_map_buffer("bit_map_1",0,64,-i)
-        Log_msg("shift bit map "..tostring(-i).." bit to the right")
+        Log_msg("shift bit map "..tostring(-i).." bit to the left")
         dump_bit_map_buffer("bit_map_1")
     end
 
@@ -127,6 +127,9 @@ bs_expression_3 = s_nor({p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16}
 s_expression_1 = s_and({true,true,true,true,true,true,true,true,true,true})
 s_expression_2 = s_or({false,false,false,false,false,false,false,false,false,true})
 s_expression_3 = s_nor({false,false,false,false,false,false,false,false,false,false})
+s_expression_4 = s_not({false,false,false,false,false,false,false,false,false,false})
+s_expression_5 = s_xor({true,true,true,true,true,true})
+s_expression_6 = s_xor({false,false,false,false,false,false})
 --dump_s_expression(s_expression_1)
 
 cs_expression_1 = s_and({s_expression_1,true,s_expression_2,false})
@@ -165,9 +168,24 @@ define_column("s_expression_bit_map",false,nil)
     s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_3)
     dump_bit_map_buffer("bit_map_1")
 
+    Log_msg("s expression 4")
+    clear_bit_map("bit_map_1",false)
+    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_4)
+    dump_bit_map_buffer("bit_map_1")
+    
+    Log_msg("s expression 5")
+    clear_bit_map("bit_map_1",false)
+    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_5)
+    dump_bit_map_buffer("bit_map_1")
+
+    Log_msg("s expression 6")
+    clear_bit_map("bit_map_1",false)
+    s_bit_expression("bit_map_1", 0,"bit_map_2",s_expression_6)
+    dump_bit_map_buffer("bit_map_1")
 
     Log_msg('terminating s expression bit map')
     terminate_column()
+   
 end_column()
 
 
@@ -195,7 +213,7 @@ define_column("complex_expression_bit_map",false,nil)
     Log_msg('terminating s expression bit map')
     terminate_column()
 end_column()
-
+ print("made it here")
 --- defining user one shot functions
 
 local my_then_one_shot_header = [[

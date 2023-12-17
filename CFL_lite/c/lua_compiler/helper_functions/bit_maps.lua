@@ -192,7 +192,7 @@ typedef struct clear_bit_map_CFL_t{
     uint16_t buffer_number;
     bool state;
     uint16_t start;
-    uint16_t ending;
+    uint16_t number;
 }clear_bit_map_CFL_t;
 
 void clear_bit_map_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
@@ -208,9 +208,9 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
     Bitmap_CFL* map = get_bitmap_control_CFL(handle,setup->buffer_number);
     bool state = setup->state;
 
-    for(unsigned i = setup->start; i< setup->ending;i++){
+    for(unsigned i = 0; i< setup->number ;i++){
     
-        bitmap_set_bit_CFL(map,i,state);
+        bitmap_set_bit_CFL(map,setup->start+i,state);
     }
 
 }
@@ -221,15 +221,15 @@ void clear_bit_map_CFL(const void *input,void *params,Event_data_CFL_t *event_da
 
 Store_one_shot_function("CLEAR_BIT_MAP","clear_bit_map_CFL",clear_bit_map_body,clear_bit_map_header)
 
-function clear_bit_map(buffer_name,state,start,ending)
+function clear_bit_map(buffer_name,state,start,number)
     
     local buffer_number = get_s_bit_buffer_number(buffer_name)
     if start == nil then
         start = 0
     end
    
-    if ending == nil then
-        ending = bit_map_definition[buffer_name].size
+    if number == nil then
+        number = bit_map_definition[buffer_name].size
     
     end
     if start > bit_map_definition[buffer_name].size then
@@ -237,14 +237,14 @@ function clear_bit_map(buffer_name,state,start,ending)
         error("ERROR: start must be less than buffer size")
         os.exit(1)
     end
-    if ending > bit_map_definition[buffer_name].size then
+    if start + number  > bit_map_definition[buffer_name].size then
         print("ERROR: ending must be less than buffer size",ending, bit_map_definition[buffer_name].size)
         error("ERROR:ending must be less than buffer size")
         os.exit(1)
     end
    
     local user_data = generate_unique_function_name()
-    local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s,%d,%d};\n",user_data,buffer_number,state,start,ending)
+    local message = string.format("static const clear_bit_map_CFL_t %s = {%d,%s,%d,%d};\n",user_data,buffer_number,state,start,number)
     Store_user_code(message)
     One_shot("CLEAR_BIT_MAP", user_data)
 end
@@ -815,6 +815,22 @@ end
 function s_nor(position_indexes)
     s_expression = {}
     table.insert( s_expression,"~~" )
+    expand_table_start(s_expression,position_indexes)
+    return s_expression
+
+end
+
+function s_xor(position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"^^" )
+    expand_table_start(s_expression,position_indexes)
+    return s_expression
+
+end
+
+function s_not(position_indexes)
+    s_expression = {}
+    table.insert( s_expression,"!!" )
     expand_table_start(s_expression,position_indexes)
     return s_expression
 

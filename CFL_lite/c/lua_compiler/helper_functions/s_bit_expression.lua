@@ -19,6 +19,8 @@ typedef struct s_bit_definition_CFL_t{
 local  S_BIT_VALUE_CFL =0
 local  S_BIT_BUFFER_POSITION_CFL =1
 local  S_BIT_OPERATOR_CFL = 2
+local  S_BIT_OPERATOR_XOR_CFL = 3
+local  S_BIT_OPERATOR_NOT_CFL = 4
 local  S_BIT_OPERATOR_END_CFL = 3
 
 
@@ -34,8 +36,8 @@ local operator_def = {}
 operator_def["&&"] = {S_BIT_AND_CFL}
 operator_def["||"] = {S_BIT_OR_CFL}
 operator_def["~~"] = {S_BIT_NOR_CFL}
-
-
+operator_def["^^"] = {S_BIT_OPERATOR_XOR_CFL}
+operator_def["!!"] = {S_BIT_OPERATOR_NOT_CFL}
 
 local encoded stream = {}
 local operator_number = 0
