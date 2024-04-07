@@ -12,11 +12,11 @@ typedef struct Floatmap_CFL_t{
 } Floatmap_CFL_t;
 
   
-void  floatmap_set_value_CFL(Floatmap_CFL_t* bmp, unsigned index, float value);
+void  floatmap_set_value_CFL(const void *input,Floatmap_CFL_t* bmp, unsigned index, float value);
 
-float floatmap_get_value_CFL(Floatmap_CFL_t* bmp, unsigned index);
+float floatmap_get_value_CFL(const void *input,Floatmap_CFL_t* bmp, unsigned index);
 
-void floatmap_set_all_CFL(Floatmap_CFL_t* bmp, float value);
+void floatmap_set_all_CFL(const void *input,Floatmap_CFL_t* bmp, float value);
 
 Floatmap_CFL_t* get_floatmap_control_CFL(const void *input, unsigned buffer_number);
 

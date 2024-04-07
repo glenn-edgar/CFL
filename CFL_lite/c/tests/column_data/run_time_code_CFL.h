@@ -6,10 +6,15 @@ extern "C" {
 #endif
 #include <stdbool.h>   
 #include "CFL_inner_engine.h"
+#include "CFL_useful_utilities.h"
 
 
 
 //----------Ref function header code ----
+
+#include "CFL_column_element_state_utilities.h"
+
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
 extern const int reset_buffer[1];
@@ -43,7 +48,11 @@ typedef struct While_control_ROM_t
 
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
-
+typedef struct Log_message_CFL_t{
+   const char *entry_message;
+   const bool  exit_flag;
+   const char *exit_message;
+}Log_message_CFL_t;
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data);
@@ -62,10 +71,6 @@ void store_column_data(const void *input, void *params,Event_data_CFL_t *event_d
 
 void null_function(const void *handle,
     void *params, Event_data_CFL_t *event_data);
-
-void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
-
-
 
      
 typedef struct While_time_control_ROM_t

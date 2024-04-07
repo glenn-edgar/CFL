@@ -6,17 +6,44 @@ extern "C" {
 #endif
 #include <stdbool.h>   
 #include "CFL_inner_engine.h"
+#include "CFL_useful_utilities.h"
 
 
 
 //----------Ref function header code ----
 
+#include "CFL_state_machine.h"
+#include "CFL_column_element_state_utilities.h"
+#include "CFL_state_machine.h"
 
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
+extern const int reset_buffer[1];
+extern const int halt_buffer[1];
+extern const int terminate_buffer[1];
+extern const int terminate_engine_buffer[1];
 
+int return_condition_code_CFL(const void *handle, void *aux_fn,
+    void *params, Event_data_CFL_t *event_data);
 
+    
 int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+
+
+typedef struct Process_rpc_CFL_t
+{
+    uint16_t *elasped_time;
+    uint16_t *state;
+    const uint16_t queue_id;
+    const uint16_t rpc_number;
+    const uint16_t *rpc_id_list;
+    const uint16_t column_id;
+    const uint16_t time_out_ms;
+    const bool  terminate_flag;
+    void *user_data;
+} Process_rpc_CFL_t;
+
+
+int process_rpc_event_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
 
@@ -38,82 +65,37 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-typedef struct rpc_server_event_processor_CFL_t
+typedef struct Trap_rpc_event_CFL_t
 {
-  void *user_data;
-  unsigned short rpc_request_number;
-  const unsigned short *rpc_request_list;
-} rpc_server_event_processor_CFL_t;
+    const uint16_t queue_id;
+
+} Trap_rpc_event_CFL_t;
+
+int trap_rpc_event_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
-int rpc_server_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-int rpc_client_event_processor_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
-
-
-typedef struct rpc_server_event_clean_up_CFL_t
+typedef struct Release_rpc_event_CFL_t
 {
-  void *user_data;
-  bool terminate_flag;
-} rpc_server_event_clean_up_CFL_t;
-
-int rpc_server_event_clean_up_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
+    bool  *release_state;
+    const uint16_t queue_id;
+} Release_rpc_event_CFL_t;        
 
 
+int release_rpc_request_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
-int rpc_client_event_generator_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
-
-
-extern const int reset_buffer[1];
-extern const int halt_buffer[1];
-extern const int terminate_buffer[1];
-extern const int terminate_engine_buffer[1];
-
-int return_condition_code_CFL(const void *handle, void *aux_fn,
+void null_function(const void *handle,
     void *params, Event_data_CFL_t *event_data);
-
-    
+typedef struct Log_message_CFL_t{
+   const char *entry_message;
+   const bool  exit_flag;
+   const char *exit_message;
+}Log_message_CFL_t;
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data);
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-
-
-int rpc_clean_up_one_shot(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-typedef struct Enable_column_CFL_t {
-    const bool    terminate_flag;
-    const unsigned short number_of_columns;
-    const unsigned short *column_list;
-} Enable_column_CFL_t;
-
-void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data);
-
-
-    void rpc_client_1_time_out(const void *input,void *user_data, Event_data_CFL_t *data);
-
-
-
-
-
-
-typedef struct While_event_control_ROM_t
-{
-   unsigned   number_of_events;
-   short     event_index;
-   int       time_out_ms;
-   bool      terminate_flag;
-   const void* user_data;
-   unsigned  *current_count;
-  
-} While_event_control_ROM_t;
-
-bool wait_event_handler(const void *handle, void *params,
-                               Event_data_CFL_t *event_data);
 
      
 typedef struct While_time_control_ROM_t
@@ -125,16 +107,6 @@ typedef struct While_time_control_ROM_t
 
 bool wait_time_delay_CFL(const void *input, void *params,
                             Event_data_CFL_t *event_data);
-    void rpc_client_1_generator(const void *input,void *user_data, Event_data_CFL_t *data);
-
-    void rpc_client_2_generator(const void *input,void *user_data, Event_data_CFL_t *data);
-
-    void rpc_client_3_generator(const void *input,void *user_data, Event_data_CFL_t *data);
-
-    void rpc_client_event_processor_1(const void *input,void *user_data, rpc_ram_message_CFL_t *data);
-
-    void   service_handler_1(const void *input,void *params, rpc_rom_message_CFL_t *data);
- void    service_handler_2(const void *input,void *user_data, rpc_rom_message_CFL_t *data);
    
 
 #ifdef __cplusplus

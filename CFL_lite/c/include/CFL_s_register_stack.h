@@ -35,19 +35,19 @@ typedef struct register_s_stack_control_CFL_t{
 register_s_stack_control_CFL_t *register_initialize_s_stack_CFL(const void *input,uint16_t p_stack_size,uint16_t op_stack_size);
 
 void register_free_s_stack_CFL(const void *input,register_s_stack_control_CFL_t*stack_control);
-void register_push_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_control, s_register_parameter_type_CFL_t *op);
+void register_push_parameter_stack_CFL(const void *input,register_s_stack_control_CFL_t *stack_control, s_register_parameter_type_CFL_t *op);
 
 s_register_parameter_type_CFL_t  *register_pop_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_control);
 
-s_register_parameter_type_CFL_t  *register_s_get_parameter_stack_CFL(register_s_stack_control_CFL_t *stack_control ,uint16_t stack_start);
+s_register_parameter_type_CFL_t  *register_s_get_parameter_stack_CFL(const void *input,register_s_stack_control_CFL_t *stack_control ,uint16_t stack_start);
 
 
-void register_release_parameter_stack_CFL(register_s_stack_control_CFL_t*stack_control, unsigned number_of_parameters);
+void register_release_parameter_stack_CFL(const void *input,register_s_stack_control_CFL_t*stack_control, unsigned number_of_parameters);
 
 
-void register_push_op_stack_CFL(register_s_stack_control_CFL_t *stack_control, s_register_operator_type_CFL_t *op);
+void register_push_op_stack_CFL(const void *input,register_s_stack_control_CFL_t *stack_control, s_register_operator_type_CFL_t *op);
 
-s_register_operator_type_CFL_t *register_pop_op_stack_CFL(register_s_stack_control_CFL_t *stack_control);
+s_register_operator_type_CFL_t *register_pop_op_stack_CFL(const void *input,register_s_stack_control_CFL_t *stack_control);
 
 s_register_operator_type_CFL_t *register_peak_op_stack_CFL(register_s_stack_control_CFL_t *stack_control);
 uint16_t register_op_stack_size_CFL(register_s_stack_control_CFL_t *stack_control);

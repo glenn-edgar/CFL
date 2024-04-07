@@ -4,38 +4,46 @@
 
 #include "run_time_code_CFL.h"
 
+int case_change_test(const void *input, void* params, Event_data_CFL_t* event_data, bool *continue_flag)
+{
 
-int SM_debug_CFL(const void *input, void *fn_aux,void *params,Event_data_CFL_t *event_data){
-   (void)fn_aux;
-   (void)input;
-   SM_debug_CFL_t *sm_debug = (SM_debug_CFL_t *)params;
-   if(event_data->event_index < 0){
-    return CONTINUE_CFL;
-   }
-   Printf_CFL("State machine %d state %d event index %d %s\n",sm_debug->sm_id,sm_debug->state_id,event_data->event_index,sm_debug->debug_message);
-   return CONTINUE_CFL;
-
-}
-
-
-
-int state_change_CFL(const void *input, void *fn_aux, void *params, Event_data_CFL_t *event_data){
-    (void)fn_aux;
-    const state_change_CFL_t *state_change = (const state_change_CFL_t *)params;
-   if(event_data->event_index < 0){
-       return CONTINUE_CFL;
-   }
-   for(unsigned i = 0 ;i< state_change->event_number;i++){
+  
+    Case_change_test_data_t *case_change_data = (Case_change_test_data_t *)params;
+    *continue_flag = true;
+    int event_id = event_data->event_index;
+    switch(event_id)
+    {
+        case 101:
+            return 0;
+            *continue_flag = false;
+            break;
+        case 102:
+            return 1;
+            *continue_flag = false;
+            break;
+        case 103:
+            return 2;
+            *continue_flag = false;
+            break;
+        case 104:
+            return 3;
+            *continue_flag = false;
+            break;
       
-       if(event_data->event_index == state_change->event_indexes[i]){
-           
-           change_state_machine_CFL(input,state_change->sm_id,state_change->new_state_id);
-           return HALT_CFL;
-       }
-   }
-   return CONTINUE_CFL;
-}
-   
+        case 114:
+            Printf_CFL(input,case_change_data->debug_message);
+            Printf_CFL(input," .............. event 114 processed here \n");
+            *continue_flag = false;
+            return -1;
+            break;
+        default:
+            return -1;
+            break;
+        }
+        return -1;
+    }
+
+
 
   static inline int generate_return_code_while(bool termination_flag)
   {
@@ -88,33 +96,6 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 
 
 
-int sync_events_CFL(const void *input,void *aux_fn,void *params,Event_data_CFL_t *event_data){
-    (void)aux_fn;
-    Handle_CFL_t *handle = (Handle_CFL_t *)input;
-    sync_events_t *syn_events = (sync_events_t *)params;
-    
-    if(event_data->event_index == EVENT_INIT_CFL){
-        unsigned short sm_queue_id = handle->sm_rom[syn_events->sm_id].sm_queue_id;
-       
-        Event_data_CFL_t   sync_event_data = {syn_events->sync_event_index,false,NULL};
-        enqueue_event_CFL(input,sm_queue_id,&sync_event_data);
-        return CONTINUE_CFL;
-    }
-    if(event_data->event_index == EVENT_TERMINATION_CFL){
-        return CONTINUE_CFL;
-    }
-    if(event_data->event_index >0)
-    {
-       
-        if(event_data->event_index == syn_events->sync_event_index){
-            return DISABLE_CFL;
-        }
-    }
-
-    return HALT_CFL;
-}
-
-
 
 int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
                             Event_data_CFL_t *event_data)
@@ -129,112 +110,6 @@ int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
   }
   return DISABLE_CFL;
 }
-
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-
-  return CONTINUE_CFL;
-}
-
-
-
-int redirect_event_CFL(const void *input,void *fn_aux,void *params, Event_data_CFL_t *event_data){
-    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-    Bool_function_CFL_t boolean_fn = (Bool_function_CFL_t )fn_aux;
-    const redirect_CFL_t *redirect = (const redirect_CFL_t *)params;
-    unsigned short sm_id = redirect->sm_id;
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        boolean_fn(input, redirect->user_data, event_data);
-        return CONTINUE_CFL;
-    }
-    if (event_data->event_index == EVENT_TERMINATION_CFL)
-    {
-        boolean_fn(input,redirect->user_data, event_data);
-        return CONTINUE_CFL;
-    }
-    if(event_data->event_index <0)
-    {
-        return CONTINUE_CFL;
-    }
-    if(boolean_fn(input,redirect->user_data,event_data) == true){
-        Sm_control_RAM_CFL_t sm_ram = handle->sm_ram[sm_id];
-        Sm_control_ROM_CFL_t sm_rom = handle->sm_rom[sm_id];
-        if(sm_ram.active == false){
-            return CONTINUE_CFL;
-        }
-        unsigned short sm_queue_id = sm_rom.queue_ids[sm_ram.current_state];
-        enqueue_event_CFL(input,sm_queue_id,event_data);
-        return CONTINUE_CFL;
-    }
-
-    return CONTINUE_CFL;
-}
-
-int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-    (void)aux_fn;
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-    if (event_data->event_index == EVENT_TERMINATION_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-    unsigned short *new_state = (unsigned short *)params;
-       
-    change_local_column_state_CFL(input, *new_state);
-    return DISABLE_CFL;
- }
-
-  
-  
-  
-  int conditional_state_change_CFL(const void *input,void *fn_aux,void *params, Event_data_CFL_t *event_data){
-      const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-      Bool_function_CFL_t boolean_fn = (Bool_function_CFL_t )fn_aux;
-      const conditional_state_change_CFL_t *state_change = (const conditional_state_change_CFL_t *)params;
-      
-      if (event_data->event_index == EVENT_INIT_CFL)
-      {
-          boolean_fn(input,state_change->user_data, event_data);
-          return CONTINUE_CFL;
-      }
-      if (event_data->event_index == EVENT_TERMINATION_CFL)
-      {
-          boolean_fn(input,state_change->user_data, event_data);
-          return CONTINUE_CFL;
-      }
-      if(event_data->event_index <0)
-      {
-          return CONTINUE_CFL;
-      }
-      unsigned short sm_id = state_change->sm_id;
-      if(boolean_fn(input,state_change->user_data,event_data) == true){
-          Sm_control_RAM_CFL_t sm_ram = handle->sm_ram[sm_id];
-          
-          if(sm_ram.active == false){
-              return CONTINUE_CFL;
-          }
-          change_state_machine_CFL(input,state_change->sm_id,state_change->new_state_id);
-
-          return HALT_CFL;
-      }
-  
-      return CONTINUE_CFL;
-  }
 
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
@@ -259,11 +134,267 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
 }
 
 
-void change_sm_state_CFL(const void *input, void *params, Event_data_CFL_t *event_data)
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
+}
+
+int SM_case_change_CFL(const void *input, void *fn_aux,void *params,Event_data_CFL_t *event_data){
+
+   State_function_CFL_t case_change = (State_function_CFL_t)fn_aux;
+   SM_case_change_CFL_t *sm_case_change = (SM_case_change_CFL_t *)params;
+   if(event_data->event_index < 0){
+    return CONTINUE_CFL;
+   }
+    bool continue_flag = false;
+   int new_state = case_change(input,(void *)sm_case_change->user_data,event_data,&continue_flag);
+   if(new_state >= 0 ){
+       change_state_machine_CFL(input,sm_case_change->sm_id,new_state);
+       return HALT_CFL;
+   }
+   if(continue_flag == true){
+       return CONTINUE_CFL;
+   }
+   return HALT_CFL;
+
+}
+
+
+int state_change_CFL(const void *input, void *fn_aux, void *params, Event_data_CFL_t *event_data){
+    (void)fn_aux;
+    const state_change_CFL_t *state_change = (const state_change_CFL_t *)params;
+   if(event_data->event_index < 0){
+       return CONTINUE_CFL;
+   }
+   for(unsigned i = 0 ;i< state_change->event_number;i++){
+      
+       if(event_data->event_index == state_change->event_indexes[i]){
+           
+           change_state_machine_CFL(input,state_change->sm_id,state_change->new_state_id);
+           return HALT_CFL;
+       }
+   }
+   return CONTINUE_CFL;
+}
+   
+
+
+int sm_sync_events_CFL(const void *input,void *aux_fn,void *params,Event_data_CFL_t *event_data){
+    (void)aux_fn;
+   
+    sm_sync_events_t *sync_events = (sm_sync_events_t *)params;
+    
+    if(event_data->event_index == EVENT_INIT_CFL){
+        
+       
+        Event_data_CFL_t   sync_event_data = {sync_events->sync_event_index,false,NULL};
+        enqueue_event_CFL(input,sync_events->sm_queue_id,&sync_event_data);
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index >0)
+    {
+       
+        if(event_data->event_index == sync_events->sync_event_index){
+            return HALT_AND_DISABLE_CFL;
+        }
+    }
+
+    return HALT_CFL;
+}
+
+
+int SM_debug_CFL(const void *input, void *fn_aux,void *params,Event_data_CFL_t *event_data){
+   (void)fn_aux;
+   (void)input;
+   SM_debug_CFL_t *sm_debug = (SM_debug_CFL_t *)params;
+   if(event_data->event_index < 0){
+    return CONTINUE_CFL;
+   }
+
+
+
+   Printf_CFL(input,"State machine %d state %d event index %d %s\n",sm_debug->sm_id,sm_debug->state_id,event_data->event_index,sm_debug->debug_message);
+   return CONTINUE_CFL;
+
+}
+
+
+
+int sm_feed_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data){
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    const SM_feed_state_CFL_t *sm_feed_state_struct = (const SM_feed_state_CFL_t *)params;
+
+    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+
+    Sm_control_ROM_CFL_t *sm_rom_array = (Sm_control_ROM_CFL_t *)handle->sm_rom;
+    Sm_control_RAM_CFL_t *sm_ram_array = (Sm_control_RAM_CFL_t *)handle->sm_ram;
+    Sm_control_ROM_CFL_t *sm_rom = &sm_rom_array[sm_feed_state_struct->sm_id];
+    Sm_control_RAM_CFL_t *sm_ram = &sm_ram_array[sm_feed_state_struct->sm_id];
+    if(event_data->event_index == EVENT_INIT_CFL){
+        fn(input,(void *)sm_feed_state_struct->user_data,event_data);
+        return CONTINUE_CFL;
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL){
+        fn(input,(void *)sm_feed_state_struct->user_data,event_data);
+        return CONTINUE_CFL;
+    }
+
+    if(event_data->event_index < 0){
+        return CONTINUE_CFL;
+    }
+    if(sm_ram->active == false)
+    {
+       return CONTINUE_CFL;
+    }
+    bool result = fn(input,(void *)sm_feed_state_struct->user_data,event_data);
+    if( result == true){
+        chain_single_sweep_CFL( input, sm_rom->column_ids[sm_ram->current_state], event_data);
+        return HALT_CFL;
+    }
+    return CONTINUE_CFL;
+        
+}
+
+
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+
+ 
+  Log_message_CFL_t *log_message = (Log_message_CFL_t *)params;
+  
+  unsigned column_index;
+  int column_element_number;
+
+  if(event_data->event_index == EVENT_INIT_CFL){
+      column_index = get_current_column_index_CFL(input);
+      column_element_number = get_current_column_element_index_CFL(input);
+      Printf_CFL(input,"Log !!!! entering column index %d column element %d  ---> msg: %s\n",
+              column_index, column_element_number, log_message->entry_message);
+      return;
+  }
+  if(event_data->event_index == EVENT_TERMINATION_CFL){
+      if(log_message->exit_flag == true){
+        column_index = get_current_column_index_CFL(input);
+        column_element_number = get_current_column_element_index_CFL(input);
+        Printf_CFL(input,"Log !!!! Termination msg: %s\n",log_message->exit_message);
+      }
+      return;
+  }
+}
+
+
+void Asm_change_state_machine_CFL(const void *input, void *params, Event_data_CFL_t *event_data)
 {
     (void)event_data;
-    change_sm_state_CFL_t *change_sm_state = (change_sm_state_CFL_t *)params;
-    change_state_machine_CFL(input,change_sm_state->sm_id,change_sm_state->new_state);
+    ASM_change_state_machine_CFL_t *change_state_machine = (ASM_change_state_machine_CFL_t  *)params;
+    change_state_machine_CFL(input,change_state_machine->sm_index,change_state_machine->state_index);
+
+}
+
+void enable_sm_CFL(const void *input, void *params, Event_data_CFL_t *event_data)
+{
+    (void)event_data;
+    enable_sm_CFL_t *enable_sm = (enable_sm_CFL_t *)params;
+    for(unsigned i = 0; i< enable_sm->sm_number; i++)
+    {
+        enable_state_machine_CFL(input,enable_sm->sm_indexes[i]);
+    }
+    
+}
+
+void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
+    
+    Enable_column_CFL_t *enable_column = (Enable_column_CFL_t *)params;
+    if(event_data->event_index == EVENT_INIT_CFL )
+    {
+       
+        for(unsigned i=0;i<enable_column->number_of_columns;i++){
+            if(get_current_column_index_CFL(input) != enable_column->column_list[i]){
+               enable_column_CFL(input,enable_column->column_list[i]);
+            }
+        }
+        
+        
+    }
+    if(event_data->event_index == EVENT_TERMINATION_CFL ){
+        if(enable_column->terminate_flag==true){
+           for(unsigned i=0;i<enable_column->number_of_columns;i++){
+              disable_column_CFL(input,enable_column->column_list[i]);
+           }
+        }
+    }
+        
+
+
+}
+
+
+
+
+void SM_log_function_CFL(const void *input, void *params, Event_data_CFL_t *event) {
+  (void)event;
+ 
+  SM_log_CFL_t *sm_data = (SM_log_CFL_t *)params;
+  if(event->event_index == EVENT_INIT_CFL){
+   
+    Printf_CFL(input, "-------------------- State Machine %d  current state %d .." ,sm_data->sm_id,sm_data->state_id);
+    Printf_CFL(input,"%s\n" ,sm_data->entry_message);
+    return;
+  }
+  if(event->event_index == EVENT_TERMINATION_CFL){
+   
+    Printf_CFL(input, "------------------------ State Machine %d  current state %d  ..",sm_data->sm_id,sm_data->state_id);
+    Printf_CFL(input,"%s\n",sm_data->exit_message);
+    return;
+  }
+
+}
+
+    
+void send_event_to_sm(const void *input, void *params, Event_data_CFL_t *event_data)
+{
+    (void)event_data;
+    sm_event_CFL_t *sm_event = (sm_event_CFL_t *)params;
+    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+    Sm_control_ROM_CFL_t *sm_rom_array = (Sm_control_ROM_CFL_t *)handle->sm_rom;
+    Sm_control_RAM_CFL_t *sm_ram_array = (Sm_control_RAM_CFL_t *)handle->sm_ram;
+    Sm_control_ROM_CFL_t *sm_rom = &sm_rom_array[sm_event->sm_id];
+    Sm_control_RAM_CFL_t *sm_ram = &sm_ram_array[sm_event->sm_id];
+    if(sm_ram->active == false)
+    { 
+        return; // sm is not active
+    }
+    unsigned short sm_queue_id = sm_rom->manager_column_id +1;
+    Event_data_CFL_t *event_data_to_send = ( Event_data_CFL_t *)sm_event->event_data;
+  
+    enqueue_event_CFL(input,sm_queue_id, event_data_to_send);
+  
+}
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
 }
     
 void enable_disable_sm_CFL(const void *input, void *params, Event_data_CFL_t *event_data)
@@ -283,104 +414,30 @@ void enable_disable_sm_CFL(const void *input, void *params, Event_data_CFL_t *ev
         }
     }
 }
-    
-void send_event_to_sm(const void *input, void *params, Event_data_CFL_t *event_data)
+
+void disable_sm_CFL(const void *input, void *params, Event_data_CFL_t *event_data)
 {
     (void)event_data;
-    sm_event_CFL_t *sm_event = (sm_event_CFL_t *)params;
-    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-    Sm_control_ROM_CFL_t sm_rom = handle->sm_rom[sm_event->sm_id];
-    unsigned short sm_queue_id = sm_rom.sm_queue_id;
-    Event_data_CFL_t *event_data_to_send = ( Event_data_CFL_t *)sm_event->event_data;
-   
-    enqueue_event_CFL(input,sm_queue_id, event_data_to_send);
-}
-
-void enable_columns_function_CFL(const void *input, void *params, Event_data_CFL_t *event_data){
-    
-    Enable_column_CFL_t *enable_column = (Enable_column_CFL_t *)params;
-    if(event_data->event_index == EVENT_INIT_CFL )
+    enable_sm_CFL_t *enable_sm = (enable_sm_CFL_t *)params;
+    for(unsigned i = 0; i< enable_sm->sm_number; i++)
     {
-       
-        for(unsigned i=0;i<enable_column->number_of_columns;i++){
-          
-            enable_column_CFL(input,enable_column->column_list[i]);
-        }
-        
-        
+        disable_state_machine_CFL(input,enable_sm->sm_indexes[i]);
     }
-    if(event_data->event_index == EVENT_TERMINATION_CFL ){
-        if(enable_column->terminate_flag==true){
-           for(unsigned i=0;i<enable_column->number_of_columns;i++){
-              disable_column_CFL(input,enable_column->column_list[i]);
-           }
-        }
-    }
-        
-
-
+    
 }
 
-
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data)
+bool feed_events_test_a(const void *input, void* params, Event_data_CFL_t* event_data)
 {
 
-  (void)event_data;
-
- 
-  char **message;
-  
-  unsigned column_index;
-  int column_element_number;
-  message = (char **)params;
-
-  column_index = get_current_column_index_CFL(input);
-  column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
-              column_index, column_element_number, *message);
-}
-
-
-bool conditional_state_change(const void *input, void *params, Event_data_CFL_t *event_data){
     (void)input;
-    condition_state_change_t *condition_state_change = (condition_state_change_t *)params;
-    if(event_data->event_index == EVENT_INIT_CFL){
-        *condition_state_change->trigger_count = 0;
-        return false;
-    }
-    if(event_data->event_index == EVENT_TERMINATION_CFL){
-        return false;
-
-    }
-    if(event_data->event_index == condition_state_change->trigger_event){
-        *condition_state_change->trigger_count = *condition_state_change->trigger_count + 1;
-        if(*condition_state_change->trigger_count >= condition_state_change->trigger_count_limit){
-            return true;
-        }
-    }
-    return false;
-
+    (void)event_data;
+    (void)params;
+    //Feed_events_test_data_a_t *feed_events_test_data = (Feed_events_test_data_a_t *)params;
+  
+    
+    return true;
 }
 
-
-bool true_constant_handler(void *handle, void *params,
-                                  Event_data_CFL_t *event_data)
-{
-  (void)handle;
-  (void)params;
-  (void)event_data;
-  return true;
-}
  
 
 
@@ -409,3 +466,24 @@ bool wait_time_delay_CFL(const void *input, void *params,
 
   return false;
 }
+
+bool feed_events_test(const void *input, void* params, Event_data_CFL_t* event_data)
+{
+
+  
+    Feed_events_test_data_t *feed_events_test_data = (Feed_events_test_data_t *)params;
+    int event_id = event_data->event_index;
+    switch(event_id)
+    {
+        
+        case 114:
+               Printf_CFL(input,feed_events_test_data->debug_message);
+               Printf_CFL(input," .............. event 114 processed here \n");
+               return false;
+            break;
+        default:
+            return true;
+    }
+    return true;
+}
+

@@ -27,17 +27,17 @@ typedef struct s_stack_control_CFL_t{
 s_stack_control_CFL_t *bit_initialize_s_stack_CFL(const void *input,uint16_t p_stack_size,uint16_t op_stack_size);
 
 void bit_free_s_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control);
-void bit_push_parameter_stack_CFL(s_stack_control_CFL_t *stack_control, s_parameter_type_CFL_t op);
+void bit_push_parameter_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control, s_parameter_type_CFL_t op);
 
-s_parameter_type_CFL_t  bit_pop_parameter_stack_CFL(s_stack_control_CFL_t *stack_control);
+s_parameter_type_CFL_t  bit_pop_parameter_stack_CFL(const void *input, s_stack_control_CFL_t *stack_control);
 
-s_parameter_type_CFL_t  * s_bit_get_parameter_stack_CFL(s_stack_control_CFL_t *stack_control ,uint16_t stack_start);
-void bit_release_parameter_stack_CFL(s_stack_control_CFL_t *stack_control, unsigned number_of_parameters);
+s_parameter_type_CFL_t  * s_bit_get_parameter_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control ,uint16_t stack_start);
+void bit_release_parameter_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control, unsigned number_of_parameters);
 
 
-void bit_push_op_stack_CFL(s_stack_control_CFL_t *stack_control, s_operator_type_CFL_t op);
+void bit_push_op_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control, s_operator_type_CFL_t op);
 
-s_operator_type_CFL_t  bit_pop_op_stack_CFL(s_stack_control_CFL_t *stack_control);
+s_operator_type_CFL_t  bit_pop_op_stack_CFL(const void *input,s_stack_control_CFL_t *stack_control);
 
 s_operator_type_CFL_t *bit_peak_op_stack_CFL(s_stack_control_CFL_t *stack_control);
 uint16_t bit_op_stack_size_CFL(s_stack_control_CFL_t *stack_control);

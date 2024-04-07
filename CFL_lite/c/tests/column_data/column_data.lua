@@ -4,21 +4,44 @@ local entry_point = "column_data_handle"
 
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
-local default_event_queue_size = 10 
-start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
+local default_event_queue_size = 0
+local global_event_queue_size = 7
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,global_event_queue_size,'debug_write')  
 
-local column_data = 'char column_test_data[] ="this is the column data test";'
-Store_user_code(column_data)
+
+local column_data_1 = 'char column_test_data_1[] ="this is the column data 1 test";'
+Store_user_code(column_data_1)
+
+
+local column_data_2 = 'char column_test_data_2[] ="this is the column data 2 test";'
+Store_user_code(column_data_2)
 
 Store_user_code([[
-  static void get_column_local_data(void *input,void *param,Event_data_CFL_t *event_data){
+  static void get_current_column_data(void *input,void *param,Event_data_CFL_t *event_data){
     (void) param;
     (void) event_data;
     unsigned short column_index = get_current_column_index_CFL(input); 
-    Printf_CFL("column index %d \n",column_index);
-    char *column_data = (char *)retrieve_local_column_data(input);
+    Printf_CFL(input,"column index %d \n",column_index);
+    char *column_data = (char *)retrieve_current_column_data_CFL(input);
     
-    Printf_CFL("user data for column_data_test %s \n",column_data);
+    Printf_CFL(input,"user data for column_data_test %s \n",column_data);
+
+
+  }
+
+
+
+]])
+
+Store_user_code([[
+  static void get_column_data(void *input,void *param,Event_data_CFL_t *event_data){
+    (void) param;
+    (void) event_data;
+    unsigned short column_index = get_current_column_index_CFL(input); 
+    Printf_CFL(input,"column index %d \n",column_index);
+    char *column_data = (char *)retreive_column_data_CFL(input,column_index);
+    
+    Printf_CFL(input,"user data for column_data_test %s \n",column_data);
 
 
   }
@@ -28,32 +51,32 @@ Store_user_code([[
 ]])
 
 
-
-local column_list = {"send","receive_1","receive_2"}
+local column_list = {"store","receive_1","receive_2"}
 define_columns(column_list)
 
-define_column("send",true)
-  Log_msg('starting send')
- 
-  Wait_delay(1000)
-  Store_column_data({"receive_1",'receive_2'},'column_test_data')
-  Log_msg('ending send_column_data')
+define_column("store",true)
+  Log_msg('starting store')
+
+  Store_column_data({"receive_1",},'column_test_data_1')
+  Store_column_data({'receive_2'},'column_test_data_2')
+  Log_msg('ending store column data')
   terminate_column()
 end_column()
 
 
 define_column("receive_1",true)
   Log_msg('receive_1')
-  Wait_delay(2000)
-  One_shot_raw('get_column_local_data','NULL')
+  Wait_delay(1000)
+  One_shot_raw('get_current_column_data','NULL')
   Log_msg('ending receive_1')
   terminate_column()
 end_column()
 
 define_column("receive_2",true)
   Log_msg('starting column_receive_2')
-  Wait_delay(2000)
-  One_shot_raw('get_column_local_data','NULL')
+  Wait_delay(1000)
+  One_shot_raw('get_column_data','NULL')
+  Log_msg('ending receive_2')
   terminate_column()
 end_column()
 

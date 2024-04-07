@@ -5,6 +5,23 @@
 #include "run_time_code_CFL.h"
 
 
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
+}
+
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
 const int terminate_buffer[1] = { TERMINATE_CFL };
@@ -100,16 +117,26 @@ void log_message_CFL(const void *input, void *params,
   (void)event_data;
 
  
-  char **message;
+  Log_message_CFL_t *log_message = (Log_message_CFL_t *)params;
   
   unsigned column_index;
   int column_element_number;
-  message = (char **)params;
 
-  column_index = get_current_column_index_CFL(input);
-  column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
-              column_index, column_element_number, *message);
+  if(event_data->event_index == EVENT_INIT_CFL){
+      column_index = get_current_column_index_CFL(input);
+      column_element_number = get_current_column_element_index_CFL(input);
+      Printf_CFL(input,"Log !!!! entering column index %d column element %d  ---> msg: %s\n",
+              column_index, column_element_number, log_message->entry_message);
+      return;
+  }
+  if(event_data->event_index == EVENT_TERMINATION_CFL){
+      if(log_message->exit_flag == true){
+        column_index = get_current_column_index_CFL(input);
+        column_element_number = get_current_column_element_index_CFL(input);
+        Printf_CFL(input,"Log !!!! Termination msg: %s\n",log_message->exit_message);
+      }
+      return;
+  }
 }
 
 
@@ -121,7 +148,8 @@ void store_column_data(const void *input,void *params,Event_data_CFL_t *event_da
   for(unsigned i= 0; i< column_data->number_of_columns; i++)
   {
    
-    store_local_column_data(input,column_data->column_id[i],(void *)column_data->user_data);
+  
+    store_column_data_CFL(input,column_data->column_id[i],(void *)column_data->user_data);
   }
 
 }
@@ -133,16 +161,6 @@ void null_function(const void *handle,
     (void)event_data;
     return;
 }
-
-void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-  Event_data_CFL_t *event_data_to_send = (Event_data_CFL_t *)params;
-  enqueue_event_CFL(input,0,event_data_to_send); 
-
-}
-
  
 
 

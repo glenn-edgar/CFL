@@ -4,8 +4,9 @@ local entry_point = "tod_handle"
 
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
-local default_event_queue_size = 10 
-start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')  
+local default_event_queue_size = 0
+local global_event_queue_size = 7
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,global_event_queue_size,'debug_write')  
 
 Store_user_code([[
 
@@ -28,8 +29,9 @@ void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata
    (void)input;
    (void)eventdata;
    Wait_tod_ROM_CFL_t *wait_tod = (Wait_tod_ROM_CFL_t *)params;
-   Printf_CFL("terminate flag %d \n",wait_tod->terminate_flag);
-   Printf_CFL(" %s \n",(const char *)wait_tod->user_data);
+
+   Printf_CFL(input,"terminate flag %d \n",(int)(wait_tod->terminate_flag));
+   Printf_CFL(input," %s \n",(const char *)wait_tod->user_data);
 }
 ]]
 
@@ -53,17 +55,12 @@ add_second(gt_50,50)
 
 
 
-local column_list = {"engine_time_out","test_wait_tod_second","test_verify_tod_second"}
+local column_list = {"test_wait_tod_second","test_verify_tod_second"}
 define_columns(column_list)
 
-define_column("engine_time_out",true,nill)
-  Wait_delay(180000)
-  terminate_engine()
-end_column()
-  
 
 
-define_column("test_wait_tod_second",true,nil)
+define_column("test_wait_tod_second",true,0)
    Log_msg("wait less than 10 seconds")
    Wait_tod_lt(lt_10)
    Log_msg("wait passed less than 10 seconds")
@@ -101,7 +98,7 @@ local le_49 = generate_tod_dictionary()
 add_second(le_49,49)
 
 
-define_column("test_verify_tod_second",true,nil)
+define_column("test_verify_tod_second",true,0)
    Log_msg("verify tod column start")
  
    
@@ -111,11 +108,11 @@ define_column("test_verify_tod_second",true,nil)
    Wait_tod_ge(ge_17)
    Log_msg("made it past 17 seconds")
   
-   Verify_tod_lt(true,"TOD_VERIFY_RESET",'failure_verify_50',lt_50)
-   Verify_tod_le(true,"TOD_VERIFY_RESET",'failure_verify_49',le_49)
+   Verify_tod_lt(false,"TOD_VERIFY_RESET",'failure_verify_50',lt_50)
+   Verify_tod_le(false,"TOD_VERIFY_RESET",'failure_verify_49',le_49)
 
    -- this verification fails with a reset
-   Verify_tod_ge(false,"TOD_VERIFY_RESET",'failure_verify_28',ge_28)
+   Verify_tod_ge(true,"TOD_VERIFY_RESET",'failure_verify_28',ge_28)
   halt_column()
    
 end_column()

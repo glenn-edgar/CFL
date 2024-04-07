@@ -37,17 +37,17 @@ typedef struct s_float_stack_control_CFL_t{
 s_float_stack_control_CFL_t *float_initialize_s_stack_CFL(const void *input,uint16_t p_stack_size,uint16_t op_stack_size);
 
 void float_free_s_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control);
-void float_push_parameter_stack_CFL(s_float_stack_control_CFL_t *stack_control, s_float_parameter_type_CFL_t *op);
+void float_push_parameter_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control, s_float_parameter_type_CFL_t *op);
 
-s_float_parameter_type_CFL_t  *float_pop_parameter_stack_CFL(s_float_stack_control_CFL_t *stack_control);
+s_float_parameter_type_CFL_t  *float_pop_parameter_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control);
 
-s_float_parameter_type_CFL_t  * float_s_get_parameter_stack_CFL(s_float_stack_control_CFL_t *stack_control ,uint16_t stack_start);
-void float_release_parameter_stack_CFL(s_float_stack_control_CFL_t *stack_control, unsigned number_of_parameters);
+s_float_parameter_type_CFL_t  * float_s_get_parameter_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control ,uint16_t stack_start);
+void float_release_parameter_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control, unsigned number_of_parameters);
 
 
-void float_push_op_stack_CFL(s_float_stack_control_CFL_t *stack_control, s_float_operator_type_CFL_t *op);
+void float_push_op_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control, s_float_operator_type_CFL_t *op);
 
-s_float_operator_type_CFL_t  *float_pop_op_stack_CFL(s_float_stack_control_CFL_t *stack_control);
+s_float_operator_type_CFL_t  *float_pop_op_stack_CFL(const void *input,s_float_stack_control_CFL_t *stack_control);
 
 s_float_operator_type_CFL_t *float_peak_op_stack_CFL(s_float_stack_control_CFL_t *stack_control);
 uint16_t float_op_stack_size_CFL(s_float_stack_control_CFL_t *stack_control);

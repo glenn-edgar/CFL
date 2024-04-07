@@ -49,7 +49,7 @@ void initialize_privateHeap_CFL(CS_MEMORY_CONTROL *memoryControl, int heapSize,
   memoryControl->lastErrorCodeString = cs_heap_error_string[CS_OK];
 }
 
-void reset_privateHeap_CFL(CS_MEMORY_CONTROL *memoryControl)
+void reset_privateHeap_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl)
 {
 
   if (verifyControlBlock_CFL(memoryControl) == CS_HEAP_TRUE)
@@ -68,35 +68,35 @@ void reset_privateHeap_CFL(CS_MEMORY_CONTROL *memoryControl)
   }
   else
   {
-    ASSERT_PRINT(__func__, "bad memory control block");
+    ASSERT_PRINT(input,__func__, "bad memory control block");
   }
 }
 
-void *malloc_CFL(CS_MEMORY_CONTROL *memoryControl, unsigned bytes)
+void *malloc_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl, unsigned bytes)
 {
   void *returnValue;
   if (bytes == 0)
   {
-    ASSERT_PRINT(__func__, "cannot allocate 0 bytes");
+    ASSERT_PRINT(input,__func__, "cannot allocate 0 bytes");
   }
   if (verifyControlBlock_CFL(memoryControl) == CS_HEAP_TRUE)
   {
     returnValue = cs_malloc_allocate_a(memoryControl, bytes);
     if (returnValue == NULL)
     {
-      ASSERT_PRINT(__func__, "out of memory");
+      ASSERT_PRINT(input,__func__, "out of memory");
     }
   }
   else
   {
-    ASSERT_PRINT(__func__, "bad memory control block");
+    ASSERT_PRINT(input,__func__, "bad memory control block");
     returnValue = NULL;
   }
 
   return returnValue;
 }
 
-void *realloc_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr,
+void *realloc_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl, void *ptr,
                   unsigned newSize)
 {
 
@@ -105,12 +105,12 @@ void *realloc_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr,
 
   if (newSize == 0)
   {
-    ASSERT_PRINT(__func__, "cannot allocate 0 bytes");
+    ASSERT_PRINT(input,__func__, "cannot allocate 0 bytes");
   }
   returnValue = NULL;
   if (ptr == NULL)
   {
-    returnValue = malloc_CFL(memoryControl, newSize);
+    returnValue = malloc_CFL(input,memoryControl, newSize);
 
     memset(returnValue, 0, newSize);
     goto done;
@@ -118,16 +118,16 @@ void *realloc_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr,
 
   
 
-  if (verifyMemBlock_CFL(ptr) != CS_HEAP_TRUE)
+  if (verifyMemBlock_CFL(input, ptr) != CS_HEAP_TRUE)
   {
 
-    ASSERT_PRINT(__func__, "bad memory  block");
+    ASSERT_PRINT(input,__func__, "bad memory  block");
   }
 
-  if (verifyControlBlock_CFL(memoryControl) != CS_HEAP_TRUE)
+  if (verifyControlBlock_CFL( memoryControl) != CS_HEAP_TRUE)
   {
 
-    ASSERT_PRINT(__func__, "bad memory control block");
+    ASSERT_PRINT(input,__func__, "bad memory control block");
   }
 
   returnValue = cs_malloc_realloc_a(memoryControl, ptr, newSize);
@@ -136,7 +136,7 @@ done:
   return returnValue;
 }
 
-void free_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr)
+void free_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl, void *ptr)
 {
   // CS_MEM_BLOCK *p;
 
@@ -147,21 +147,21 @@ void free_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr)
 
   
 
-  if (verifyMemBlock_CFL(ptr) != CS_HEAP_TRUE)
+  if (verifyMemBlock_CFL(input,ptr) != CS_HEAP_TRUE)
   {
 
-    ASSERT_PRINT(__func__, "bad memory block");
+    ASSERT_PRINT(input,__func__, "bad memory block");
   }
 
   if (verifyControlBlock_CFL(memoryControl) != CS_HEAP_TRUE)
   {
 
-    ASSERT_PRINT(__func__, "bad memory control block");
+    ASSERT_PRINT(input,__func__, "bad memory control block");
   }
 
   if (memoryControl == NULL)
   {
-    ASSERT_PRINT(__func__, "bad memory control block");
+    ASSERT_PRINT(input,__func__, "bad memory control block");
   }
 
   cs_free_a(memoryControl, ptr);
@@ -169,22 +169,23 @@ void free_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr)
   ; // end function
 }
 
-CS_HEAP_BOOLEAN verifyMemBlock_CFL(void *data)
+CS_HEAP_BOOLEAN verifyMemBlock_CFL(const void *input,void *data)
 {
-  
+  #ifndef CS_MEM_PROTECTION
+   (void) input;
+  #endif
    CS_MEM_BLOCK *p = (CS_MEM_BLOCK *)data;
    p--;
 #ifdef CS_MEM_PROTECTION
       if(p->validTag != CS_MEM_BLOCK_VALID){
-        ASSERT_PRINT_F("bad memory initial block %p", data);
+        ASSERT_PRINT_F(input,"bad memory initial block %p", data);
       }
       CS_MEM_BLOCK *z = p+p->units-1;
       if(z->validTag != CS_MEM_BLOCK_END_VALID){
-        ASSERT_PRINT_F("bad memory ending block %p", data);
+        ASSERT_PRINT_F(input,"bad memory ending block %p", data);
       }
     
 #endif
-  
 
   return CS_HEAP_TRUE;
 }
@@ -208,7 +209,7 @@ CS_HEAP_BOOLEAN verifyControlBlock_CFL(CS_MEMORY_CONTROL *memoryControl)
 }
 
 // this is a diagnostic function
-void dumpHeap_CFL(CS_MEMORY_CONTROL *memoryControl)
+void dumpHeap_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl)
 {
   CS_MEM_BLOCK *p = NULL;
   CS_MEM_BLOCK *q = NULL;
@@ -218,14 +219,14 @@ void dumpHeap_CFL(CS_MEMORY_CONTROL *memoryControl)
   for (q = memoryControl->allocp, p = q->next; /**/; q = p, p = p->next)
   {
     totalUnits += p->units;
-    Printf_CFL("\tp=%p p->units=%5d p+p->units=%p p->next=%p\r\n", p,
+    Printf_CFL(input,"\tp=%p p->units=%5d p+p->units=%p p->next=%p\r\n", p,
                p->units, p + p->units, p->next);
     if (p == memoryControl->allocp)
     {
       break;
     }
   }
-  Printf_CFL("total memory blocks %d total bytes %d \r\n", totalUnits,
+  Printf_CFL(input,"total memory blocks %d total bytes %d \r\n", totalUnits,
              (int)(totalUnits * sizeof(CS_MEM_BLOCK)));
 }
 

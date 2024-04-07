@@ -4,20 +4,31 @@
 #include "CFL_inner_engine.h"
 
 
+#if 0
 void delay_ms(unsigned int milliseconds)
 {
     struct timespec delay;
     delay.tv_sec = milliseconds / 1000;
     delay.tv_nsec = (milliseconds % 1000) * 1000000;
-
+    printf("milliseconds = %d\n", milliseconds);
     nanosleep(&delay, NULL);
 }
-
+#endif
 unsigned long long get_elapsed_time_ms(void)
 {
     struct timespec currentTime;
     clock_gettime(CLOCK_MONOTONIC, &currentTime);
     return (unsigned long long)(currentTime.tv_sec * 1000LL + currentTime.tv_nsec / 1000000);
+}
+
+void delay_ms(unsigned int milliseconds)
+{
+    unsigned long long time_ref = get_elapsed_time_ms();
+    while(true){
+        if(get_elapsed_time_ms() - time_ref >= milliseconds){
+            break;
+        }   
+    }
 }
 
 void default_idle_function(const void *input,

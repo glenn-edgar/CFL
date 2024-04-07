@@ -24,7 +24,8 @@ void free_allocate_once_heap(){
 }
 
 
-#include "test_script.h"
+#include "return_codes.h"
+#include "fibonacci.h"
 
 
 
@@ -34,11 +35,19 @@ int main()
    
    create_allocate_once_heap(); // create allocate once heap
 
-   const Handle_CFL_t *handle = test_entry_point();
-   Initialize_engine_CFL(handle);
-   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   const Handle_CFL_t *handle = return_codes_entry_point();
+   Initialize_heap_CFL(handle);
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   Start_engine_CFL(handle);
+
+   const Handle_CFL_t *handle1 = fibonacci_entry_point();
+   Initialize_heap_CFL(handle1);
+   Initialize_engine_CFL(handle1, 10, default_idle_function, default_calendar_function);
+   Start_engine_CFL(handle1);
+
+
    free_allocate_once_heap(); // free allocate once heap
  
-   printf("Engine is done");
+   printf("Engine is done \n");
 }
 

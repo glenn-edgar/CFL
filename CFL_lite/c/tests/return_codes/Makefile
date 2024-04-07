@@ -2,7 +2,7 @@ CC = gcc -I../../include
 CFLAGS = -Wall -Wextra -Werror -g 
 SRCS = $(wildcard *.c)
 OBJS = $(addprefix obj/,$(notdir $(SRCS:.c=.o)))
-EXEC = test_CFL
+EXEC = test_return_codes
 LIBS = ../../lib/CFL.a
 
 all: obj $(EXEC)

@@ -5,6 +5,58 @@
 #include "run_time_code_CFL.h"
 
 
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+    return DISABLE_CFL;
+  }
+  return DISABLE_CFL;
+}
+  static inline int generate_return_code_verify(bool termination_flag)
+  {
+    if (termination_flag == true)
+    {
+      return TERMINATE_CFL;
+    }
+    return RESET_CFL;
+  }
+
+int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
+{
+    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
+    
+
+    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+
+        fn(handle, verify_control->user_data, event_data);
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+
+    if (fn(handle, verify_control->user_data, event_data) == false)
+    {
+        if (verify_control->user_termination_fn != NULL)
+        {
+            verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
+        }
+        return generate_return_code_verify(verify_control->terminate_flag);
+    }
+    return CONTINUE_CFL;
+}
+
+
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
 const int terminate_buffer[1] = { TERMINATE_CFL };
@@ -27,21 +79,6 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     return *return_code;
 }
 
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-    return DISABLE_CFL;
-  }
-  return DISABLE_CFL;
-}
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -92,43 +129,13 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 }
 
 
-  static inline int generate_return_code_verify(bool termination_flag)
-  {
-    if (termination_flag == true)
-    {
-      return TERMINATE_CFL;
-    }
-    return RESET_CFL;
-  }
-
-int verify_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data)
-{
-    Bool_function_CFL_t fn = (Bool_function_CFL_t)aux_fn;
-    
-
-    Verify_control_ROM_CFL_t *verify_control = (Verify_control_ROM_CFL_t *)params;
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-
-        fn(handle, verify_control->user_data, event_data);
-        return CONTINUE_CFL;
-    }
-    if (event_data->event_index == EVENT_TERMINATION_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-
-    if (fn(handle, verify_control->user_data, event_data) == false)
-    {
-        if (verify_control->user_termination_fn != NULL)
-        {
-            verify_control->user_termination_fn(handle, verify_control->user_data,event_data);
-        }
-        return generate_return_code_verify(verify_control->terminate_flag);
-    }
-    return CONTINUE_CFL;
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
 }
-
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -145,7 +152,7 @@ void log_message_CFL(const void *input, void *params,
 
   column_index = get_current_column_index_CFL(input);
   column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
+  Printf_CFL(input,"Log !!!! column index %d column element %d  ---> msg: %s\n",
               column_index, column_element_number, *message);
 }
 
@@ -154,46 +161,12 @@ void tod_verify_reset(const void *input,void *params,Event_data_CFL_t *eventdata
    (void)input;
    (void)eventdata;
    Wait_tod_ROM_CFL_t *wait_tod = (Wait_tod_ROM_CFL_t *)params;
-   Printf_CFL("terminate flag %d \n",wait_tod->terminate_flag);
-   Printf_CFL(" %s \n",(const char *)wait_tod->user_data);
-}
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
- 
 
-
-bool wait_time_delay_CFL(const void *input, void *params,
-                            Event_data_CFL_t *event_data)
-{
-  
-  Handle_CFL_t *handle = (Handle_CFL_t *)input;
-  const While_time_control_ROM_CFL_t *while_time_control = (const While_time_control_ROM_CFL_t *)params;
-  
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    
-    *while_time_control->start_time = handle->time_control->current_millis;
-    
-    return false;
-  }
-  if (event_data->event_index == TIMER_TICK_CFL)
-  {
-    unsigned timeElasped = handle->time_control->current_millis - *while_time_control->start_time;
-    if (timeElasped >= while_time_control->time_delay)
-    {
-      return true;
-    }
-  }
-
-  return false;
+   Printf_CFL(input,"terminate flag %d \n",(int)(wait_tod->terminate_flag));
+   Printf_CFL(input," %s \n",(const char *)wait_tod->user_data);
 }
 
-static bool test_while_tod_operations(unsigned short op_type, short ref, short compare ){
+static bool test_while_tod_operations(const void *input,unsigned short op_type, short ref, short compare ){
     
     switch(op_type){
        
@@ -230,7 +203,7 @@ static bool test_while_tod_operations(unsigned short op_type, short ref, short c
             }
             break;
         default:
-        ASSERT_PRINT_INT("Invalid operator type",op_type);
+        ASSERT_PRINT_INT(input,"Invalid operator type",op_type);
     }
    
     return false;
@@ -248,38 +221,38 @@ bool test_tod_condition(const void *input, void *user_data, Event_data_CFL_t *ev
     Time_control_CFL_t *time_control = Get_time_control_CFL(input);
     if (wait_tod->day_of_year >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->day_of_year,  wait_tod->day_of_year ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->day_of_year,  wait_tod->day_of_year ) == false){
             return true;
         }
     
     }
     if (wait_tod->month >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->month,  wait_tod->month ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->month,  wait_tod->month ) == false){
             return true;
         }
     }
     if (wait_tod->day >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->day,  wait_tod->day ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->day,  wait_tod->day ) == false){
             return true;
         }
     }
     if (wait_tod->dow >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->dow,  wait_tod->dow ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->dow,  wait_tod->dow ) == false){
             return true;
         }
     }
     if (wait_tod->hour >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->hour,  wait_tod->hour ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->hour,  wait_tod->hour ) == false){
             return true;
         }
     }
     if (wait_tod->minute >= 0)
     {
-        if( test_while_tod_operations(wait_tod->op_type,time_control->minute,  wait_tod->minute ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->minute,  wait_tod->minute ) == false){
             return true;
         }
      
@@ -288,7 +261,7 @@ bool test_tod_condition(const void *input, void *user_data, Event_data_CFL_t *ev
     if (wait_tod->second >= 0)
     {
       
-        if( test_while_tod_operations(wait_tod->op_type,time_control->second,  wait_tod->second ) == false){
+        if( test_while_tod_operations(input,wait_tod->op_type,time_control->second,  wait_tod->second ) == false){
             return true;
         }
     }

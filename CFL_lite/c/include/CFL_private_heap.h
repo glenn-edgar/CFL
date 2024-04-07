@@ -61,24 +61,24 @@ void initialize_privateHeap_CFL(CS_MEMORY_CONTROL *memoryControl,
                                 int heapSize,
                                 void *heapMemory);
 
-void reset_privateHeap_CFL(CS_MEMORY_CONTROL *
+void reset_privateHeap_CFL(const void *input, CS_MEMORY_CONTROL *
                                memoryControl);
 
-void *malloc_CFL(CS_MEMORY_CONTROL *memoryControl,
+void *malloc_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl,
                  unsigned bytes);
 
-void *realloc_CFL(CS_MEMORY_CONTROL *memoryControl,
+void *realloc_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl,
                   void *prt, unsigned newSize);
 
-void free_CFL(CS_MEMORY_CONTROL *memoryControl, void *ptr);
+void free_CFL(const void *input,CS_MEMORY_CONTROL *memoryControl, void *ptr);
 
-CS_HEAP_BOOLEAN verifyMemBlock_CFL(void *data);
+CS_HEAP_BOOLEAN verifyMemBlock_CFL(const void *input, void *data);
 
 CS_HEAP_BOOLEAN verifyControlBlock_CFL(CS_MEMORY_CONTROL *
                                            memoryControl);
 // these are diagnostic functions
 
-void dumpHeap_CFL(CS_MEMORY_CONTROL *memoryControl);
+void dumpHeap_CFL(const void *input, CS_MEMORY_CONTROL *memoryControl);
 
 unsigned largest_block_privateHeap_CFL(CS_MEMORY_CONTROL *memoryControl);
 

@@ -25,6 +25,8 @@ extern "C" {
 #include "CFL_s_float_engine.h"
 #include "CFL_s_float_stack.h"
 
+#include "CFL_rpc_packets.h"
+
 
 typedef void (*Debug_out_CFL_t)(const void *buf, unsigned count);
 
@@ -66,6 +68,7 @@ typedef struct Column_element_CFL_t
 
 #define COLUMN_ELEMENT_ACTIVE 0x1
 #define COLUMN_ELEMENT_INITIALIZED 0x2
+#define COlUMN_ELEMENT_SUCCESS_FLAG 0x80
 
 
 
@@ -78,7 +81,7 @@ typedef struct Column_ROM_CFL_t
   unsigned short start;
   short start_state;
   short end_state;
-
+  void *aux_data;
 } Column_ROM_CFL_t;
 
 typedef struct Engine_control_CFL_t
@@ -90,7 +93,7 @@ typedef struct Engine_control_CFL_t
   unsigned short current_column_index;
   unsigned short current_column_element_index;
 
-  Event_data_CFL_t ref_event_data;
+  
 } Engine_control_CFL_t;
 
 
@@ -160,6 +163,9 @@ typedef struct Handle_CFL_t
   const unsigned number_of_floatmaps;
   Floatmap_CFL_t *floatmaps;
 
+  const uint16_t rpc_queue_number;
+  RPC_Packet_control_RAM_CFL_t *rpc_queue_ram;
+  const RPC_Packet_control_ROM_CFL_t *rpc_queue_rom;
 
 } Handle_CFL_t;
 
@@ -184,12 +190,12 @@ void initialize_columns_CFL(const void *input);
 
 
 
-void set_current_column_return_code_CFL(const void *input, bool state);
+void set_column_return_code_CFL(const void *input,unsigned short column_index, bool state);
 
-bool get_current_column_return_code_CFL(const void *input,unsigned short column_index);
+bool get_column_return_code_CFL(const void *input,unsigned short column_index);
 
-unsigned get_current_column_element_index_CFL(const void *input);
 
+bool get_column_state_CFL(const void *input, unsigned short column_index);
 
 unsigned short get_current_column_index_CFL(const void *input);
 
@@ -206,15 +212,25 @@ void attach_watch_dog_handler_CFL(const void *input,const Watch_dog_struct_CFL_t
                                   
 void detach_watch_dog_handler_CFL(const void *input);
 
-void store_local_column_data(const void *input, unsigned short column_id, void *column_data);
+void store_column_data_CFL(const void *input, unsigned short column_id, void *column_data);
+void store_current_column_data_CFL(const void *input,  void *column_data);
 
 // current column id is used to retrieve the data
-void *retrieve_local_column_data(const void *input);
+void *retrieve_current_column_data_CFL(const void *input);
+void *retreive_column_data_CFL(const void *input, unsigned short column_id);
 
-void Initialize_engine_CFL(const void *input);
 
-void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_function,
+unsigned get_current_column_element_index_CFL(const void *input);
+
+bool chain_single_sweep_CFL(const void *input,
+                             const uint16_t column_index,
+                              Event_data_CFL_t *event_data);  
+
+void Initialize_heap_CFL(const void *input);
+
+void Initialize_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_function,
                       Calendar_function_CFL_t calendar_function);
+void Start_engine_CFL(const void *input);
 #ifdef __cplusplus
 }
 #endif

@@ -2,7 +2,7 @@ CC = gcc -I../../include
 CFLAGS = -Wall -Wextra -Werror -g 
 SRCS = $(wildcard *.c)
 OBJS = $(addprefix obj/,$(notdir $(SRCS:.c=.o)))
-EXEC = test_CFL
+EXEC = test_rpc_services
 LIBS = ../../lib/CFL.a
 
 all: obj $(EXEC)
@@ -19,5 +19,7 @@ $(EXEC): $(OBJS)
 
 clean:
 	rm -rf obj $(EXEC)
+	touch *.c	
+	touch *.h
 
 .PHONY: all clean

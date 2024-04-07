@@ -4,7 +4,7 @@
 #include "CFL_s_bit_operators.h"
 #include "CFL_bit_map.h"
 
-static bool xor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters){
+static bool xor_op(const void *input,uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters){
     bool result = false;
     for (uint16_t i = 0; i < number_of_parameters; i++)
     {
@@ -17,7 +17,7 @@ static bool xor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
         }
         else
         {
-            if (bitmap_get_bit_CFL(bmp, parameters[i].parameter_value) > 0)
+            if (bitmap_get_bit_CFL(input,bmp, parameters[i].parameter_value) > 0)
             {
                 result = !result;
             }
@@ -30,7 +30,7 @@ static bool xor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
 
 
 
-static bool and_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
+static bool and_op(const void *input,uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
 {
     for (uint16_t i = 0; i < number_of_parameters; i++)
     {
@@ -43,7 +43,7 @@ static bool and_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
         }
         else
         {
-            if (bitmap_get_bit_CFL(bmp, parameters[i].parameter_value) == 0)
+            if (bitmap_get_bit_CFL(input,bmp, parameters[i].parameter_value) == 0)
             {
                 return false;
             }
@@ -52,7 +52,7 @@ static bool and_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
     return true;
 }
 
-static bool or_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
+static bool or_op(const void *input,uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
 {
     for (uint16_t i = 0; i < number_of_parameters; i++)
     {
@@ -65,7 +65,7 @@ static bool or_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_ty
         }
         else
         {
-            if (bitmap_get_bit_CFL(bmp, parameters[i].parameter_value) > 0)
+            if (bitmap_get_bit_CFL(input,bmp, parameters[i].parameter_value) > 0)
             {
                 return true;
             }
@@ -74,7 +74,7 @@ static bool or_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_ty
     return false;
 }
 
-static bool nor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
+static bool nor_op(const void *input,uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters)
 {
     for (uint16_t i = 0; i < number_of_parameters; i++)
     {
@@ -87,7 +87,7 @@ static bool nor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
         }
         else
         {
-            if (bitmap_get_bit_CFL(bmp, parameters[i].parameter_value) > 0)
+            if (bitmap_get_bit_CFL(input,bmp, parameters[i].parameter_value) > 0)
             {
                 return false;
             }
@@ -96,8 +96,8 @@ static bool nor_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_t
     return true;
 }
 
-static bool not_op(uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters){
-     return nor_op(number_of_parameters, bmp, parameters);
+static bool not_op(const void *input,uint16_t number_of_parameters, Bitmap_CFL *bmp, s_parameter_type_CFL_t *parameters){
+     return nor_op(input,number_of_parameters, bmp, parameters);
 }
 
 
@@ -109,33 +109,33 @@ void process_operator_CFL(const void *input, s_bit_working_control_CFL_t *workin
     unsigned number_of_parameters = bit_parameter_stack_size_CFL(working_control->stack_control) - stack_start;
     if (number_of_parameters == 0)
     {
-        ASSERT_PRINT_F("buffer ops: number of parameters is %d  \n", 0);
+        ASSERT_PRINT_F(input,"buffer ops: number of parameters is %d  \n", 0);
     }
-    s_parameter_type_CFL_t *parameters = s_bit_get_parameter_stack_CFL(working_control->stack_control, stack_start);
+    s_parameter_type_CFL_t *parameters = s_bit_get_parameter_stack_CFL(input,working_control->stack_control, stack_start);
 
     switch (op_value)
     {
     case S_BIT_AND_CFL:
-        result = and_op(number_of_parameters, bit_map, parameters);
+        result = and_op(input,number_of_parameters, bit_map, parameters);
 
         break;
     case S_BIT_OR_CFL:
-        result = or_op(number_of_parameters, bit_map, parameters);
+        result = or_op(input,number_of_parameters, bit_map, parameters);
         break;
     case S_BIT_NOR_CFL:
-        result = nor_op(number_of_parameters, bit_map, parameters);
+        result = nor_op(input,number_of_parameters, bit_map, parameters);
         break;
 
     case  S_BIT_XOR_CFL:
-         result = xor_op(number_of_parameters, bit_map, parameters);
+         result = xor_op(input,number_of_parameters, bit_map, parameters);
          break;
     case S_BIT_NOT_CFL:
-        result = not_op(number_of_parameters, bit_map, parameters);
+        result = not_op(input,number_of_parameters, bit_map, parameters);
         break;
     default:
-        ASSERT_PRINT_F("buffer ops: unknown operator type %d\n", op_value);
+        ASSERT_PRINT_F(input,"buffer ops: unknown operator type %d\n", op_value);
     }
-    bit_release_parameter_stack_CFL(working_control->stack_control, number_of_parameters);
+    bit_release_parameter_stack_CFL(input,working_control->stack_control, number_of_parameters);
     s_parameter_type_CFL_t p_op = {S_BIT_VALUE_CFL, result};
-    bit_push_parameter_stack_CFL(working_control->stack_control, p_op);
+    bit_push_parameter_stack_CFL(input,working_control->stack_control, p_op);
 }

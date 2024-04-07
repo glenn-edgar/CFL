@@ -32,13 +32,12 @@ Time_control_CFL_t *Get_time_control_CFL(const void *input)
   return (Time_control_CFL_t *)handle->time_control;
 }
 
-void Initialize_engine_CFL(const void *input)
+void Initialize_heap_CFL(const void *input)
 {
-  config_debug_handle_CFL(input);
   create_allocate_once_heap_CFL(input);
 }
 
-void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_function,
+void Initialize_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_function,
                       Calendar_function_CFL_t calendar_function)
 {
 
@@ -46,7 +45,8 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
   
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   Engine_control_CFL_t *engine_control = (Engine_control_CFL_t *)handle->engine_control;
-  
+   
+   
   
   if (idle_function != NULL)
   {
@@ -68,7 +68,7 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
   
 
   reset_all_queues(handle);
-  reset_all_state_machines_CFL(handle);
+  disable_all_state_machines_CFL(handle);
 
   
   handle->time_control->tick_ms = ms_tick;
@@ -76,18 +76,21 @@ void Start_engine_CFL(const void *input, int ms_tick, Idle_function_CFL_t idle_f
   engine_control->idle_function(handle, handle->time_control, true);
   engine_control->calendar_function(handle, handle->time_control,
                                     true);
-  
+   
+
+   initialize_columns_CFL(handle);
 
 
-
-  initialize_columns_CFL(handle);
-
- 
-  process_event_loop(handle);
   
 }
 
+void Start_engine_CFL(const void *input){
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+ 
+  process_event_loop(handle);
+  
 
+}
 
 static void process_event_loop(const Handle_CFL_t *handle)
 {
@@ -126,7 +129,7 @@ static bool process_single_loop(const Handle_CFL_t *handle)
   
   if (current_event == NULL)
   {
-    ASSERT_PRINT("Internal Program Error", "");
+    ASSERT_PRINT(handle,"Internal Program Error", "");
   }
   if (current_event->event_index == ENGINE_TERMINATE_EVENT_CFL)
   {

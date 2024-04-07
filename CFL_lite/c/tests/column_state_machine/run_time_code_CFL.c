@@ -4,6 +4,21 @@
 
 #include "run_time_code_CFL.h"
 
+
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+    return DISABLE_CFL;
+  }
+  return DISABLE_CFL;
+}
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -54,38 +69,6 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 }
 
 
-int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-    (void)aux_fn;
-    if (event_data->event_index == EVENT_INIT_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-    if (event_data->event_index == EVENT_TERMINATION_CFL)
-    {
-        return CONTINUE_CFL;
-    }
-    unsigned short *new_state = (unsigned short *)params;
-       
-    change_local_column_state_CFL(input, *new_state);
-    return DISABLE_CFL;
- }
-
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-    return DISABLE_CFL;
-  }
-  return DISABLE_CFL;
-}
 
 const int reset_buffer[1] = { RESET_CFL };
 const int halt_buffer[1] = { HALT_CFL };
@@ -108,6 +91,23 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
    
     return *return_code;
 }
+
+int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+    (void)aux_fn;
+    if (event_data->event_index == EVENT_INIT_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+    if (event_data->event_index == EVENT_TERMINATION_CFL)
+    {
+        return CONTINUE_CFL;
+    }
+    unsigned short *new_state = (unsigned short *)params;
+       
+    change_local_column_state_CFL(input, *new_state);
+    return DISABLE_CFL;
+ }
 
 
 void send_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
@@ -135,7 +135,7 @@ void log_message_CFL(const void *input, void *params,
 
   column_index = get_current_column_index_CFL(input);
   column_element_number = get_current_column_element_index_CFL(input);
-  Printf_CFL("Log !!!! column index %d column element %d  ---> msg: %s\n",
+  Printf_CFL(input,"Log !!!! column index %d column element %d  ---> msg: %s\n",
               column_index, column_element_number, *message);
 }
 

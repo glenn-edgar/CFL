@@ -2,11 +2,12 @@ set_h_file("column_state_machine.h")
 
 local entry_point = "column_state_machine_handle"
 
+
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
-local default_event_queue_size = 10 
-start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
-
+local default_event_queue_size = 0
+local global_event_queue_size = 7
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,global_event_queue_size,'debug_write') 
 -- start of user events
 set_user_event_start(100)
 
@@ -23,7 +24,7 @@ define_columns(column_list)
 
 
 
-define_column("test_start",true,nil)
+define_column("test_start",true)
   Log_msg("test_start")
   Log_msg("step 0")
   Log_msg("step 1")
@@ -40,7 +41,7 @@ define_column("test_start",true,nil)
   Set_column_state_machine_end()
 end_column()
 
-define_column("test_end",true,nil)
+define_column("test_end",true)
   Log_msg("test_end")
   Log_msg("step 0")
   Log_msg("step 1")
@@ -57,7 +58,7 @@ define_column("test_end",true,nil)
   Set_column_state_machine_end()
 end_column()
 
-define_column("test_middle",true,nil)
+define_column("test_middle",true)
   Log_msg("test_middle")
   Log_msg("step 0")
   Log_msg("step 1")
@@ -74,13 +75,13 @@ define_column("test_middle",true,nil)
   Set_column_state_machine_end()
 end_column()
 
-define_column("terminate_column",true,nil)
+define_column("terminate_column",true)
   Wait_delay(120000)
   terminate_engine()
 end_column()
 
 
-define_column("event_generator",true,nil)
+define_column("event_generator",true)
  Log_msg("event generator start")
  Wait_delay(30000)
  send_global_event(filter_event)
@@ -93,7 +94,7 @@ end_column()
 
 
 
-define_column("test_sm_structure",true,nil)
+define_column("test_sm_structure",true)
  Log_msg("executing a sequence of actions first")
  Log_msg("action 1")
  Wait_delay(1000)
@@ -113,7 +114,6 @@ define_column("test_sm_structure",true,nil)
  store_column_element('sm_2','NULL',"(void *)&sm_2_data")
  store_column_element('sm_3','NULL',"(void *)&sm_3_data")
  Set_column_state_machine_end()
- Log_msg("end step")
  halt_column()
 
 end_column()
@@ -133,26 +133,26 @@ static int filter_event_1(const void *input,void *aux_fn,void *param,Event_data_
    (void)param;
   if( event->event_index == EVENT_INIT_CFL){
     
-    Printf_CFL("filter_event_1 initialization event \n");
+    Printf_CFL(input,"filter_event_1 initialization event \n");
     return CONTINUE_CFL;
   
   }
   if( event->event_index == EVENT_TERMINATION_CFL){
     
-    Printf_CFL("filter_event_1 initialization event \n");
+    Printf_CFL(input,"filter_event_1 termination event \n");
     return CONTINUE_CFL;
   
   }
   if( event->event_index == <<p, filter_event >>){
     
-    Printf_CFL("filter event 1 received doing common action \n");
-    Printf_CFL("%s\n",filter_event_data_1);
+    Printf_CFL(input,"filter event 1 received doing common action \n");
+    Printf_CFL(input,"%s\n",filter_event_data_1);
     return HALT_CFL;
   
   }
   if(event->event_index == <<p, sm_change_event >>){
     
-    Printf_CFL("filter event 2 received doing changing column state to 3 \n");
+    Printf_CFL(input,"state change event received doing changing column state to 3 \n");
     change_local_column_state_CFL(input, 3);
     return HALT_CFL;
   
@@ -177,7 +177,7 @@ local sm_template_code = [[
    unsigned *count = (unsigned *)param;
 
   if( event->event_index == EVENT_INIT_CFL){
-    Printf_CFL("<<p,name >> initialization event \n");
+    Printf_CFL(input,"<<p,name >> initialization event \n");
     *count = 0;
     return CONTINUE_CFL;
   
@@ -190,12 +190,13 @@ local sm_template_code = [[
   }
   if( event->event_index == SECOND_TICK_CFL){
     
-    Printf("second tics received \n");
+    Printf_CFL(input,"second tics received \n");
     *count = *count + 1;
    
     if(*count >=  5){
+      *count = 0;
       change_local_column_state_CFL(input, <<p,state>>);
-       return HALT_CFL;
+       return CONTINUE_CFL;
     }
     return CONTINUE_CFL;
   

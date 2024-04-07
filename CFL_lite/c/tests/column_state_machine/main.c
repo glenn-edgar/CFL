@@ -41,10 +41,13 @@ void test_column_state_machine(void)
    create_allocate_once_heap(); // create allocate once heap
 
    const Handle_CFL_t *handle = column_state_machine_handle();
-   Initialize_engine_CFL(handle);
-   Start_engine_CFL(handle, 500, default_idle_function, default_calendar_function);
+   Initialize_heap_CFL(handle);
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   Start_engine_CFL(handle);
    free_allocate_once_heap(); // free allocate once heap
  
    printf("Engine is done \n");
 }
+
+
 

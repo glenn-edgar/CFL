@@ -27,11 +27,15 @@ typedef struct Event_control_ROM_CFL_t{
 
 
  bool is_queue_empty_CFL(const void *input, unsigned queue_id); 
- bool is_queue_full(const void *input,unsigned queue_id); 
+ bool is_queue_full_CFL(const void *input,unsigned queue_id); 
 unsigned get_queue_number_CFL(const void *input,unsigned queue_id);
 unsigned get_queue_max_size_CFL(const void *input,unsigned queue_id);
 void reset_event_queue_CFL(const void *input,unsigned queue_id);
+void reset_current_event_queue_CFL(const void *input);
 void enqueue_event_CFL(const void *input,unsigned queue, Event_data_CFL_t *event); 
+void enqueue_column_event_CFL(const void *input,unsigned queue_id, Event_data_CFL_t *event);
+void front_enqueue_event_CFL(const void *input, Event_data_CFL_t *event);
+void front_enqueue_column_index_event_CFL(const void *input, unsigned column_index, Event_data_CFL_t *event);
 void dequeue_event_CFL(const void *input,unsigned queue_id);
 Event_data_CFL_t *peak_event_CFL(const void *input,unsigned queue_id);
 void queue_global_event_CFL(const void *input, Event_data_CFL_t *event);

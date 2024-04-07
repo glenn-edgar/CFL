@@ -12,7 +12,7 @@
 Bitmap_CFL *get_bitmap_control_CFL(const void *input, unsigned bit_map_number){
    Handle_CFL_t *handle = (Handle_CFL_t *)input;
    if(bit_map_number >= handle->number_of_bitmaps){
-     ASSERT_PRINT_F("bit_map_number is out of range got %d, max %d\n", bit_map_number, handle->number_of_bitmaps);
+     ASSERT_PRINT_F(input,"bit_map_number is out of range got %d, max %d\n", bit_map_number, handle->number_of_bitmaps);
    }
   return &handle->bitmaps[bit_map_number];
 
@@ -28,9 +28,9 @@ uint8_t *bitmap_buffer(const void *input, unsigned buffer_number){
     return bmp->data; 
 }
 
-void bitmap_set_bit_CFL(Bitmap_CFL* bmp, uint32_t index, bool value) {
+void bitmap_set_bit_CFL(const void *input,Bitmap_CFL* bmp, uint32_t index, bool value) {
     if (index >= bmp->length) {
-        ASSERT_PRINT_F("index is out of range got %d, max %d\n", index, bmp->length);
+        ASSERT_PRINT_F(input,"index is out of range got %d, max %d\n", index, bmp->length);
         return;
     }
     uint32_t byteIndex = index / 8;
@@ -42,9 +42,9 @@ void bitmap_set_bit_CFL(Bitmap_CFL* bmp, uint32_t index, bool value) {
     }
 }
 
-bool bitmap_get_bit_CFL(Bitmap_CFL* bmp, uint32_t index) {
+bool bitmap_get_bit_CFL(const void *input,Bitmap_CFL* bmp, uint32_t index) {
     if (index >= bmp->length) {
-        ASSERT_PRINT_F("index is out of range got %d, max %d\n", index, bmp->length);
+        ASSERT_PRINT_F(input,"index is out of range got %d, max %d\n", index, bmp->length);
         return false;
     }
     uint32_t byteIndex = index / 8;

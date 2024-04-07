@@ -12,11 +12,11 @@ typedef struct Registermap_CFL_t{
 } Registermap_CFL_t;
 
   
-void  registermap_set_value_CFL(Registermap_CFL_t* bmp, unsigned index, int16_t value);
+void  registermap_set_value_CFL(const void *input,Registermap_CFL_t* bmp, unsigned index, int16_t value);
 
-int16_t registermap_get_value_CFL(Registermap_CFL_t* bmp, unsigned index);
+int16_t registermap_get_value_CFL(const void *input,Registermap_CFL_t* bmp, unsigned index);
 
-void registermap_set_all_CFL(Registermap_CFL_t* bmp, int16_t value);
+void registermap_set_all_CFL(const void *input,Registermap_CFL_t* bmp, int16_t value);
 
 Registermap_CFL_t* get_registermap_control_CFL(const void *input, unsigned buffer_number);
 

@@ -12,6 +12,10 @@ extern "C" {
 //----------Ref function header code ----
 
 
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
+
+
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -31,13 +35,6 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
-
-
 extern const int reset_buffer[1];
 extern const int halt_buffer[1];
 extern const int terminate_buffer[1];
@@ -47,6 +44,9 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     void *params, Event_data_CFL_t *event_data);
 
     
+int change_column_state_CFL(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+
 void send_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
 
 

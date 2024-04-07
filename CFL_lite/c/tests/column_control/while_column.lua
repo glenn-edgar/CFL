@@ -4,8 +4,9 @@ local entry_point = "while_column_handle"
 
 local allocate_once_heap_size = 2000
 local private_heap_size = 1000
-local default_event_queue_size = 10 
-start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,'debug_write')
+local default_event_queue_size = 0
+local global_event_queue_size = 7
+start_build(entry_point,"allocate_once_memory",allocate_once_heap_size,private_heap_size,default_event_queue_size,global_event_queue_size,'debug_write')  
 
 Store_user_code([[
 static const char* while_message = "This is a test message for while \n";
@@ -20,24 +21,22 @@ bool while_column_test(void* input, void* params, Event_data_CFL_t* event_data);
 local test_bool_code = [[
 
 bool while_column_test(void* input, void* params, Event_data_CFL_t* event_data) {
-  (void)input; // unused parameter
+  (void)input; // unused parameter 
+  (void)event_data; // unused parameter
   While_column_control_CFL_t* while_control = (While_column_control_CFL_t*)params;
   
-  if (event_data->event_index == EVENT_INIT_CFL) {
   
-    return false;
-  }
-
- 
+  
+  
   const char** message = (const char**)while_control->user_data;
-  Printf_CFL(*message); // testing user data
+  Printf_CFL(input,*message); // testing user data
  
-  Printf_CFL("number of iterations %d max_iterations 4 \n",*while_control->current_count);
+  Printf_CFL(input,"number of iterations %d max_iterations 4 \n",*while_control->current_count);
   if (*while_control->current_count >= 4) {
-    Printf_CFL("while column is terminating \n");
+    Printf_CFL(input,"while column is terminating \n");
     return false;
   }
-  Printf_CFL("returning true \n");
+  Printf_CFL(input,"returning true \n");
   return true;
 }
 

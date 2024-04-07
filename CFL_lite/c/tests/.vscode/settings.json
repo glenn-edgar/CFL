@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "state_machine_1.h": "c"
+        "state_machine_1.h": "c",
+        "column_element_state_machine.h": "c"
     }
 }

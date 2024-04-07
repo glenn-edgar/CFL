@@ -27,13 +27,11 @@ void free_allocate_once_heap(){
 void test_rpc_services(void);
 
 
-
 int main()
 
 {
   printf("\n\n test rpc services \n\n");
   test_rpc_services();
-  
   
  
 }
@@ -44,16 +42,20 @@ void test_rpc_services(void)
 {  
     
  
-   
+
    create_allocate_once_heap(); // create allocate once heap
 
+  
    const Handle_CFL_t *handle = rpc_services_handle();
-   Initialize_engine_CFL(handle);
-
-   Start_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
-
+ 
+   Initialize_heap_CFL(handle);
+     
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   
+   Start_engine_CFL(handle);
    free_allocate_once_heap(); // free allocate once heap
  
-   printf("Engine is done \n");
+  
 }
+
 

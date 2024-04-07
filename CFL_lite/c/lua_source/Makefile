@@ -94,9 +94,9 @@ CORE_O=	lapi.o lcode.o lctype.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o \
 	ltm.o lundump.o lvm.o lzio.o ltests.o
 AUX_O=	lauxlib.o
 LIB_O=	lbaselib.o ldblib.o liolib.o lmathlib.o loslib.o ltablib.o lstrlib.o \
-	lutf8lib.o loadlib.o lcorolib.o linit.o lua_read_pxt.o 
+	lutf8lib.o loadlib.o lcorolib.o linit.o lua_read_pxt.o  CFL_hash_table_support.o
 
-LUA_T=	CFL_preprocessor
+LUA_T=	CFL_assembler
 LUA_O=	lua.o
 
 
@@ -207,4 +207,5 @@ lvm.o: lvm.c lprefix.h lua.h luaconf.h ldebug.h lstate.h lobject.h \
 lzio.o: lzio.c lprefix.h lua.h luaconf.h llimits.h lmem.h lstate.h \
  lobject.h ltm.h lzio.h
 lua_read_pxt.o: lua_read_pxt.c
+CFL_hash_table_support.o: CFL_hash_table_support.c
 # (end of Makefile)

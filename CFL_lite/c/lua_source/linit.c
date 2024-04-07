@@ -34,7 +34,7 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include "lua_read_pxt.h"
-
+#include "CFL_hash_table_support.h"
 
 /*
 ** these libs are loaded by lua.c and are readily available to any Lua
@@ -52,7 +52,7 @@ static const luaL_Reg loadedlibs[] = {
   {LUA_UTF8LIBNAME, luaopen_utf8},
   {LUA_DBLIBNAME, luaopen_debug},
   {"PXT", luaopen_pxt_processor },
-
+  {"CFL_hash",luaopen_cfl_hash},
   {NULL, NULL}
 };
 
