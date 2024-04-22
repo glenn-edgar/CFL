@@ -27,7 +27,7 @@ function get_column_id(name)
    return column_names[name]["data"]["number"]
 end
 
-function define_columns(columns,queue_size)
+function define_columns(columns,queue_size,push_size)
     
     
     for i,v in ipairs(columns) do
@@ -42,10 +42,11 @@ function define_columns(columns,queue_size)
       end
          
         
-         define_named_queue(v,queue_size)
+         define_named_queue(v,queue_size,push_size)
         
        column_names[v] = {}
        column_names[v]["queue_size"] = queue_size
+       column_names[v]["push_size"] = push_size
        column_names[v]["defined"] = false
        column_names[v]["number"] = column_number
        column_names[v]["queue_number"] = lookup_named_queue(v)
@@ -115,6 +116,7 @@ function define_column(name, startup_flag,sm_list)
    active_column = {}
    active_column["name"] = name
    active_column["queue_name"] = name
+   active_column["number"] = column_data["number"]
    column_names[name]["defined"] = true
    column_names[name]["data"] = column_data
    if sm_flag == true then
@@ -126,7 +128,7 @@ function define_column(name, startup_flag,sm_list)
 end
 
 function add_rpc_queue(rpc_queue)
-   print("add_rpc_queue",rpc_queue)
+
    assert(active_column ~= nil,"Not in column definition")
    active_column["rpc_queue"] = rpc_queue
 end

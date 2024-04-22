@@ -46,6 +46,7 @@ function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap
     build_status["allocate_once_heap_pointer"] = allocate_once_heap_pointer
     build_status["default_event_queue_size"] = default_event_queue_size
     build_status["debug_function"] = debug_function
+
     reset_user_defined_events()
     initialize_event_queues(default_event_queue_size,global_event_size)
     initialize_columns()
@@ -53,6 +54,7 @@ function start_build(entry_point,allocate_once_heap_pointer,  allocate_once_heap
     reset_code_buffers()
     initialize_bit_maps()
     initialize_register_maps()
+    initialize_rpc_queues()
     
 
 end
@@ -211,6 +213,8 @@ function dump_build()
   message = '#include "run_time_code_CFL.h"\n'
   write_output(message)
   message = '#include "CFL_column_element_state_utilities.h"\n'
+  write_output(message)
+  message =  '#include "CFL_rpc_packets.h"'
   write_output(message)
   message = '#include "CFL_state_machine.h"\n'
   Store_basic_header_code(message)

@@ -150,7 +150,7 @@ define_column("idle_column",false)
   halt_column()
 end_column()
 
-define_columns( {"push_front_event"},4)
+define_columns( {"push_front_event"},4,4)
 define_column("push_front_event",true)
   Log_msg("push front event")
   display_event( {column_event_1_id,column_event_2_id,column_event_3_id,column_event_4_id})
@@ -172,8 +172,9 @@ local residual_display_code = [[
     (void)input;
 
     char *residual_message = (char *)params;
+    uint16_t column_index = get_current_column_index_CFL(input);
    
-    Printf_CFL(input,"%s residual event index %d\n",residual_message,event_data->event_index);
+    Printf_CFL(input,"%s current column index %d residual event index %d\n",residual_message,column_index, event_data->event_index);
   }
 ]]
 
@@ -184,7 +185,7 @@ Store_user_code([[
 ]])
 
 
-define_columns( {"dump_residual_events"},4)
+define_columns( {"dump_residual_events"},4,4)
 define_column("dump_residual_events",true)
   Log_msg("dump residual events")
   process_residual_named_event_queue("RESIDUAL_DISPLAY",'(void *)display_message')

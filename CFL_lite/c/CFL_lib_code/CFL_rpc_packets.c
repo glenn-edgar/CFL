@@ -21,8 +21,8 @@ void free_Rpc_data_CFL(const void *input, Rpc_data_CFL_t *rpc_data)
   }
   rpc_data->input = NULL;
   rpc_data->output = NULL;
-  rpc_data->input_data_size = 0;
-  rpc_data->output_data_size = 0;
+  rpc_data->input_data_type = 0;
+  rpc_data->output_data_type = 0;
 }
 
 
@@ -124,7 +124,7 @@ unsigned get_rpc_queue_max_size_CFL(const void *input,unsigned queue_id){
    
  }
 
-void enqueue_rpc_request_CFL(const void *input,uint16_t queue_id, uint16_t rpc_id, uint16_t *data_length, void *data, bool malloc_flag )  {
+void enqueue_rpc_request_CFL(const void *input, uint16_t queue_id,uint16_t receiver_queue, uint16_t rpc_id, uint16_t data_type, void *data, bool malloc_flag )  {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   if(is_rpc_queue_full_CFL(input,queue_id) == true){
     ASSERT_PRINT_INT(input,"Queue is full",queue_id);
@@ -133,8 +133,9 @@ void enqueue_rpc_request_CFL(const void *input,uint16_t queue_id, uint16_t rpc_i
   RPC_Packet_control_RAM_CFL_t *RPC_Packet_control_ram =  handle->rpc_queue_ram+queue_id;
   Rpc_data_CFL_t *RPC_Packet_data_array = RPC_Packet_control_rom->Rpc_data;
   Rpc_data_CFL_t *rpc_data = &RPC_Packet_data_array[RPC_Packet_control_ram->tx_index];
+  rpc_data->receiver_queue = receiver_queue,
   rpc_data->rpc_id = rpc_id;
-  rpc_data->input_data_size = *data_length;
+  rpc_data->input_data_type = data_type;
   rpc_data->input = data;
   rpc_data->input_malloc_flag = malloc_flag;
   RPC_Packet_control_ram->current_queued_number++;
@@ -145,6 +146,35 @@ void enqueue_rpc_request_CFL(const void *input,uint16_t queue_id, uint16_t rpc_i
   
    
 }
+
+
+void return_rpc_event_CFL(const void *input,int16_t receiver_queue, Rpc_data_CFL_t *rpc_event){
+   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+   uint16_t queue_id = rpc_event->receiver_queue;
+  if(is_rpc_queue_full_CFL(input,queue_id) == true){
+    ASSERT_PRINT_INT(input,"Queue is full",queue_id);
+  }
+  const RPC_Packet_control_ROM_CFL_t *RPC_Packet_control_rom = handle->rpc_queue_rom+queue_id;
+  RPC_Packet_control_RAM_CFL_t *RPC_Packet_control_ram =  handle->rpc_queue_ram+queue_id;
+  Rpc_data_CFL_t *RPC_Packet_data_array = RPC_Packet_control_rom->Rpc_data;
+  Rpc_data_CFL_t *rpc_data = &RPC_Packet_data_array[RPC_Packet_control_ram->tx_index];
+  rpc_data->receiver_queue = receiver_queue;
+  rpc_data->rpc_id =  rpc_event->rpc_id;
+  rpc_data->input_data_type = rpc_event->input_data_type;
+  rpc_data->input = rpc_event->input;
+  rpc_data->input_malloc_flag = rpc_event->input_malloc_flag;
+  rpc_data->output_data_type = rpc_event->output_data_type;
+  rpc_data->output = rpc_event->output;
+  rpc_data->output_malloc_flag = rpc_event->output_malloc_flag;
+  RPC_Packet_control_ram->current_queued_number++;
+  RPC_Packet_control_ram->tx_index = RPC_Packet_control_ram->tx_index + 1;
+  if(RPC_Packet_control_ram->tx_index >= RPC_Packet_control_rom->queue_size){
+    RPC_Packet_control_ram->tx_index = 0;
+  }
+  
+   
+}
+
 
 
 void dequeue_Rpc_data_CFL(const void *input, uint16_t queue_id) {

@@ -83,16 +83,19 @@ function get_event(event_name)
 end
 
 
-function define_named_queue(name,size)
+function define_named_queue(name,size, push_size)
      if size == nil then
         size = default_queue_size
+     end
+     if push_size == nil then
+        push_size = 0
      end
     if queue_names[name] ~= nil then
         print("Cannot define queue "..name.." twice")
         os.exit(1)
      end
-    
-    queue_names[name] = {name, size,queue_number}
+    size = size + push_size
+    queue_names[name] = {name, size,queue_number,push_size}
     
     return_value = queue_number
     queue_number = queue_number + 1
@@ -132,9 +135,11 @@ typedef struct Event_control_ROM_CFL_t{
 } Event_control_ROM_CFL_t;
 ]]--
 local event_data_queue_names = {}
+local event_data_push_names = {}
 
 local function dump_ram_data_structures()
   event_data_queue_names = {}
+  event_data_push_names = {}
    
    queue_ram_name = generate_unique_function_name()
    build_status["event_queue_ram"] = queue_ram_name
@@ -150,9 +155,14 @@ local function dump_ram_data_structures()
     table.insert(event_data_queue_names,event_queue_name)
     format_string = "static Event_data_CFL_t %s[%d];\n"
     size = queue_data[2]
-   
+    push_size = queue_data[4]
+    
     local message = string.format(format_string,event_queue_name,size)
     write_output(message)
+    local push_queue_name = generate_unique_function_name()
+    local message = string.format(format_string,push_queue_name,push_size)
+    write_output(message)
+    table.insert(event_data_push_names,push_queue_name)
   end
    
 
@@ -164,8 +174,8 @@ function dump_rom_array_structures()
   build_status["event_queue_number"] = #queue_list
   for i,queue_name in ipairs(queue_list) do
     queue_data = queue_names[queue_name]
-    format_string = "     {  %d, %s },\n"
-    message = string.format(format_string,queue_data[2],event_data_queue_names[i])
+    format_string = "     {  %d, %s, %d, %s},\n"
+    message = string.format(format_string,queue_data[2],event_data_queue_names[i],queue_data[4],event_data_push_names[i])
     write_output(message)
   end
 end

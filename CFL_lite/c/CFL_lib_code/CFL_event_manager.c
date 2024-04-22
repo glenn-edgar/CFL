@@ -3,7 +3,7 @@
 #include "CFL_inner_engine.h"
 
 
- bool is_queue_empty_CFL(const void *input, unsigned queue_id){
+ bool is_queue_empty_CFL(const void *input, uint16_t queue_id){
    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
     Event_control_RAM_CFL_t *event_control_ram =  handle->queue_ram+queue_id;
     
@@ -16,33 +16,35 @@
     
  }
 
- bool is_queue_full_CFL(const void *input,unsigned queue_id){
+
+
+ bool is_queue_full_CFL(const void *input,uint16_t queue_id){
     const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
     const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+queue_id;
-    unsigned number = event_control_rom->queue_size;
+    uint16_t number = event_control_rom->queue_size;
     Event_control_RAM_CFL_t *event_control_ram = handle->queue_ram+queue_id;
     return (event_control_ram->current_queued_number >= number);
  }
-unsigned get_queue_number_CFL(const void *input,unsigned queue_id){
+uint16_t get_queue_number_CFL(const void *input,uint16_t queue_id){
    const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
    Event_control_RAM_CFL_t *event_control_ram =  handle->queue_ram+queue_id;
    return event_control_ram->current_queued_number;
 
 }
 
-unsigned get_queue_max_size_CFL(const void *input,unsigned queue_id){
+uint16_t get_queue_max_size_CFL(const void *input,uint16_t queue_id){
     const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
     const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+queue_id;
     return event_control_rom->queue_size;
 }
 
-static inline void  clear_event_data(const void *input, unsigned i){
+static inline void  clear_event_data(const void *input, uint16_t i){
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input; 
   const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+i;
   
   Event_data_CFL_t *event_data_array = event_control_rom->event_data_array;
-   unsigned number = event_control_rom->queue_size;
-   for(unsigned i= 0;i<number;i++){
+   uint16_t number = event_control_rom->queue_size;
+   for(uint16_t i= 0;i<number;i++){
     free_event_CFL(input, &event_data_array[i]);
    }
 
@@ -54,17 +56,18 @@ void reset_current_event_queue_CFL(const void *input){
 }
 
 
-void reset_event_queue_CFL(const void *input,unsigned queue_id){
+void reset_event_queue_CFL(const void *input,uint16_t queue_id){
     const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
     Event_control_RAM_CFL_t *event_control_ram = ((Event_control_RAM_CFL_t*) handle->queue_ram)+queue_id;
     event_control_ram->rx_index = 0;
     event_control_ram->tx_index = 0;
     event_control_ram->current_queued_number = 0;
+    event_control_ram->push_number = 0;
     clear_event_data(input, queue_id);
 
 }
 
-void enqueue_event_CFL(const void *input,unsigned queue_id, Event_data_CFL_t *event) {
+void enqueue_event_CFL(const void *input,uint16_t queue_id, Event_data_CFL_t *event) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   if (is_queue_full_CFL(input,queue_id)) {
     ASSERT_PRINT_INT(input,"Queue is full",queue_id);
@@ -82,10 +85,10 @@ void enqueue_event_CFL(const void *input,unsigned queue_id, Event_data_CFL_t *ev
    
 }
 
-void enqueue_column_event_CFL(const void *input,unsigned queue_id, Event_data_CFL_t *event) {
+void enqueue_column_event_CFL(const void *input,uint16_t queue_id, Event_data_CFL_t *event) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
   
-  unsigned column_id = queue_id - 1;
+  uint16_t column_id = queue_id - 1;
   if( get_column_state_CFL( input, column_id  ) == false){
     return; // do not store inactivated column
   }
@@ -113,36 +116,43 @@ void front_enqueue_event_CFL(const void *input, Event_data_CFL_t *event) {
 }
 
 
-void front_enqueue_column_index_event_CFL(const void *input, unsigned column_index, Event_data_CFL_t *event) {
+void front_enqueue_column_index_event_CFL(const void *input, uint16_t column_index, Event_data_CFL_t *event) {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  unsigned queue_id = column_index + 1;
- 
-  if (is_queue_full_CFL(input,queue_id) == true ) {
-    ASSERT_PRINT_INT(input,"Queue is full",queue_id);
-  }
+  uint16_t queue_id = column_index + 1;
   const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+queue_id;
   Event_control_RAM_CFL_t *event_control_ram = handle->queue_ram+queue_id;
-  Event_data_CFL_t *event_data_array = event_control_rom->event_data_array;
- 
-  if(event_control_ram->tx_index == 0){
-    event_control_ram->tx_index = event_control_rom->queue_size - 1;
+  Event_data_CFL_t *event_data_array = event_control_rom->push_array_data;
+  if(event_control_ram->push_number < event_control_rom->push_queue_size){
+    *(event_data_array+event_control_ram->push_number) = *event;
+    event_control_ram->push_number +=1;
+   
   }else{
-    event_control_ram->tx_index = event_control_ram->tx_index - 1;
+    ASSERT_PRINT_INT(input,"Push Queue is full",queue_id)
   }
-   event_data_array[event_control_ram->tx_index] = *event;
-  event_control_ram->current_queued_number++;
  
-  
 }
 
-
+void dump_event_push_array_CFL(const void *input, uint16_t column_index){
+ 
+  const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
+  uint16_t queue_id = column_index + 1;
+  const Event_control_ROM_CFL_t *event_control_rom = handle->queue_rom+queue_id;
+  Event_control_RAM_CFL_t *event_control_ram = handle->queue_ram+queue_id;
+  Event_data_CFL_t *event_data_array = event_control_rom->push_array_data;
+ 
+  for(int16_t i =  event_control_ram->push_number-1;i >= 0; i--){
+        enqueue_column_event_CFL(input,queue_id,event_data_array+i); 
+  }
+  event_control_ram->push_number = 0;
+}
+ 
 
 
 void queue_global_event_CFL(const void *input, Event_data_CFL_t *event) {
   enqueue_event_CFL(input,0,event);
 }
 
-void dequeue_event_CFL(const void *input,unsigned queue_id) {
+void dequeue_event_CFL(const void *input,uint16_t queue_id) {
   Handle_CFL_t *handle = (Handle_CFL_t *)input;
   Event_data_CFL_t *event;
 
@@ -166,7 +176,7 @@ void dequeue_event_CFL(const void *input,unsigned queue_id) {
   }
 }
 
-Event_data_CFL_t *peak_event_CFL(const void *input,unsigned queue_id){
+Event_data_CFL_t *peak_event_CFL(const void *input,uint16_t queue_id){
    Handle_CFL_t *handle = (Handle_CFL_t *)input;
   Event_data_CFL_t *event;
 
@@ -195,8 +205,8 @@ void free_event_CFL(const void *input, Event_data_CFL_t *event_data)
 void reset_all_queues(const void *input)
 {
   const Handle_CFL_t *handle = (const Handle_CFL_t *)input;
-  const unsigned number = handle->queue_number;
-  for (unsigned i = 0; i < number; i++)
+  const uint16_t number = handle->queue_number;
+  for (uint16_t i = 0; i < number; i++)
   {
     reset_event_queue_CFL(input, i);
   }

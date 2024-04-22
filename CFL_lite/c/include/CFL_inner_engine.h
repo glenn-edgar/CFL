@@ -11,7 +11,7 @@ extern "C" {
 #include "CFL_private_heap.h"
 #include "CFL_local_heap_functions.h"
 #include "CFL_state_machine.h"
-#include "CFL_rpc_types.h"
+#include "CFL_rpc_packets.h"
 #include "CFL_bit_map.h"
 #include "CFL_s_bit_stack.h"
 #include "CFL_s_bit_engine.h"

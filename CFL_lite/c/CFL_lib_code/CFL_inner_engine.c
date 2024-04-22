@@ -252,25 +252,25 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
 
     if (return_code == ENGINE_TERMINATE_CFL)
     {
-
+      printf("terminate engine \n");
       return false;
     }
     if (return_code == TERMINATE_CFL)
     {
-      //printf("terminate column %d\n", column->id);
+      dump_event_push_array_CFL(handle,column_index);
       disable_column_CFL(handle, column->id);
 
       return true;
     }
     if (return_code == RESET_CFL)
     {
-
+      dump_event_push_array_CFL(handle,column_index);
       reset_column_CFL(handle, column->id);
       return true;
     }
     if (return_code == HALT_CFL)
     {
-
+      dump_event_push_array_CFL(handle,column_index);
       return true;
     }
     if (return_code == DISABLE_CFL)
@@ -280,15 +280,17 @@ static inline bool inner_process_column(const Handle_CFL_t *handle,
     if (return_code == HALT_AND_DISABLE_CFL)
     {
       handle->column_elements_flags[column->start + i] &= ~(COLUMN_ELEMENT_ACTIVE);
+      dump_event_push_array_CFL(handle,column_index);
       return true;
     }
   }
   if (column_element_count == 0)
   {
-
+    
     // column has no active column elements
     disable_column_CFL(handle, column->id);
   }
+  dump_event_push_array_CFL(handle,column_index);
 
   return true;
 }
@@ -329,7 +331,7 @@ static inline bool process_column_named_events(const Handle_CFL_t *handle,
 
     
     dequeue_event_CFL(handle, column->queue_number);
-   
+    
     
     if (result == false)
     {

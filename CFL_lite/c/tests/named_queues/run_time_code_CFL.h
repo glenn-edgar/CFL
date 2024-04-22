@@ -12,16 +12,17 @@ extern "C" {
 
 //----------Ref function header code ----
 
+#include "CFL_state_machine.h"
 #include "CFL_column_element_state_utilities.h"
+#include "CFL_state_machine.h"
 
-typedef struct display_event_CFL_t 
+typedef struct Residual_column_event_CFL_t
 {
-  unsigned short number_of_columns; 
-  unsigned short *event_array;
+  const unsigned  column_id;
+  const void *user_data;
+}Residual_column_event_CFL_t;
 
-}display_event_CFL_t;
-
-int display_event_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
+int process_residual_column_event_queue(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
 
 
 
@@ -34,6 +35,20 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     void *params, Event_data_CFL_t *event_data);
 
     
+typedef struct display_event_CFL_t 
+{
+  unsigned short number_of_columns; 
+  unsigned short *event_array;
+
+}display_event_CFL_t;
+
+int display_event_CFL(const void *input,void *aux_fn, void *params,Event_data_CFL_t *event_data);
+
+
+
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
+
+
 
 typedef struct While_control_RAM_CFL_t{
     int current_count;
@@ -53,23 +68,6 @@ typedef struct While_control_ROM_t
 int while_handler_CFL(const void *handle, void *aux_fn, void *params,Event_data_CFL_t *event_data);
 
 
-typedef struct Residual_column_event_CFL_t
-{
-  const unsigned  column_id;
-  const void *user_data;
-}Residual_column_event_CFL_t;
-
-int process_residual_column_event_queue(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data);
-
-
-
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data);
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data);
-
-
 typedef struct Conditional_send_event_CFL_t 
 {
   unsigned short number_of_columns; 
@@ -80,25 +78,8 @@ int conditional_send_CFL(const void *input,void *aux_fn, void *params,Event_data
 
 
 
-typedef struct Front_queue_event_CFL_t
-{
-  unsigned         column_id;
-  const Event_data_CFL_t *event_data;
-}Front_queue_event_CFL_t;
-
-void send_front_queue_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
-
-
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data);
-typedef struct Log_message_CFL_t{
-   const char *entry_message;
-   const bool  exit_flag;
-   const char *exit_message;
-}Log_message_CFL_t;
-
-void log_message_CFL(const void *input, void *params,
-                        Event_data_CFL_t *event_data);
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data);
 
   
   void residual_display(void *input, void *params,Event_data_CFL_t *event_data);
@@ -114,8 +95,32 @@ void send_queue_event_CFL(const void *input, void *params,Event_data_CFL_t *even
 
 
 
+typedef struct Front_queue_event_CFL_t
+{
+  unsigned         column_id;
+  const Event_data_CFL_t *event_data;
+}Front_queue_event_CFL_t;
+
+void send_front_queue_event_CFL(const void *input, void *params,Event_data_CFL_t *event_data);
+
+
+typedef struct Log_message_CFL_t{
+   const char *entry_message;
+   const bool  exit_flag;
+   const char *exit_message;
+}Log_message_CFL_t;
+
+void log_message_CFL(const void *input, void *params,
+                        Event_data_CFL_t *event_data);
+
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data);
+
 
 bool routing_2(void *input, void *params,Event_data_CFL_t *event_data);
+
+
+bool routing_1(void *input, void *params,Event_data_CFL_t *event_data);
 
      
 typedef struct While_time_control_ROM_t
@@ -127,9 +132,6 @@ typedef struct While_time_control_ROM_t
 
 bool wait_time_delay_CFL(const void *input, void *params,
                             Event_data_CFL_t *event_data);
-
-
-bool routing_1(void *input, void *params,Event_data_CFL_t *event_data);
    
 
 #ifdef __cplusplus

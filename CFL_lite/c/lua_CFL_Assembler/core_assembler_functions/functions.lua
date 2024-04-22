@@ -8,9 +8,9 @@
     
 
     
-    rpc_event_generate_functions = {}
-    rpc_event_client_process_functions = {}
-    rpc_event_server_process_functions = {}
+   -- rpc_event_generate_functions = {}
+  --  rpc_event_client_process_functions = {}
+ --   rpc_event_server_process_functions = {}
 
     active_column_functions = {}
     active_one_shot_functions = {}
@@ -24,6 +24,17 @@
     active_rpc_event_client_process_functions = {}
     active_rpc_event_server_process_functions = {}
 
+function initialize_functions()
+    column_functions = {}
+    one_shot_functions = {}
+    boolean_functions = {}
+    state_functions = {}
+    
+    active_column_functions = {}
+    active_one_shot_functions = {}
+    active_boolean_functions = {}
+    active_state_functions = {}
+end 
 
 function dump_rpc_event_generate_functions()
 

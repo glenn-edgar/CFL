@@ -2,6 +2,8 @@
 #define CFL_USEFUL_UTILITIES_H
 
 #include "CFL_inner_engine.h"
+
+
 typedef struct sequence_columns_CFL_t
 {
   unsigned short column_number;

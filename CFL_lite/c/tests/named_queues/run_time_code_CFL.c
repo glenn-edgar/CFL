@@ -5,26 +5,31 @@
 #include "run_time_code_CFL.h"
 
 
-int display_event_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+int process_residual_column_event_queue(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
-  (void)aux_fn;
-  const display_event_CFL_t *display_event = (const display_event_CFL_t *)params;
   
-  for(unsigned i= 0; i< display_event->number_of_columns; i++)
-  {
-    if(event_data->event_index == display_event->event_array[i]){
-      
-      unsigned column_index = get_current_column_index_CFL(handle);
-      unsigned column_element_number = get_current_column_element_index_CFL(handle);
-      Printf_CFL(handle,"Display Event !!!! column index %d column element %d  ---> Event: %d\n",
-              column_index, column_element_number,display_event->event_array[i]);
+  (void)event_data;
+  const Residual_column_event_CFL_t *residual_column_event = (const Residual_column_event_CFL_t *)params;
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if(event_data->event_index == EVENT_TERMINATION_CFL){
+   
+    unsigned queue_id = residual_column_event->column_id + 1;
+ 
+    while(is_queue_empty_CFL( input, queue_id ) == false){
+     
+      Event_data_CFL_t *event_data = peak_event_CFL(input,queue_id);
+     
+      fn(input,(void*)residual_column_event->user_data,event_data);
+     
+      dequeue_event_CFL(input,queue_id);
     }
-    
+    return TERMINATE_CFL;
   }
   
-
   return CONTINUE_CFL;
 }
+
 
 
 const int reset_buffer[1] = { RESET_CFL };
@@ -49,6 +54,45 @@ int return_condition_code_CFL(const void *handle, void *aux_fn,
     return *return_code;
 }
 
+
+int display_event_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+  (void)aux_fn;
+  const display_event_CFL_t *display_event = (const display_event_CFL_t *)params;
+  
+  for(unsigned i= 0; i< display_event->number_of_columns; i++)
+  {
+    if(event_data->event_index == display_event->event_array[i]){
+      
+      unsigned column_index = get_current_column_index_CFL(handle);
+      unsigned column_element_number = get_current_column_element_index_CFL(handle);
+      Printf_CFL(handle,"Display Event !!!! column index %d column element %d  ---> Event: %d\n",
+              column_index, column_element_number,display_event->event_array[i]);
+    }
+    
+  }
+  
+
+  return CONTINUE_CFL;
+}
+
+
+int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+  if (event_data->event_index == EVENT_TERMINATION_CFL)
+  {
+    fn(handle, params, event_data);
+  }
+
+  return CONTINUE_CFL;
+}
   static inline int generate_return_code_while(bool termination_flag)
   {
     if (termination_flag == true)
@@ -100,65 +144,6 @@ int while_handler_CFL(const void *input, void *aux_fn, void *params,Event_data_C
 
 
 
-int process_residual_column_event_queue(const void *input, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-  
-  (void)event_data;
-  const Residual_column_event_CFL_t *residual_column_event = (const Residual_column_event_CFL_t *)params;
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if(event_data->event_index == EVENT_TERMINATION_CFL){
-   
-    unsigned queue_id = residual_column_event->column_id + 1;
- 
-    while(is_queue_empty_CFL( input, queue_id ) == false){
-     
-      Event_data_CFL_t *event_data = peak_event_CFL(input,queue_id);
-     
-      fn(input,(void*)residual_column_event->user_data,event_data);
-     
-      dequeue_event_CFL(input,queue_id);
-    }
-    return TERMINATE_CFL;
-  }
-  
-  return CONTINUE_CFL;
-}
-
-
-
-int bidirectional_one_shot_handler_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-  if (event_data->event_index == EVENT_TERMINATION_CFL)
-  {
-    fn(handle, params, event_data);
-  }
-
-  return CONTINUE_CFL;
-}
-
-
-int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
-                            Event_data_CFL_t *event_data)
-{
-
-  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
-
-  if (event_data->event_index == EVENT_INIT_CFL)
-  {
-    fn(handle, params, event_data);
-    return DISABLE_CFL;
-  }
-  return DISABLE_CFL;
-}
-
 int conditional_send_CFL(const void *handle, void *aux_fn, void *params, Event_data_CFL_t *event_data)
 {
 
@@ -194,6 +179,43 @@ int conditional_send_CFL(const void *handle, void *aux_fn, void *params, Event_d
 }
 
 
+
+int one_shot_handler_CFL(const void *handle, void *aux_fn, void *params,
+                            Event_data_CFL_t *event_data)
+{
+
+  One_shot_function_CFL_t fn = (One_shot_function_CFL_t)aux_fn;
+
+  if (event_data->event_index == EVENT_INIT_CFL)
+  {
+    fn(handle, params, event_data);
+    return DISABLE_CFL;
+  }
+  return DISABLE_CFL;
+}
+  void residual_display(void *input, void *params,Event_data_CFL_t *event_data)
+  {
+    (void)input;
+
+    char *residual_message = (char *)params;
+    uint16_t column_index = get_current_column_index_CFL(input);
+   
+    Printf_CFL(input,"%s current column index %d residual event index %d\n",residual_message,column_index, event_data->event_index);
+  }
+
+void send_queue_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+  Queue_event_CFL_t *queue_event = (Queue_event_CFL_t *)params;
+  Event_data_CFL_t *event_data_to_send = ( Event_data_CFL_t *)queue_event->event_data;
+  
+  unsigned event_queue_index = queue_event->event_queue_index;
+  enqueue_column_event_CFL(input,event_queue_index,event_data_to_send); 
+
+}
+
+
 void send_front_queue_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
 {
 
@@ -205,13 +227,6 @@ void send_front_queue_event_CFL(const void *input,void *params,Event_data_CFL_t 
                     
 }
 
-void null_function(const void *handle,
-    void *params, Event_data_CFL_t *event_data){
-    (void)handle;
-    (void)params;
-    (void)event_data;
-    return;
-}
 
 void log_message_CFL(const void *input, void *params,
                         Event_data_CFL_t *event_data)
@@ -242,27 +257,13 @@ void log_message_CFL(const void *input, void *params,
   }
 }
 
-  void residual_display(void *input, void *params,Event_data_CFL_t *event_data)
-  {
-    (void)input;
-
-    char *residual_message = (char *)params;
-   
-    Printf_CFL(input,"%s residual event index %d\n",residual_message,event_data->event_index);
-  }
-
-void send_queue_event_CFL(const void *input,void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-  Queue_event_CFL_t *queue_event = (Queue_event_CFL_t *)params;
-  Event_data_CFL_t *event_data_to_send = ( Event_data_CFL_t *)queue_event->event_data;
-  
-  unsigned event_queue_index = queue_event->event_queue_index;
-  enqueue_column_event_CFL(input,event_queue_index,event_data_to_send); 
-
+void null_function(const void *handle,
+    void *params, Event_data_CFL_t *event_data){
+    (void)handle;
+    (void)params;
+    (void)event_data;
+    return;
 }
-
 
 
 bool routing_2(void *input, void *params,Event_data_CFL_t *event_data)
@@ -275,6 +276,22 @@ bool routing_2(void *input, void *params,Event_data_CFL_t *event_data)
     return true;
   }
   if(event_data->event_index == 103){
+    return true;
+  }
+  return false;
+}
+
+
+bool routing_1(void *input, void *params,Event_data_CFL_t *event_data)
+{
+
+  (void)event_data;
+  (void)input;
+  (void)params;
+  if(event_data->event_index == 100){
+    return true;
+  }
+  if(event_data->event_index == 101){
     return true;
   }
   return false;
@@ -305,21 +322,5 @@ bool wait_time_delay_CFL(const void *input, void *params,
     }
   }
 
-  return false;
-}
-
-
-bool routing_1(void *input, void *params,Event_data_CFL_t *event_data)
-{
-
-  (void)event_data;
-  (void)input;
-  (void)params;
-  if(event_data->event_index == 100){
-    return true;
-  }
-  if(event_data->event_index == 101){
-    return true;
-  }
   return false;
 }

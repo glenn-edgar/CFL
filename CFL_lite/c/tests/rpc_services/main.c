@@ -24,21 +24,26 @@ void free_allocate_once_heap(){
 
 
 
-void test_rpc_services(void);
+void test_rpc_services_1(void);
+void test_rpc_services_2(void);
+void test_sync_no_wait(void);
+void test_sync_wait(void);
 
 
 int main()
 
 {
   printf("\n\n test rpc services \n\n");
-  test_rpc_services();
-  
+  //test_rpc_services_1();
+  //test_rpc_services_2();
+  //test_sync_no_wait();
+  test_sync_wait();
  
 }
 
 
-#include "rpc_services.h"
-void test_rpc_services(void)
+#include "rpc_services_1.h"
+void test_rpc_services_1(void)
 {  
     
  
@@ -46,7 +51,7 @@ void test_rpc_services(void)
    create_allocate_once_heap(); // create allocate once heap
 
   
-   const Handle_CFL_t *handle = rpc_services_handle();
+   const Handle_CFL_t *handle = rpc_services_handle_1();
  
    Initialize_heap_CFL(handle);
      
@@ -58,4 +63,69 @@ void test_rpc_services(void)
   
 }
 
+
+
+#include "rpc_services_2.h"
+
+void test_rpc_services_2(void)
+{  
+    
+ 
+
+   create_allocate_once_heap(); // create allocate once heap
+
+  
+   const Handle_CFL_t *handle = rpc_services_handle_2();
+ 
+   Initialize_heap_CFL(handle);
+     
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   
+   Start_engine_CFL(handle);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+  
+}
+
+#include "sync_service_1.h"
+void test_sync_no_wait(void)
+{  
+    
+ 
+
+   create_allocate_once_heap(); // create allocate once heap
+
+  
+   const Handle_CFL_t *handle = sync_service_1();
+ 
+   Initialize_heap_CFL(handle);
+     
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   
+   Start_engine_CFL(handle);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+  
+}
+
+#include "sync_service_2.h"
+void test_sync_wait(void)
+{  
+    
+ 
+
+   create_allocate_once_heap(); // create allocate once heap
+
+  
+   const Handle_CFL_t *handle = sync_service_2();
+ 
+   Initialize_heap_CFL(handle);
+     
+   Initialize_engine_CFL(handle, 10, default_idle_function, default_calendar_function);
+   
+   Start_engine_CFL(handle);
+   free_allocate_once_heap(); // free allocate once heap
+ 
+  
+}
 
